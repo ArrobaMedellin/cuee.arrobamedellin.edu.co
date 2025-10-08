@@ -1,26 +1,30 @@
+import { RegistrationFormData } from '@/types/form'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import { FormData } from '@/types/form'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface FormStore {
-	data: Partial<FormData>
+	data: Partial<RegistrationFormData>
 	currentSection: number
-	setSectionData: <K extends keyof FormData>(
+	setSectionData: <K extends keyof RegistrationFormData>(
 		section: K,
-		data: FormData[K]
+		data: RegistrationFormData[K]
 	) => void
 	setCurrentSection: (section: number) => void
 	resetForm: () => void
-	isSectionValid: (section: keyof FormData) => boolean
+	isSectionValid: (section: keyof RegistrationFormData) => boolean
 }
 
-const initialData: Partial<FormData> = {
+const initialData: Partial<RegistrationFormData> = {
 	section1: {
 		firstName: '',
 		lastName: '',
 		documentType: '',
 		documentNumber: '',
 		email: '',
+		countryOfBirth: '',
+		departmentOfBirth: '',
+		municipalityOfBirth: '',
+		otherDocumentType: '',
 	},
 	section2: {
 		birthDate: '',
@@ -29,6 +33,9 @@ const initialData: Partial<FormData> = {
 		gender: '',
 		sexualOrientation: '',
 		genderIdentity: '',
+		age: 0,
+		otherSexualOrientation: '',
+		representativePhone: '',
 	},
 	section3: {
 		countryOfResidence: '',
@@ -36,9 +43,32 @@ const initialData: Partial<FormData> = {
 		cityOfResidence: '',
 		neighborhood: '',
 		commune: '',
-		address: '',
 		stratum: '',
+		addressType: '',
+		addressNumber1: '',
+		addressLetter1: '',
+		addressOrientation1: '',
+		addressNumber2: '',
+		addressLetter2: '',
+		addressOrientation2: '',
+		addressNumber3: '',
+		addressComplement: '',
+		fullAddress: '',
 		birthCity: '',
+		countryOfResidenceId: undefined,
+		departmentOfResidenceId: undefined,
+		cityOfResidenceId: undefined,
+		communeId: undefined,
+		neighborhoodId: undefined,
+		birthCityId: undefined,
+	},
+	section4: {
+		graduationYear: '',
+		graduatedFrom: '',
+		selectedCourses: [],
+		hasIcfesPro: 'NO' as const,
+		icfesProScore: '',
+		icfesProYear: '',
 	},
 	section21: {
 		representativeFirstName: '',
@@ -47,27 +77,64 @@ const initialData: Partial<FormData> = {
 		representativeEmail: '',
 	},
 	section5: {
-		healthSystem: '',
-		internetConnection: '',
 		devices: [],
-		occupation: '',
-		educationLevel: '',
 		housingType: '',
-		hasChildren: false,
-		singleParent: false,
-		pregnantOrLactating: false,
+		familyMembers: 1,
+		occupation: '',
+		otherOccupation: '',
 		dependents: 0,
+		workStatus: 'BUSCANDO_TRABAJO' as const,
+		monthlyIncome: '',
+		isPregnant: 'NO' as const,
+		isLactating: 'NO' as const,
+		isInformalVendor: false,
+		isFamilyOfInformalVendor: false,
+		isFamilyCaregiver: false,
+		isYouthCouncilor: false,
+		isCertifiedBarrista: false,
+		specialPopulations: [],
+		healthSystem: '',
+		educationLevel: '',
+		internetConnection: '',
+		hasChildren: false,
+		numberOfChildren: undefined,
+		singleParent: false,
+		firstChildAge: undefined,
+		pregnantOrLactating: false,
+		socialSecurityContributions: [],
+		emotionalSalaryOptions: [],
+		missingCompetencies: [],
+		otherMissingCompetencies: '',
+		graduationToEmploymentTime: '',
+		englishLevel: '',
+		jobSearchAreas: [],
+		otherJobSearchArea: '',
+		salaryExpectationsMet: '',
+		jobSatisfaction: '',
+		remoteWorkOption: '',
+		remoteWorkSpace: '',
 	},
 	section6: {
-		violenceInColombia: false,
-		accessibility: '',
 		hasDisability: false,
-		population: '',
-		ventero: false,
-		familyVentero: false,
-		barrista: false,
-		familyDisability: false,
-		ethnicities: [],
+		disabilityTypes: [],
+		disabilityDescription: '',
+		requiresSupport: false,
+		supportType: '',
+		ethnicGroups: [],
+		isViolenceVictim: false,
+		victimizingActs: [],
+		violenceType: '',
+		registeredWithVictimUnit: false,
+		victimRegistrationNumber: '',
+		isExcombatant: false,
+		isReintegrated: false,
+		isFamilyOfExcombatant: false,
+		isInternallyDisplaced: false,
+		isRefugee: false,
+		accessibility: '',
+		isFamilyCaregiver: false,
+		isYouthCouncilor: false,
+		isCertifiedBarrista: false,
 	},
 }
 

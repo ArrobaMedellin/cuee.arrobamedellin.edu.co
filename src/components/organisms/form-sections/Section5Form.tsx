@@ -1,9 +1,6 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { section5Schema } from '@/schemas/section5'
-import type { Section5Form } from '@/schemas/section5'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Form,
 	FormControl,
@@ -20,24 +17,53 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
+import type { Section5Form } from '@/schemas/section5'
+import { section5Schema } from '@/schemas/section5'
 import { useFormStore } from '@/stores/formStore'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 export function Section5Form() {
 	const { data, setSectionData } = useFormStore()
 	const form = useForm<Section5Form>({
 		resolver: zodResolver(section5Schema),
 		defaultValues: data.section5 || {
-			healthSystem: '',
-			internetConnection: '',
 			devices: [],
-			occupation: '',
-			educationLevel: '',
 			housingType: '',
-			hasChildren: false,
-			singleParent: false,
-			pregnantOrLactating: false,
+			familyMembers: 1,
+			occupation: '',
+			otherOccupation: '',
 			dependents: 0,
+			workStatus: 'BUSCANDO_TRABAJO',
+			monthlyIncome: '',
+			isPregnant: 'NO',
+			isLactating: 'NO',
+			isInformalVendor: false,
+			isFamilyOfInformalVendor: false,
+			isFamilyCaregiver: false,
+			isYouthCouncilor: false,
+			isCertifiedBarrista: false,
+			specialPopulations: [],
+			healthSystem: '',
+			educationLevel: '',
+			internetConnection: '',
+			hasChildren: false,
+			numberOfChildren: undefined,
+			singleParent: false,
+			firstChildAge: undefined,
+			pregnantOrLactating: false,
+			socialSecurityContributions: [],
+			emotionalSalaryOptions: [],
+			missingCompetencies: [],
+			otherMissingCompetencies: '',
+			graduationToEmploymentTime: '',
+			englishLevel: '',
+			jobSearchAreas: [],
+			otherJobSearchArea: '',
+			salaryExpectationsMet: '',
+			jobSatisfaction: '',
+			remoteWorkOption: '',
+			remoteWorkSpace: '',
 		},
 	})
 
@@ -70,9 +96,12 @@ export function Section5Form() {
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										<SelectItem value='contributivo'>Contributivo</SelectItem>
-										<SelectItem value='subsidiado'>Subsidiado</SelectItem>
-										<SelectItem value='otro'>Otro</SelectItem>
+										<SelectItem value='Contributivo'>Contributivo</SelectItem>
+										<SelectItem value='Subsidiado'>Subsidiado</SelectItem>
+										<SelectItem value='Especial'>Especial</SelectItem>
+										<SelectItem value='No tiene afiliación'>
+											No tiene afiliación
+										</SelectItem>
 									</SelectContent>
 								</Select>
 								<FormMessage />

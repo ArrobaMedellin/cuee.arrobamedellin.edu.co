@@ -1,20 +1,41 @@
 import { z } from 'zod'
 
-export const section1Schema = z.object({
-	firstName: z
-		.string()
-		.min(1, 'Nombres es requerido')
-		.max(100, 'Máximo 100 caracteres'),
-	lastName: z
-		.string()
-		.min(1, 'Apellidos es requerido')
-		.max(100, 'Máximo 100 caracteres'),
-	documentType: z.string().min(1, 'Tipo de documento es requerido'),
-	documentNumber: z
-		.string()
-		.min(1, 'Número de documento es requerido')
-		.regex(/^\d+$/, 'Solo números'),
-	email: z.string().email('Correo electrónico inválido'),
-})
+export const section1Schema = z
+	.object({
+		firstName: z
+			.string()
+			.min(1, 'Nombres es requerido')
+			.max(100, 'Máximo 100 caracteres'),
+		lastName: z
+			.string()
+			.min(1, 'Apellidos es requerido')
+			.max(100, 'Máximo 100 caracteres'),
+		documentType: z.string().min(1, 'Tipo de documento es requerido'),
+		otherDocumentType: z.string().optional(),
+		documentNumber: z
+			.string()
+			.min(1, 'Número de documento es requerido')
+			.regex(/^\d+$/, 'Solo números'),
+		email: z.string().email('Correo electrónico inválido'),
+		countryOfBirth: z.string().min(1, 'País de nacimiento es requerido'),
+		departmentOfBirth: z
+			.string()
+			.min(1, 'Departamento de nacimiento es requerido'),
+		municipalityOfBirth: z
+			.string()
+			.min(1, 'Municipio de nacimiento es requerido'),
+	})
+	.refine(
+		data => {
+			if (data.documentType === 'Otro' && !data.otherDocumentType) {
+				return false
+			}
+			return true
+		},
+		{
+			message: 'Especifica el otro tipo de documento',
+			path: ['otherDocumentType'],
+		}
+	)
 
 export type Section1Form = z.infer<typeof section1Schema>

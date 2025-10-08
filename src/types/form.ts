@@ -1,72 +1,26 @@
 // Types for the registration form
+import { Section1Form } from '@/schemas/section1'
+import { Section2Form } from '@/schemas/section2'
+import { Section21Form } from '@/schemas/section21'
+import { Section3Form } from '@/schemas/section3'
+import { Section4Form } from '@/schemas/section4'
+import { Section5Form } from '@/schemas/section5'
+import { Section6Form } from '@/schemas/section6'
 
-export interface Section1 {
-	firstName: string
-	lastName: string
-	documentType: string
-	documentNumber: string
-	email: string
-}
+export type Section1 = Section1Form
+export type Section2 = Section2Form
+export type Section21 = Section21Form
+export type Section3 = Section3Form
+export type Section4 = Section4Form
+export type Section5 = Section5Form
+export type Section6 = Section6Form
 
-export interface Section2 {
-	birthDate: string
-	cityOfResidence: string
-	phone: string
-	gender: string
-	sexualOrientation: string
-	genderIdentity: string
-}
-
-export interface Section21 {
-	representativeFirstName: string
-	representativeDocumentType: string
-	representativeDocumentNumber: string
-	representativeEmail: string
-}
-
-export interface Section3 {
-	countryOfResidence: string
-	departmentOfResidence: string
-	cityOfResidence: string
-	neighborhood: string
-	commune?: string
-	address: string
-	stratum: string
-	birthCity: string
-}
-
-export interface Section5 {
-	healthSystem: string
-	internetConnection: string
-	devices: string[]
-	occupation: string
-	educationLevel: string
-	housingType: string
-	hasChildren: boolean
-	numberOfChildren?: number
-	singleParent: boolean
-	firstChildAge?: number
-	pregnantOrLactating: boolean
-	dependents: number
-}
-
-export interface Section6 {
-	violenceInColombia: boolean
-	accessibility: string
-	hasDisability: boolean
-	population: string
-	ventero: boolean
-	familyVentero: boolean
-	barrista: boolean
-	familyDisability: boolean
-	ethnicities: string[]
-}
-
-export interface FormData {
+export interface RegistrationFormData {
 	section1: Section1
 	section2: Section2
 	section21?: Section21
 	section3: Section3
+	section4: Section4
 	section5: Section5
 	section6: Section6
 }

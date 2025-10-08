@@ -1,0 +1,25 @@
+{
+	"data": [
+		{ "id": 1, "name": "Popular", "cityId": 5001 },
+		{ "id": 2, "name": "Santa Cruz", "cityId": 5001 },
+		{ "id": 3, "name": "Manrique", "cityId": 5001 },
+		{ "id": 4, "name": "Aranjuez", "cityId": 5001 },
+		{ "id": 5, "name": "Castilla", "cityId": 5001 },
+		{ "id": 6, "name": "Doce de Octubre", "cityId": 5001 },
+		{ "id": 7, "name": "Robledo", "cityId": 5001 },
+		{ "id": 8, "name": "Villa Hermosa", "cityId": 5001 },
+		{ "id": 9, "name": "Buenos Aires", "cityId": 5001 },
+		{ "id": 10, "name": "La Candelaria", "cityId": 5001 },
+		{ "id": 11, "name": "Laureles - Estadio", "cityId": 5001 },
+		{ "id": 12, "name": "La América", "cityId": 5001 },
+		{ "id": 13, "name": "San Javier", "cityId": 5001 },
+		{ "id": 14, "name": "El Poblado", "cityId": 5001 },
+		{ "id": 15, "name": "Guayabal", "cityId": 5001 },
+		{ "id": 16, "name": "Belén", "cityId": 5001 },
+		{ "id": 50, "name": "Palmitas", "cityId": 5001 },
+		{ "id": 60, "name": "San Cristóbal", "cityId": 5001 },
+		{ "id": 70, "name": "Altavista", "cityId": 5001 },
+		{ "id": 80, "name": "San Antonio de Prado", "cityId": 5001 },
+		{ "id": 90, "name": "Santa Elena", "cityId": 5001 }
+	]
+}

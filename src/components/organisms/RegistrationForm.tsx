@@ -1,16 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Stepper, Step } from '@/components/atoms/stepper'
-import { Section1Form } from './form-sections/Section1Form'
-import { Section2Form } from './form-sections/Section2Form'
-import { Section3Form } from './form-sections/Section3Form'
-import { Section21Form } from './form-sections/Section21Form'
-import { Section5Form } from './form-sections/Section5Form'
-import { Section6Form } from './form-sections/Section6Form'
-import { useFormStore } from '@/stores/formStore'
-import { useMemo } from 'react'
-import { Summary } from './Summary'
+import { Step, Stepper } from '@/components/atoms/stepper'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -22,13 +12,22 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { useFormStore } from '@/stores/formStore'
+import { useMemo } from 'react'
 import { toast } from 'sonner'
+import { Section1Form } from './form-sections/Section1Form'
+import { Section2Form } from './form-sections/Section2Form'
+import { Section3FormNew } from './form-sections/Section3FormNew'
+import { Section5Form } from './form-sections/Section5Form'
+import { Section6FormNew } from './form-sections/Section6FormNew'
+import { Summary } from './Summary'
 
 export function RegistrationForm() {
 	const { currentSection, setCurrentSection } = useFormStore()
 
-	const steps = useMemo(
-		() => [
+	const steps = useMemo(() => {
+		const baseSteps = [
 			{
 				key: 1,
 				title: 'Información Personal',
@@ -39,13 +38,7 @@ export function RegistrationForm() {
 				key: 2,
 				title: 'Datos Personales',
 				description: 'Contacto y perfil',
-				tooltip: 'Nacimiento, contacto, género',
-			},
-			{
-				key: 21,
-				title: 'Representante',
-				description: 'Sección 2.1',
-				tooltip: 'Datos del representante legal',
+				tooltip: 'Nacimiento, contacto, género y representante (si aplica)',
 			},
 			{
 				key: 3,
@@ -71,11 +64,14 @@ export function RegistrationForm() {
 				description: 'Verificación final',
 				tooltip: 'Revisa y envía',
 			},
-		],
-		[]
-	)
+		]
 
-	const goto = (target: number) => setCurrentSection(target)
+		return baseSteps
+	}, [])
+
+	const goto = (target: number) => {
+		setCurrentSection(target)
+	}
 
 	const renderForm = () => {
 		switch (currentSection) {
@@ -83,14 +79,12 @@ export function RegistrationForm() {
 				return <Section1Form />
 			case 2:
 				return <Section2Form />
-			case 21:
-				return <Section21Form />
 			case 3:
-				return <Section3Form />
+				return <Section3FormNew />
 			case 5:
 				return <Section5Form />
 			case 6:
-				return <Section6Form />
+				return <Section6FormNew />
 			default:
 				return <Section1Form />
 		}
@@ -99,8 +93,20 @@ export function RegistrationForm() {
 	const stepIndex = steps.findIndex(s => s.key === currentSection)
 	const canGoPrev = stepIndex > 0
 	const canGoNext = stepIndex < steps.length - 1
-	const nextKey = canGoNext ? steps[stepIndex + 1].key : currentSection
-	const prevKey = canGoPrev ? steps[stepIndex - 1].key : currentSection
+
+	// Navegación simplificada
+	const getNextStep = () => {
+		if (!canGoNext) return currentSection
+		return steps[stepIndex + 1].key
+	}
+
+	const getPrevStep = () => {
+		if (!canGoPrev) return currentSection
+		return steps[stepIndex - 1].key
+	}
+
+	const nextKey = getNextStep()
+	const prevKey = getPrevStep()
 
 	return (
 		<div className='mx-auto max-w-6xl p-6 min-h-[70vh]'>

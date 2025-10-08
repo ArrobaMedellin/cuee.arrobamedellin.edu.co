@@ -1,17 +1,47 @@
 'use client'
 
-import { useFormStore } from '@/stores/formStore'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useFormStore } from '@/stores/formStore'
+import type {
+	Section1,
+	Section2,
+	Section21,
+	Section3,
+	Section4,
+	Section5,
+	Section6,
+} from '@/types/form'
 // Sin acciones de envío aquí; el botón de Confirmar se mueve al footer del wizard
 
 type Primitive = string | number | boolean | null | undefined
+type SectionData =
+	| Section1
+	| Section2
+	| Section21
+	| Section3
+	| Section4
+	| Section5
+	| Section6
 
 function display(value: Primitive | string[] | undefined): string {
 	if (Array.isArray(value)) return value.length ? value.join(', ') : '—'
 	if (value === '' || value === undefined || value === null) return '—'
 	if (typeof value === 'boolean') return value ? 'Sí' : 'No'
 	return String(value)
+}
+
+// Función para verificar si una sección tiene datos reales (no solo valores por defecto)
+function hasRealData(section: SectionData | undefined): boolean {
+	if (!section) return false
+
+	// Verificar si tiene al menos un campo con datos reales
+	return Object.values(section).some(value => {
+		if (typeof value === 'string') return value !== ''
+		if (typeof value === 'number') return value !== 0
+		if (typeof value === 'boolean') return true // Los booleanos siempre son válidos
+		if (Array.isArray(value)) return value.length > 0
+		return value !== null && value !== undefined
+	})
 }
 
 function Kv({
@@ -32,12 +62,13 @@ function Kv({
 }
 
 export function Summary() {
-	const { data, resetForm } = useFormStore()
+	const { data } = useFormStore()
 
 	const s1 = data.section1
 	const s2 = data.section2
 	const s21 = data.section21
 	const s3 = data.section3
+	const s4 = data.section4
 	const s5 = data.section5
 	const s6 = data.section6
 
@@ -45,7 +76,7 @@ export function Summary() {
 		<div className='space-y-6'>
 			<h2 className='text-xl font-semibold'>Resumen</h2>
 
-			{s1 && (
+			{s1 && hasRealData(s1) && (
 				<Card>
 					<CardHeader>
 						<CardTitle>Información Personal</CardTitle>
@@ -53,29 +84,29 @@ export function Summary() {
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
 							label='Nombres'
-							value={s1.firstName}
+							value={s1?.firstName}
 						/>
 						<Kv
 							label='Apellidos'
-							value={s1.lastName}
+							value={s1?.lastName}
 						/>
 						<Kv
 							label='Tipo de documento'
-							value={s1.documentType}
+							value={s1?.documentType}
 						/>
 						<Kv
 							label='Número de documento'
-							value={s1.documentNumber}
+							value={s1?.documentNumber}
 						/>
 						<Kv
 							label='Correo electrónico'
-							value={s1.email}
+							value={s1?.email}
 						/>
 					</CardContent>
 				</Card>
 			)}
 
-			{s2 && (
+			{s2 && hasRealData(s2) && (
 				<Card>
 					<CardHeader>
 						<CardTitle>Datos Personales</CardTitle>
@@ -83,33 +114,33 @@ export function Summary() {
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
 							label='Fecha de nacimiento'
-							value={s2.birthDate}
+							value={s2?.birthDate}
 						/>
 						<Kv
 							label='Ciudad de residencia'
-							value={s2.cityOfResidence}
+							value={s2?.cityOfResidence}
 						/>
 						<Kv
 							label='Teléfono'
-							value={s2.phone}
+							value={s2?.phone}
 						/>
 						<Kv
 							label='Género'
-							value={s2.gender}
+							value={s2?.gender}
 						/>
 						<Kv
 							label='Orientación sexual'
-							value={s2.sexualOrientation}
+							value={s2?.sexualOrientation}
 						/>
 						<Kv
 							label='Identidad de género'
-							value={s2.genderIdentity}
+							value={s2?.genderIdentity}
 						/>
 					</CardContent>
 				</Card>
 			)}
 
-			{s21 && (
+			{s21 && hasRealData(s21) && (
 				<Card>
 					<CardHeader>
 						<CardTitle>Representante</CardTitle>
@@ -117,25 +148,25 @@ export function Summary() {
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
 							label='Nombres representante'
-							value={s21.representativeFirstName}
+							value={s21?.representativeFirstName}
 						/>
 						<Kv
 							label='Tipo documento rep.'
-							value={s21.representativeDocumentType}
+							value={s21?.representativeDocumentType}
 						/>
 						<Kv
 							label='Número documento rep.'
-							value={s21.representativeDocumentNumber}
+							value={s21?.representativeDocumentNumber}
 						/>
 						<Kv
 							label='Correo repres.'
-							value={s21.representativeEmail}
+							value={s21?.representativeEmail}
 						/>
 					</CardContent>
 				</Card>
 			)}
 
-			{s3 && (
+			{s3 && hasRealData(s3) && (
 				<Card>
 					<CardHeader>
 						<CardTitle>Ubicación</CardTitle>
@@ -143,43 +174,90 @@ export function Summary() {
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
 							label='País de residencia'
-							value={s3.countryOfResidence}
+							value={s3?.countryOfResidence}
 						/>
 						<Kv
 							label='Departamento'
-							value={s3.departmentOfResidence}
+							value={s3?.departmentOfResidence}
 						/>
 						<Kv
 							label='Ciudad'
-							value={s3.cityOfResidence}
+							value={s3?.cityOfResidence}
 						/>
 						<Kv
 							label='Barrio'
-							value={s3.neighborhood}
+							value={s3?.neighborhood}
 						/>
-						{s3.commune !== undefined && (
+						{s3?.commune !== undefined && (
 							<Kv
 								label='Comuna'
-								value={s3.commune}
+								value={s3?.commune}
 							/>
 						)}
 						<Kv
 							label='Dirección'
-							value={s3.address}
+							value={
+								s3?.fullAddress ||
+								`${s3?.addressType} ${s3?.addressNumber1}${
+									s3?.addressLetter1 || ''
+								} ${s3?.addressOrientation1 || ''} # ${s3?.addressNumber2}${
+									s3?.addressLetter2 || ''
+								} ${s3?.addressOrientation2 || ''} - ${s3?.addressNumber3} ${
+									s3?.addressComplement || ''
+								}`.trim()
+							}
 						/>
 						<Kv
 							label='Estrato'
-							value={s3.stratum}
+							value={s3?.stratum}
 						/>
 						<Kv
 							label='Ciudad de nacimiento'
-							value={s3.birthCity}
+							value={s3?.birthCity}
 						/>
 					</CardContent>
 				</Card>
 			)}
 
-			{s5 && (
+			{s4 && hasRealData(s4) && (
+				<Card>
+					<CardHeader>
+						<CardTitle>Información Educativa</CardTitle>
+					</CardHeader>
+					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+						<Kv
+							label='Año de graduación'
+							value={s4.graduationYear}
+						/>
+						<Kv
+							label='Institución donde se graduó'
+							value={s4.graduatedFrom}
+						/>
+						<Kv
+							label='Cursos seleccionados'
+							value={s4.selectedCourses.join(', ')}
+						/>
+						<Kv
+							label='Tiene ICFES Pro'
+							value={s4.hasIcfesPro}
+						/>
+						{s4.hasIcfesPro === 'SI' && (
+							<>
+								<Kv
+									label='Puntaje ICFES Pro'
+									value={s4.icfesProScore}
+								/>
+								<Kv
+									label='Año ICFES Pro'
+									value={s4.icfesProYear}
+								/>
+							</>
+						)}
+					</CardContent>
+				</Card>
+			)}
+
+			{s5 && hasRealData(s5) && (
 				<Card>
 					<CardHeader>
 						<CardTitle>Información Socioeconómica</CardTitle>
@@ -237,11 +315,19 @@ export function Summary() {
 							label='Personas a cargo'
 							value={s5.dependents}
 						/>
+						<Kv
+							label='Vendedor informal (ventero)'
+							value={s5.isInformalVendor}
+						/>
+						<Kv
+							label='Familia ventera'
+							value={s5.isFamilyOfInformalVendor}
+						/>
 					</CardContent>
 				</Card>
 			)}
 
-			{s6 && (
+			{s6 && hasRealData(s6) && (
 				<Card>
 					<CardHeader>
 						<CardTitle>Información Adicional</CardTitle>
@@ -249,7 +335,7 @@ export function Summary() {
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
 							label='Víctima de violencia en Colombia'
-							value={s6.violenceInColombia}
+							value={s6.isViolenceVictim}
 						/>
 						<Kv
 							label='Accesibilidad'
@@ -260,28 +346,20 @@ export function Summary() {
 							value={s6.hasDisability}
 						/>
 						<Kv
-							label='Población'
-							value={s6.population}
+							label='Grupos étnicos'
+							value={s6.ethnicGroups}
 						/>
 						<Kv
-							label='Vendedor informal (ventero)'
-							value={s6.ventero}
+							label='Cuidador familiar'
+							value={s6.isFamilyCaregiver}
 						/>
 						<Kv
-							label='Familia ventera'
-							value={s6.familyVentero}
+							label='Concejal juvenil'
+							value={s6.isYouthCouncilor}
 						/>
 						<Kv
-							label='Barrista'
-							value={s6.barrista}
-						/>
-						<Kv
-							label='Familia con discapacidad'
-							value={s6.familyDisability}
-						/>
-						<Kv
-							label='Etnias'
-							value={s6.ethnicities}
+							label='Barrista certificado'
+							value={s6.isCertifiedBarrista}
 						/>
 					</CardContent>
 				</Card>

@@ -1,9 +1,5 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { section21Schema } from '@/schemas/section21'
-import type { Section21Form as Section21Values } from '@/schemas/section21'
 import {
 	Form,
 	FormControl,
@@ -20,7 +16,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import type { Section21Form as Section21Values } from '@/schemas/section21'
+import { section21Schema } from '@/schemas/section21'
 import { useFormStore } from '@/stores/formStore'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 export function Section21Form() {
 	const { data, setSectionData } = useFormStore()
@@ -77,9 +77,19 @@ export function Section21Form() {
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										<SelectItem value='cc'>Cédula de ciudadanía</SelectItem>
-										<SelectItem value='ti'>Tarjeta de identidad</SelectItem>
-										<SelectItem value='ce'>Cédula de extranjería</SelectItem>
+										<SelectItem value='Registro Civil'>
+											Registro civil
+										</SelectItem>
+										<SelectItem value='Tarjeta de identidad'>
+											Tarjeta de identidad
+										</SelectItem>
+										<SelectItem value='Cédula de ciudadanía'>
+											Cédula de ciudadanía
+										</SelectItem>
+										<SelectItem value='Cédula extranjería'>
+											Cédula extranjería
+										</SelectItem>
+										<SelectItem value='Otro'>Otro</SelectItem>
 									</SelectContent>
 								</Select>
 								<FormMessage />

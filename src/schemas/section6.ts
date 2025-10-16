@@ -10,9 +10,8 @@ export const section6Schema = z
 		supportType: z.string().optional(),
 
 		// Grupos étnicos
-		ethnicGroups: z
-			.array(z.string())
-			.min(1, 'Selecciona al menos una opción étnica'),
+		belongsToEthnicGroup: z.boolean().default(false),
+		ethnicGroups: z.array(z.string()).optional(),
 
 		// Víctima de violencia (expandido)
 		isViolenceVictim: z.boolean(),

@@ -6,6 +6,7 @@ import { Section3Form } from '@/schemas/section3'
 import { Section4Form } from '@/schemas/section4'
 import { Section5Form } from '@/schemas/section5'
 import { Section6Form } from '@/schemas/section6'
+import { Section7Form } from '@/schemas/section7'
 
 export type Section1 = Section1Form
 export type Section2 = Section2Form
@@ -14,6 +15,7 @@ export type Section3 = Section3Form
 export type Section4 = Section4Form
 export type Section5 = Section5Form
 export type Section6 = Section6Form
+export type Section7 = Section7Form
 
 export interface RegistrationFormData {
 	section1: Section1
@@ -23,4 +25,5 @@ export interface RegistrationFormData {
 	section4: Section4
 	section5: Section5
 	section6: Section6
+	section7: Section7
 }

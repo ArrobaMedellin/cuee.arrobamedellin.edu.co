@@ -1,6 +1,12 @@
 export const API_URL =
 	process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 
+// Opciones Sí/No para MultiCheckboxField
+export const YES_NO_OPTIONS = [
+	{ value: 'si', label: 'Sí' },
+	{ value: 'no', label: 'No' },
+]
+
 // Dispositivos tecnológicos
 export const DEVICE_OPTIONS = [
 	{ value: 'computador-mesa', label: 'Computador de mesa' },

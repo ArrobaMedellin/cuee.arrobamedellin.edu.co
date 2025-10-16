@@ -1,6 +1,5 @@
 'use client'
 
-import { CitySelect } from '@/components/atoms/city-select'
 import {
 	Form,
 	FormControl,
@@ -21,10 +20,24 @@ import type { Section3Form } from '@/schemas/section3'
 import { section3Schema } from '@/schemas/section3'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section3Form() {
 	const { data, setSectionData } = useFormStore()
+	const [selectedCountryId] = useState<number | undefined>(
+		data.section3?.countryOfResidenceId
+	)
+	const [selectedDepartmentId] = useState<number | undefined>(
+		data.section3?.departmentOfResidenceId
+	)
+	const [selectedCityId] = useState<number | undefined>(
+		data.section3?.cityOfResidenceId
+	)
+	const [selectedCommuneId] = useState<number | undefined>(
+		data.section3?.communeId
+	)
+
 	const form = useForm<Section3Form>({
 		resolver: zodResolver(section3Schema),
 		defaultValues: data.section3 || {
@@ -49,7 +62,15 @@ export function Section3Form() {
 	})
 
 	const onSubmit = (values: Section3Form) => {
-		setSectionData('section3', values)
+		const submitData = {
+			...values,
+			countryOfResidenceId: selectedCountryId,
+			departmentOfResidenceId: selectedDepartmentId,
+			cityOfResidenceId: selectedCityId,
+			communeId: selectedCommuneId,
+			neighborhoodId: form.watch('neighborhoodId'),
+		}
+		setSectionData('section3', submitData)
 	}
 
 	return (
@@ -58,94 +79,6 @@ export function Section3Form() {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className='space-y-6'
 			>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					<FormField
-						control={form.control}
-						name='countryOfResidence'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>País de residencia</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Colombia'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='departmentOfResidence'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Departamento de residencia</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa departamento'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					<FormField
-						control={form.control}
-						name='cityOfResidence'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Ciudad de residencia</FormLabel>
-								<FormControl>
-									<CitySelect
-										value={field.value}
-										onValueChange={field.onChange}
-										placeholder='Selecciona una ciudad'
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='neighborhood'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Barrio</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa barrio'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					<FormField
-						control={form.control}
-						name='commune'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Comuna</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa comuna'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
-
 				{/* Constructor de dirección */}
 				<div className='space-y-4'>
 					<h3 className='text-lg font-semibold'>Constructor de Dirección</h3>
@@ -318,23 +251,6 @@ export function Section3Form() {
 										<SelectItem value='6'>6</SelectItem>
 									</SelectContent>
 								</Select>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='birthCity'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Ciudad de nacimiento</FormLabel>
-								<FormControl>
-									<CitySelect
-										value={field.value}
-										onValueChange={field.onChange}
-										placeholder='Selecciona una ciudad'
-									/>
-								</FormControl>
 								<FormMessage />
 							</FormItem>
 						)}

@@ -11,7 +11,13 @@ export const section2Schema = z
 				'Fecha de nacimiento inválida o futura'
 			),
 		age: z.number().optional(), // Calculada automáticamente
+		bornCity: z.string().min(1, 'Ciudad de nacimiento es requerida'),
+		countryOfResidence: z.string().optional(),
+		departmentOfResidence: z.string().optional(),
 		cityOfResidence: z.string().min(1, 'Ciudad dónde vive es requerida'),
+		commune: z.string().optional(),
+		neighborhood: z.string().optional(),
+		neighborhoodId: z.number().optional(),
 		phone: z
 			.string()
 			.min(1, 'Teléfono es requerido')

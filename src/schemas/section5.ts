@@ -29,15 +29,16 @@ export const section5Schema = z
 		isLactating: z.enum(['SI', 'NO']),
 
 		// Ventero informal
-		isInformalVendor: z.boolean(),
-		isFamilyOfInformalVendor: z.boolean(),
+		isInformalVendor: z.array(z.string()).optional(),
+		isFamilyOfInformalVendor: z.array(z.string()).optional(),
 
 		// Otras características sociales
-		isFamilyCaregiver: z.boolean(),
-		isYouthCouncilor: z.boolean(),
-		isCertifiedBarrista: z.boolean(),
+		isFamilyCaregiver: z.array(z.string()).optional(),
+		isYouthCouncilor: z.array(z.string()).optional(),
+		isCertifiedBarrista: z.array(z.string()).optional(),
 
 		// Poblaciones especiales
+		belongsToSpecialPopulations: z.boolean().default(false),
 		specialPopulations: z.array(z.string()).optional(),
 
 		// Salud y educación
@@ -48,11 +49,11 @@ export const section5Schema = z
 		internetConnection: z.string().min(1, 'Conexión a internet es requerida'),
 
 		// Información familiar
-		hasChildren: z.boolean(),
+		hasChildren: z.array(z.string()).optional(),
 		numberOfChildren: z.number().optional(),
-		singleParent: z.boolean(),
+		singleParent: z.array(z.string()).optional(),
 		firstChildAge: z.number().optional(),
-		pregnantOrLactating: z.boolean(),
+		pregnantOrLactating: z.array(z.string()).optional(),
 
 		// Seguridad social
 		socialSecurityContributions: z.array(z.string()).optional(),
@@ -76,7 +77,11 @@ export const section5Schema = z
 	})
 	.refine(
 		data => {
-			if (data.hasChildren && !data.numberOfChildren) {
+			if (
+				data.hasChildren &&
+				data.hasChildren.length > 0 &&
+				!data.numberOfChildren
+			) {
 				return false
 			}
 			return true
@@ -88,7 +93,11 @@ export const section5Schema = z
 	)
 	.refine(
 		data => {
-			if (data.hasChildren && !data.firstChildAge) {
+			if (
+				data.hasChildren &&
+				data.hasChildren.length > 0 &&
+				!data.firstChildAge
+			) {
 				return false
 			}
 			return true

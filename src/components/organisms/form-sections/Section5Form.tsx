@@ -9,7 +9,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import {
 	Select,
 	SelectContent,
@@ -17,61 +16,86 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import type { Section5Form } from '@/schemas/section5'
-import { section5Schema } from '@/schemas/section5'
+import { Switch } from '@/components/ui/switch'
+import type { Section6Form } from '@/schemas/section6'
+import { section6Schema } from '@/schemas/section6'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 export function Section5Form() {
 	const { data, setSectionData } = useFormStore()
-	const form = useForm<Section5Form>({
-		resolver: zodResolver(section5Schema),
-		defaultValues: data.section5 || {
-			devices: [],
-			housingType: '',
-			familyMembers: 1,
-			occupation: '',
-			otherOccupation: '',
-			dependents: 0,
-			workStatus: 'BUSCANDO_TRABAJO',
-			monthlyIncome: '',
-			isPregnant: 'NO',
-			isLactating: 'NO',
-			isInformalVendor: false,
-			isFamilyOfInformalVendor: false,
+	const form = useForm<Section6Form>({
+		resolver: zodResolver(section6Schema),
+		defaultValues: data.section6 || {
+			hasDisability: false,
+			disabilityTypes: [],
+			belongsToEthnicGroup: false,
+			ethnicGroups: [],
+			isViolenceVictim: false,
+			victimizingActs: [],
+			accessibility: '',
+			isExcombatant: false,
+			isReintegrated: false,
+			isFamilyOfExcombatant: false,
+			isInternallyDisplaced: false,
+			isRefugee: false,
 			isFamilyCaregiver: false,
 			isYouthCouncilor: false,
 			isCertifiedBarrista: false,
-			specialPopulations: [],
-			healthSystem: '',
-			educationLevel: '',
-			internetConnection: '',
-			hasChildren: false,
-			numberOfChildren: undefined,
-			singleParent: false,
-			firstChildAge: undefined,
-			pregnantOrLactating: false,
-			socialSecurityContributions: [],
-			emotionalSalaryOptions: [],
-			missingCompetencies: [],
-			otherMissingCompetencies: '',
-			graduationToEmploymentTime: '',
-			englishLevel: '',
-			jobSearchAreas: [],
-			otherJobSearchArea: '',
-			salaryExpectationsMet: '',
-			jobSatisfaction: '',
-			remoteWorkOption: '',
-			remoteWorkSpace: '',
 		},
 	})
 
-	const hasChildren = form.watch('hasChildren')
-
-	const onSubmit = (values: Section5Form) => {
-		setSectionData('section5', values)
+	const onSubmit = (values: Section6Form) => {
+		setSectionData('section6', values)
 	}
+
+	const belongsToEthnicGroup = form.watch('belongsToEthnicGroup')
+
+	const ethnicGroupOptions = [
+		{ value: 'afrocolombiano', label: 'Afrocolombiano' },
+		{ value: 'indigena', label: 'Indígena' },
+		{ value: 'raizal', label: 'Raizal del archipiélago' },
+		{ value: 'palenquero', label: 'Palenquero' },
+		{ value: 'rrom', label: 'Rrom o gitano' },
+		{ value: 'mestizo', label: 'Mestizo' },
+		{ value: 'otro', label: 'Otro' },
+		{ value: 'ninguno', label: 'Ninguno' },
+	]
+
+	const disabilityTypeOptions = [
+		{ value: 'fisica', label: 'Física o motriz' },
+		{ value: 'intelectual', label: 'Intelectual' },
+		{ value: 'psicosocial', label: 'Psicosocial (mental)' },
+		{ value: 'visual', label: 'Sensorial visual' },
+		{ value: 'auditiva', label: 'Sensorial auditiva' },
+		{ value: 'multiple', label: 'Múltiple' },
+		{ value: 'otra', label: 'Otra' },
+	]
+
+	const victimizingActOptions = [
+		{ value: 'desplazamiento', label: 'Desplazamiento forzado' },
+		{ value: 'homicidio', label: 'Homicidio' },
+		{ value: 'masacre', label: 'Masacre' },
+		{ value: 'secuestro', label: 'Secuestro' },
+		{ value: 'desaparicion', label: 'Desaparición forzada' },
+		{ value: 'tortura', label: 'Tortura' },
+		{
+			value: 'delitos_sexuales',
+			label: 'Delitos contra la libertad e integridad sexual',
+		},
+		{
+			value: 'vinculacion_menores',
+			label: 'Vinculación de niños, niñas y adolescentes',
+		},
+		{ value: 'terrorismo', label: 'Acto terrorista' },
+		{ value: 'minas', label: 'Minas antipersonal' },
+		{
+			value: 'despojo_tierras',
+			label: 'Abandono o despojo forzado de tierras',
+		},
+		{ value: 'otro', label: 'Otro' },
+	]
 
 	return (
 		<Form {...form}>
@@ -79,150 +103,204 @@ export function Section5Form() {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className='space-y-6'
 			>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					<FormField
-						control={form.control}
-						name='healthSystem'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Sistema de salud</FormLabel>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder='Selecciona' />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										<SelectItem value='Contributivo'>Contributivo</SelectItem>
-										<SelectItem value='Subsidiado'>Subsidiado</SelectItem>
-										<SelectItem value='Especial'>Especial</SelectItem>
-										<SelectItem value='No tiene afiliación'>
-											No tiene afiliación
-										</SelectItem>
-									</SelectContent>
-								</Select>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='internetConnection'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Conexión a internet</FormLabel>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder='Selecciona' />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										<SelectItem value='si'>Sí</SelectItem>
-										<SelectItem value='no'>No</SelectItem>
-									</SelectContent>
-								</Select>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
+				{/* Discapacidad */}
 				<FormField
 					control={form.control}
-					name='devices'
-					render={() => (
-						<FormItem>
-							<div className='mb-4'>
-								<FormLabel className='text-base'>Dispositivos</FormLabel>
+					name='hasDisability'
+					render={({ field }) => (
+						<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+							<div className='space-y-0.5'>
+								<FormLabel className='text-base'>
+									¿Tiene alguna discapacidad?
+								</FormLabel>
 							</div>
-							{['computador', 'telefono', 'tablet'].map(item => (
-								<FormField
-									key={item}
-									control={form.control}
-									name='devices'
-									render={({ field }) => {
-										return (
-											<FormItem
-												key={item}
-												className='flex flex-row items-start space-x-3 space-y-0'
-											>
-												<FormControl>
-													<Checkbox
-														checked={field.value?.includes(item)}
-														onCheckedChange={checked => {
-															return checked
-																? field.onChange([...field.value, item])
-																: field.onChange(
-																		field.value?.filter(value => value !== item)
-																  )
-														}}
-													/>
-												</FormControl>
-												<FormLabel className='font-normal'>{item}</FormLabel>
-											</FormItem>
-										)
-									}}
+							<FormControl>
+								<Switch
+									checked={field.value}
+									onCheckedChange={field.onChange}
 								/>
-							))}
-							<FormMessage />
+							</FormControl>
 						</FormItem>
 					)}
 				/>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+
+				{form.watch('hasDisability') && (
 					<FormField
 						control={form.control}
-						name='occupation'
+						name='disabilityTypes'
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Ocupación</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa ocupación'
-										{...field}
-									/>
-								</FormControl>
+								<FormLabel>Tipos de discapacidad</FormLabel>
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+									{disabilityTypeOptions.map(option => (
+										<FormItem
+											key={option.value}
+											className='flex flex-row items-start space-x-3 space-y-0'
+										>
+											<FormControl>
+												<Checkbox
+													checked={field.value?.includes(option.value)}
+													onCheckedChange={checked => {
+														return checked
+															? field.onChange([
+																	...(field.value || []),
+																	option.value,
+															  ])
+															: field.onChange(
+																	field.value?.filter(
+																		value => value !== option.value
+																	) || []
+															  )
+													}}
+												/>
+											</FormControl>
+											<FormLabel className='text-sm font-normal'>
+												{option.label}
+											</FormLabel>
+										</FormItem>
+									))}
+								</div>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
-					<FormField
-						control={form.control}
-						name='educationLevel'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Nivel de estudio</FormLabel>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder='Selecciona' />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										<SelectItem value='primaria'>Primaria</SelectItem>
-										<SelectItem value='secundaria'>Secundaria</SelectItem>
-										<SelectItem value='universitario'>Universitario</SelectItem>
-									</SelectContent>
-								</Select>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
+				)}
+
+				{/* Grupos étnicos */}
 				<FormField
 					control={form.control}
-					name='housingType'
+					name='belongsToEthnicGroup'
+					render={({ field }) => (
+						<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+							<div className='space-y-0.5'>
+								<FormLabel className='text-base'>
+									¿Pertenece a algún grupo étnico?
+								</FormLabel>
+							</div>
+							<FormControl>
+								<Switch
+									checked={field.value}
+									onCheckedChange={field.onChange}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+
+				{belongsToEthnicGroup && (
+					<FormField
+						control={form.control}
+						name='ethnicGroups'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>
+									Selecciona los grupos étnicos a los que perteneces:
+								</FormLabel>
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+									{ethnicGroupOptions.map(option => (
+										<FormItem
+											key={option.value}
+											className='flex flex-row items-start space-x-3 space-y-0'
+										>
+											<FormControl>
+												<Checkbox
+													checked={field.value?.includes(option.value)}
+													onCheckedChange={checked => {
+														return checked
+															? field.onChange([
+																	...(field.value || []),
+																	option.value,
+															  ])
+															: field.onChange(
+																	field.value?.filter(
+																		value => value !== option.value
+																	) || []
+															  )
+													}}
+												/>
+											</FormControl>
+											<FormLabel className='text-sm font-normal'>
+												{option.label}
+											</FormLabel>
+										</FormItem>
+									))}
+								</div>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				)}
+
+				{/* Víctima de violencia */}
+				<FormField
+					control={form.control}
+					name='isViolenceVictim'
+					render={({ field }) => (
+						<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+							<div className='space-y-0.5'>
+								<FormLabel className='text-base'>
+									¿Es víctima del conflicto armado en Colombia?
+								</FormLabel>
+							</div>
+							<FormControl>
+								<Switch
+									checked={field.value}
+									onCheckedChange={field.onChange}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+
+				{form.watch('isViolenceVictim') && (
+					<FormField
+						control={form.control}
+						name='victimizingActs'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Hechos victimizantes</FormLabel>
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+									{victimizingActOptions.map(option => (
+										<FormItem
+											key={option.value}
+											className='flex flex-row items-start space-x-3 space-y-0'
+										>
+											<FormControl>
+												<Checkbox
+													checked={field.value?.includes(option.value)}
+													onCheckedChange={checked => {
+														return checked
+															? field.onChange([
+																	...(field.value || []),
+																	option.value,
+															  ])
+															: field.onChange(
+																	field.value?.filter(
+																		value => value !== option.value
+																	) || []
+															  )
+													}}
+												/>
+											</FormControl>
+											<FormLabel className='text-sm font-normal'>
+												{option.label}
+											</FormLabel>
+										</FormItem>
+									))}
+								</div>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				)}
+
+				{/* Accesibilidad */}
+				<FormField
+					control={form.control}
+					name='accessibility'
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Tipo de vivienda</FormLabel>
+							<FormLabel>Accesibilidad</FormLabel>
 							<Select
 								onValueChange={field.onChange}
 								defaultValue={field.value}
@@ -233,121 +311,84 @@ export function Section5Form() {
 									</SelectTrigger>
 								</FormControl>
 								<SelectContent>
-									<SelectItem value='casa'>Casa</SelectItem>
-									<SelectItem value='apartamento'>Apartamento</SelectItem>
-									<SelectItem value='otro'>Otro</SelectItem>
+									<SelectItem value='ninguna'>Ninguna</SelectItem>
+									<SelectItem value='fisica'>Accesibilidad física</SelectItem>
+									<SelectItem value='comunicacional'>
+										Accesibilidad comunicacional
+									</SelectItem>
+									<SelectItem value='tecnologica'>
+										Accesibilidad tecnológica
+									</SelectItem>
+									<SelectItem value='otra'>Otra</SelectItem>
 								</SelectContent>
 							</Select>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name='hasChildren'
-					render={({ field }) => (
-						<FormItem className='flex flex-row items-start space-x-3 space-y-0'>
-							<FormControl>
-								<Checkbox
-									checked={field.value}
-									onCheckedChange={field.onChange}
-								/>
-							</FormControl>
-							<div className='space-y-1 leading-none'>
-								<FormLabel>Tiene hijos</FormLabel>
-							</div>
-						</FormItem>
-					)}
-				/>
-				{hasChildren && (
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-						<FormField
-							control={form.control}
-							name='numberOfChildren'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Número de hijos</FormLabel>
-									<FormControl>
-										<Input
-											type='number'
-											{...field}
-											onChange={e => field.onChange(parseInt(e.target.value))}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='firstChildAge'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Edad del primer hijo/a</FormLabel>
-									<FormControl>
-										<Input
-											type='number'
-											{...field}
-											onChange={e => field.onChange(parseInt(e.target.value))}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-				)}
-				<FormField
-					control={form.control}
-					name='singleParent'
-					render={({ field }) => (
-						<FormItem className='flex flex-row items-start space-x-3 space-y-0'>
-							<FormControl>
-								<Checkbox
-									checked={field.value}
-									onCheckedChange={field.onChange}
-								/>
-							</FormControl>
-							<div className='space-y-1 leading-none'>
-								<FormLabel>Padre o madre soltera</FormLabel>
-							</div>
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name='pregnantOrLactating'
-					render={({ field }) => (
-						<FormItem className='flex flex-row items-start space-x-3 space-y-0'>
-							<FormControl>
-								<Checkbox
-									checked={field.value}
-									onCheckedChange={field.onChange}
-								/>
-							</FormControl>
-							<div className='space-y-1 leading-none'>
-								<FormLabel>Madre gestante o lactante</FormLabel>
-							</div>
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name='dependents'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Personas que depende de usted</FormLabel>
-							<FormControl>
-								<Input
-									type='number'
-									{...field}
-									onChange={e => field.onChange(parseInt(e.target.value))}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+
+				{/* Características laborales y sociales */}
+				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+					<FormField
+						control={form.control}
+						name='isFamilyCaregiver'
+						render={({ field }) => (
+							<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+								<div className='space-y-0.5'>
+									<FormLabel className='text-base'>
+										¿Es cuidador familiar?
+									</FormLabel>
+								</div>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='isYouthCouncilor'
+						render={({ field }) => (
+							<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+								<div className='space-y-0.5'>
+									<FormLabel className='text-base'>
+										¿Es concejal juvenil?
+									</FormLabel>
+								</div>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='isCertifiedBarrista'
+						render={({ field }) => (
+							<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+								<div className='space-y-0.5'>
+									<FormLabel className='text-base'>
+										¿Es barrista certificado?
+									</FormLabel>
+								</div>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+				</div>
 			</form>
 		</Form>
 	)

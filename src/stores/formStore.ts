@@ -28,6 +28,7 @@ const initialData: Partial<RegistrationFormData> = {
 	},
 	section2: {
 		birthDate: '',
+		bornCity: '',
 		cityOfResidence: '',
 		phone: '',
 		gender: '',
@@ -87,20 +88,20 @@ const initialData: Partial<RegistrationFormData> = {
 		monthlyIncome: '',
 		isPregnant: 'NO' as const,
 		isLactating: 'NO' as const,
-		isInformalVendor: false,
-		isFamilyOfInformalVendor: false,
-		isFamilyCaregiver: false,
-		isYouthCouncilor: false,
-		isCertifiedBarrista: false,
+		isInformalVendor: [],
+		isFamilyOfInformalVendor: [],
+		isFamilyCaregiver: [],
+		isYouthCouncilor: [],
+		isCertifiedBarrista: [],
 		specialPopulations: [],
 		healthSystem: '',
 		educationLevel: '',
 		internetConnection: '',
-		hasChildren: false,
+		hasChildren: [],
 		numberOfChildren: undefined,
-		singleParent: false,
+		singleParent: [],
 		firstChildAge: undefined,
-		pregnantOrLactating: false,
+		pregnantOrLactating: [],
 		socialSecurityContributions: [],
 		emotionalSalaryOptions: [],
 		missingCompetencies: [],
@@ -113,6 +114,7 @@ const initialData: Partial<RegistrationFormData> = {
 		jobSatisfaction: '',
 		remoteWorkOption: '',
 		remoteWorkSpace: '',
+		belongsToSpecialPopulations: false
 	},
 	section6: {
 		hasDisability: false,
@@ -135,6 +137,12 @@ const initialData: Partial<RegistrationFormData> = {
 		isFamilyCaregiver: false,
 		isYouthCouncilor: false,
 		isCertifiedBarrista: false,
+		belongsToEthnicGroup: false
+	},
+	section7: {
+		selectedCourses: [],
+		howDidYouHear: '',
+		otherSource: '',
 	},
 }
 

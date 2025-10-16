@@ -75,8 +75,8 @@ export function Section4Form() {
 	const occupation = form.watch('occupation')
 	const belongsToSpecialPopulations = form.watch('belongsToSpecialPopulations')
 
-	const onSubmit = (values: Section4Form) => {
-		setSectionData('section4', values)
+	const onSubmit = (values: Section5Form) => {
+		setSectionData('section5', values)
 	}
 
 	return (
@@ -346,9 +346,9 @@ export function Section4Form() {
 							control={form.control}
 							name='belongsToSpecialPopulations'
 							render={({ field }) => (
-								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-									<div className='space-y-0.5'>
-										<FormLabel className='text-base'>
+								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+									<div className="space-y-0.5">
+										<FormLabel className="text-base">
 											¿Pertenece a alguno de estos grupos poblacionales?
 										</FormLabel>
 									</div>

@@ -6,7 +6,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
+	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,8 +14,9 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue,
+	SelectValue
 } from '@/components/ui/select'
+import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
 import type { Section1Form } from '@/schemas/section1'
 import { section1Schema } from '@/schemas/section1'
 import { useFormStore } from '@/stores/formStore'
@@ -31,8 +32,8 @@ export function Section1Form() {
 			lastName: '',
 			documentType: '',
 			documentNumber: '',
-			email: '',
-		},
+			email: ''
+		}
 	})
 
 	const onSubmit = (values: Section1Form) => {
@@ -80,6 +81,7 @@ export function Section1Form() {
 					/>
 				</div>
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+					{' '}
 					<FormField
 						control={form.control}
 						name='documentType'
@@ -96,19 +98,14 @@ export function Section1Form() {
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										<SelectItem value='Registro Civil'>
-											Registro civil
-										</SelectItem>
-										<SelectItem value='Tarjeta de identidad'>
-											Tarjeta de identidad
-										</SelectItem>
-										<SelectItem value='Cédula de ciudadanía'>
-											Cédula de ciudadanía
-										</SelectItem>
-										<SelectItem value='Cédula extranjería'>
-											Cédula extranjería
-										</SelectItem>
-										<SelectItem value='Otro'>Otro</SelectItem>
+										{DOCUMENT_TYPE_OPTIONS.map(option => (
+											<SelectItem
+												key={option.value}
+												value={option.value}
+											>
+												{option.label}
+											</SelectItem>
+										))}
 									</SelectContent>
 								</Select>
 								<FormMessage />

@@ -7,7 +7,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
+	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,8 +15,9 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue,
+	SelectValue
 } from '@/components/ui/select'
+import { GENDER_IDENTITY_OPTIONS } from '@/constants'
 import { useCities } from '@/hooks/use-cities'
 import { useCommunes } from '@/hooks/use-communes'
 import { useConditionalFields } from '@/hooks/use-conditional-fields'
@@ -74,8 +75,8 @@ export function Section2Form() {
 			representativeDocumentType: '',
 			representativeDocumentNumber: '',
 			representativeEmail: '',
-			representativePhone: '',
-		},
+			representativePhone: ''
+		}
 	})
 
 	// Sincronizar nombres con IDs
@@ -393,11 +394,14 @@ export function Section2Form() {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												<SelectItem value='Hombre'>Hombre</SelectItem>
-												<SelectItem value='Mujer'>Mujer</SelectItem>
-												<SelectItem value='No binario'>No binario</SelectItem>
-												<SelectItem value='Transgénero'>Transgénero</SelectItem>
-												<SelectItem value='Otro'>Otro</SelectItem>
+												{GENDER_IDENTITY_OPTIONS.map(option => (
+													<SelectItem
+														key={option.value}
+														value={option.value}
+													>
+														{option.label}
+													</SelectItem>
+												))}
 											</SelectContent>
 										</Select>
 										<FormMessage />

@@ -11,15 +11,7 @@ import {
 	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue
-} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { AFRO_SUBGROUPS, ETHNIC_GROUPS, INDIGENOUS_PEOPLES } from '@/constants'
 import type { Section5Form } from '@/schemas/section5'
 import { section5Schema } from '@/schemas/section5'
 import { useFormStore } from '@/stores/formStore'
@@ -38,8 +30,6 @@ export function Section5Form() {
 			supportType: '',
 			belongsToEthnicGroup: false,
 			ethnicGroups: [],
-			afroSubgroup: '',
-			indigenousPeople: '',
 			isViolenceVictim: false,
 			victimizingActs: [],
 			violenceType: '',
@@ -50,6 +40,7 @@ export function Section5Form() {
 			isFamilyOfExcombatant: false,
 			isInternallyDisplaced: false,
 			isRefugee: false,
+			accessibility: '',
 			isFamilyCaregiver: false,
 			isYouthCouncilor: false,
 			isCertifiedBarrista: false
@@ -62,8 +53,18 @@ export function Section5Form() {
 
 	const hasDisability = form.watch('hasDisability')
 	const belongsToEthnicGroup = form.watch('belongsToEthnicGroup')
-	const ethnicGroups = form.watch('ethnicGroups')
 	const isViolenceVictim = form.watch('isViolenceVictim')
+
+	const ethnicGroupOptions = [
+		{ value: 'afrocolombiano', label: 'Afrocolombiano' },
+		{ value: 'indigena', label: 'Indígena' },
+		{ value: 'raizal', label: 'Raizal del archipiélago' },
+		{ value: 'palenquero', label: 'Palenquero' },
+		{ value: 'rrom', label: 'Rrom o gitano' },
+		{ value: 'mestizo', label: 'Mestizo' },
+		{ value: 'prefiero_no_responder', label: 'Prefiero no responder' },
+		{ value: 'ninguno', label: 'Ninguno' }
+	]
 
 	const disabilityTypeOptions = [
 		{ value: 'fisica', label: 'Física o motriz' },
@@ -98,9 +99,6 @@ export function Section5Form() {
 		},
 		{ value: 'otro', label: 'Otro' }
 	]
-
-	const showAfroSubgroup = ethnicGroups?.includes('Afrodescendiente')
-	const showIndigenousPeople = ethnicGroups?.includes('Indígena')
 
 	return (
 		<Form {...form}>
@@ -265,113 +263,47 @@ export function Section5Form() {
 						/>
 
 						{belongsToEthnicGroup && (
-							<>
-								<FormField
-									control={form.control}
-									name='ethnicGroups'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Grupo étnico</FormLabel>
-											<div className='grid grid-cols-1 gap-2'>
-												{ETHNIC_GROUPS.map(option => (
-													<FormItem
-														key={option.value}
-														className='flex flex-row items-start space-x-3 space-y-0'
-													>
-														<FormControl>
-															<Checkbox
-																checked={field.value?.includes(option.value)}
-																onCheckedChange={checked => {
-																	return checked
-																		? field.onChange([
-																				...(field.value || []),
-																				option.value
-																		  ])
-																		: field.onChange(
-																				field.value?.filter(
-																					value => value !== option.value
-																				) || []
-																		  )
-																}}
-															/>
-														</FormControl>
-														<FormLabel className='text-sm font-normal'>
-															{option.label}
-														</FormLabel>
-													</FormItem>
-												))}
-											</div>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								{showAfroSubgroup && (
-									<FormField
-										control={form.control}
-										name='afroSubgroup'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Subgrupo Afrodescendiente</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													defaultValue={field.value}
+							<FormField
+								control={form.control}
+								name='ethnicGroups'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Selecciona los grupos étnicos a los que perteneces:
+										</FormLabel>
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+											{ethnicGroupOptions.map(option => (
+												<FormItem
+													key={option.value}
+													className='flex flex-row items-start space-x-3 space-y-0'
 												>
 													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder='Selecciona' />
-														</SelectTrigger>
+														<Checkbox
+															checked={field.value?.includes(option.value)}
+															onCheckedChange={checked => {
+																return checked
+																	? field.onChange([
+																			...(field.value || []),
+																			option.value
+																	  ])
+																	: field.onChange(
+																			field.value?.filter(
+																				value => value !== option.value
+																			) || []
+																	  )
+															}}
+														/>
 													</FormControl>
-													<SelectContent>
-														{AFRO_SUBGROUPS.map(option => (
-															<SelectItem
-																key={option.value}
-																value={option.value}
-															>
-																{option.label}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+													<FormLabel className='text-sm font-normal'>
+														{option.label}
+													</FormLabel>
+												</FormItem>
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
 								)}
-
-								{showIndigenousPeople && (
-									<FormField
-										control={form.control}
-										name='indigenousPeople'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Pueblo Indígena</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													defaultValue={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder='Selecciona' />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{INDIGENOUS_PEOPLES.map(option => (
-															<SelectItem
-																key={option.value}
-																value={option.value}
-															>
-																{option.label}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								)}
-							</>
+							/>
 						)}
 					</CardContent>
 				</Card>

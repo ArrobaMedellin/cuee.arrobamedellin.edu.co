@@ -2,35 +2,69 @@ import { z } from 'zod'
 
 export const section4Schema = z
 	.object({
-		// Información de graduación bachillerato
-		graduationYear: z.string().min(1, 'Año de graduación es requerido'),
-		graduatedFrom: z
-			.string()
-			.min(1, 'Institución donde se graduó es requerida'),
+		// Dispositivos tecnológicos
+		devices: z.array(z.string()).min(1, 'Selecciona al menos un dispositivo'),
 
-		// Selección de cursos (máximo 3)
-		selectedCourses: z
-			.array(z.string())
-			.min(1, 'Debe seleccionar al menos un curso')
-			.max(3, 'Máximo 3 cursos permitidos'),
+		// Vivienda y condiciones socioeconómicas
+		housingType: z.string().min(1, 'Tipo de tenencia de vivienda es requerido'),
+		occupation: z.string().min(1, 'Actividad actual es requerida'),
+		otherOccupation: z.string().optional(),
+		dependents: z.number().min(0, 'Debe ser 0 o más'),
 
-		// Información Saber Pro
-		hasIcfesPro: z.enum(['SI', 'NO']).default('NO'),
-		icfesProScore: z.string().optional(),
-		icfesProYear: z.string().optional(),
+		// Características especiales
+		isInformalVendor: z.boolean(),
+		isFamilyOfInformalVendor: z.boolean(),
+		isFamilyCaregiver: z.boolean(),
+		isYouthCouncilor: z.boolean(),
+		isCertifiedBarrista: z.boolean(),
+		belongsToSpecialPopulations: z.boolean(),
+		specialPopulations: z.array(z.string()).optional(),
 
-		// Campos condicionales para Saber Pro
+		// Salud y educación
+		healthSystem: z.string().min(1, 'Sistema de salud es requerido'),
+		internetConnection: z.string().min(1, 'Conexión a internet es requerida'),
+
+		// Información familiar
+		hasChildren: z.boolean(),
+		numberOfChildren: z.number().optional(),
+		singleParent: z.boolean(),
+		firstChildAge: z.number().optional(),
+		pregnantOrLactating: z.boolean()
 	})
 	.refine(
 		data => {
-			// Si tiene Saber Pro, debe tener puntaje y año
-			if (data.hasIcfesPro === 'SI') {
-				return data.icfesProScore && data.icfesProYear
+			if (data.hasChildren && !data.numberOfChildren) {
+				return false
 			}
 			return true
 		},
 		{
-			message: 'Si tiene ICFES Pro, debe especificar puntaje y año',
+			message: 'Número de hijos es requerido si tiene hijos',
+			path: ['numberOfChildren']
+		}
+	)
+	.refine(
+		data => {
+			if (data.hasChildren && !data.firstChildAge) {
+				return false
+			}
+			return true
+		},
+		{
+			message: 'Edad del primer hijo es requerida si tiene hijos',
+			path: ['firstChildAge']
+		}
+	)
+	.refine(
+		data => {
+			if (data.occupation === 'otro' && !data.otherOccupation) {
+				return false
+			}
+			return true
+		},
+		{
+			message: 'Especifica la otra actividad',
+			path: ['otherOccupation']
 		}
 	)
 

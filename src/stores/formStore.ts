@@ -24,7 +24,7 @@ const initialData: Partial<RegistrationFormData> = {
 		countryOfBirth: '',
 		departmentOfBirth: '',
 		municipalityOfBirth: '',
-		otherDocumentType: '',
+		otherDocumentType: ''
 	},
 	section2: {
 		birthDate: '',
@@ -36,7 +36,7 @@ const initialData: Partial<RegistrationFormData> = {
 		genderIdentity: '',
 		age: 0,
 		otherSexualOrientation: '',
-		representativePhone: '',
+		representativePhone: ''
 	},
 	section3: {
 		countryOfResidence: '',
@@ -61,68 +61,45 @@ const initialData: Partial<RegistrationFormData> = {
 		cityOfResidenceId: undefined,
 		communeId: undefined,
 		neighborhoodId: undefined,
-		birthCityId: undefined,
+		birthCityId: undefined
 	},
 	section4: {
-		graduationYear: '',
-		graduatedFrom: '',
-		selectedCourses: [],
-		hasIcfesPro: 'NO' as const,
-		icfesProScore: '',
-		icfesProYear: '',
+		devices: [],
+		housingType: '',
+		occupation: '',
+		otherOccupation: '',
+		dependents: 0,
+		isInformalVendor: false,
+		isFamilyOfInformalVendor: false,
+		isFamilyCaregiver: false,
+		isYouthCouncilor: false,
+		isCertifiedBarrista: false,
+		belongsToSpecialPopulations: false,
+		specialPopulations: [],
+		healthSystem: '',
+		internetConnection: '',
+		hasChildren: false,
+		numberOfChildren: undefined,
+		singleParent: false,
+		firstChildAge: undefined,
+		pregnantOrLactating: false
 	},
 	section21: {
 		representativeFirstName: '',
 		representativeDocumentType: '',
 		representativeDocumentNumber: '',
-		representativeEmail: '',
+		representativeEmail: ''
 	},
 	section5: {
-		devices: [],
-		housingType: '',
-		familyMembers: 1,
-		occupation: '',
-		otherOccupation: '',
-		dependents: 0,
-		workStatus: 'BUSCANDO_TRABAJO' as const,
-		monthlyIncome: '',
-		isPregnant: 'NO' as const,
-		isLactating: 'NO' as const,
-		isInformalVendor: [],
-		isFamilyOfInformalVendor: [],
-		isFamilyCaregiver: [],
-		isYouthCouncilor: [],
-		isCertifiedBarrista: [],
-		specialPopulations: [],
-		healthSystem: '',
-		educationLevel: '',
-		internetConnection: '',
-		hasChildren: [],
-		numberOfChildren: undefined,
-		singleParent: [],
-		firstChildAge: undefined,
-		pregnantOrLactating: [],
-		socialSecurityContributions: [],
-		emotionalSalaryOptions: [],
-		missingCompetencies: [],
-		otherMissingCompetencies: '',
-		graduationToEmploymentTime: '',
-		englishLevel: '',
-		jobSearchAreas: [],
-		otherJobSearchArea: '',
-		salaryExpectationsMet: '',
-		jobSatisfaction: '',
-		remoteWorkOption: '',
-		remoteWorkSpace: '',
-		belongsToSpecialPopulations: false
-	},
-	section6: {
 		hasDisability: false,
 		disabilityTypes: [],
 		disabilityDescription: '',
 		requiresSupport: false,
 		supportType: '',
+		belongsToEthnicGroup: false,
 		ethnicGroups: [],
+		afroSubgroup: '',
+		indigenousPeople: '',
 		isViolenceVictim: false,
 		victimizingActs: [],
 		violenceType: '',
@@ -133,17 +110,22 @@ const initialData: Partial<RegistrationFormData> = {
 		isFamilyOfExcombatant: false,
 		isInternallyDisplaced: false,
 		isRefugee: false,
-		accessibility: '',
 		isFamilyCaregiver: false,
 		isYouthCouncilor: false,
-		isCertifiedBarrista: false,
-		belongsToEthnicGroup: false
+		isCertifiedBarrista: false
 	},
-	section7: {
+	section6: {
 		selectedCourses: [],
 		howDidYouHear: '',
-		otherSource: '',
+		otherSource: ''
 	},
+	section7: {
+		graduationYear: '',
+		graduatedFrom: '',
+		hasIcfesPro: 'NO' as const,
+		icfesProScore: '',
+		icfesProYear: ''
+	}
 }
 
 export const useFormStore = create<FormStore>()(
@@ -153,7 +135,7 @@ export const useFormStore = create<FormStore>()(
 			currentSection: 1,
 			setSectionData: (section, data) =>
 				set(state => ({
-					data: { ...state.data, [section]: data },
+					data: { ...state.data, [section]: data }
 				})),
 			setCurrentSection: section => set({ currentSection: section }),
 			resetForm: () => set({ data: initialData, currentSection: 1 }),
@@ -164,15 +146,15 @@ export const useFormStore = create<FormStore>()(
 							value => value !== '' && value !== undefined && value !== null
 					  )
 					: false
-			},
+			}
 		}),
 		{
 			name: 'registration-form',
 			storage: createJSONStorage(() => localStorage),
 			partialize: state => ({
 				data: state.data,
-				currentSection: state.currentSection,
-			}),
+				currentSection: state.currentSection
+			})
 		}
 	)
 )

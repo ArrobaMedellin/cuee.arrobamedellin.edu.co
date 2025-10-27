@@ -8,7 +8,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
+	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -16,67 +16,54 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue,
+	SelectValue
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import {
 	DEVICE_OPTIONS,
 	HOUSING_TYPE_OPTIONS,
 	OCCUPATION_OPTIONS,
-	SPECIAL_POPULATIONS,
+	SPECIAL_POPULATIONS
 } from '@/constants'
-import type { Section5Form } from '@/schemas/section5'
-import { section5Schema } from '@/schemas/section5'
+import type { Section4Form } from '@/schemas/section4'
+import { section4Schema } from '@/schemas/section4'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 export function Section4Form() {
 	const { data, setSectionData } = useFormStore()
-	const form = useForm<Section5Form>({
-		resolver: zodResolver(section5Schema),
-		defaultValues: data.section5 || {
+	const form = useForm<Section4Form>({
+		resolver: zodResolver(section4Schema),
+		defaultValues: data.section4 || {
 			devices: [],
 			housingType: '',
 			occupation: '',
 			otherOccupation: '',
 			dependents: 0,
-			isInformalVendor: [],
-			isFamilyOfInformalVendor: [],
-			isFamilyCaregiver: [],
-			isYouthCouncilor: [],
-			isCertifiedBarrista: [],
+			isInformalVendor: false,
+			isFamilyOfInformalVendor: false,
+			isFamilyCaregiver: false,
+			isYouthCouncilor: false,
+			isCertifiedBarrista: false,
 			belongsToSpecialPopulations: false,
 			specialPopulations: [],
 			healthSystem: '',
-			educationLevel: '',
 			internetConnection: '',
-			hasChildren: [],
+			hasChildren: false,
 			numberOfChildren: undefined,
-			singleParent: [],
+			singleParent: false,
 			firstChildAge: undefined,
-			pregnantOrLactating: [],
-			socialSecurityContributions: [],
-			emotionalSalaryOptions: [],
-			missingCompetencies: [],
-			otherMissingCompetencies: '',
-			graduationToEmploymentTime: '',
-			englishLevel: '',
-			jobSearchAreas: [],
-			otherJobSearchArea: '',
-			salaryExpectationsMet: '',
-			jobSatisfaction: '',
-			remoteWorkOption: '',
-			remoteWorkSpace: '',
-		},
+			pregnantOrLactating: false
+		}
 	})
 
 	const hasChildren = form.watch('hasChildren')
 	const occupation = form.watch('occupation')
 	const belongsToSpecialPopulations = form.watch('belongsToSpecialPopulations')
 
-	const onSubmit = (values: Section5Form) => {
-		setSectionData('section5', values)
+	const onSubmit = (values: Section4Form) => {
+		setSectionData('section4', values)
 	}
 
 	return (
@@ -247,7 +234,7 @@ export function Section4Form() {
 										</div>
 										<FormControl>
 											<Switch
-												checked={field.value}
+												checked={field.value || false}
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
@@ -271,7 +258,7 @@ export function Section4Form() {
 										</div>
 										<FormControl>
 											<Switch
-												checked={field.value}
+												checked={field.value || false}
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
@@ -292,7 +279,7 @@ export function Section4Form() {
 										</div>
 										<FormControl>
 											<Switch
-												checked={field.value}
+												checked={field.value || false}
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
@@ -312,7 +299,7 @@ export function Section4Form() {
 										</div>
 										<FormControl>
 											<Switch
-												checked={field.value}
+												checked={field.value || false}
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
@@ -332,7 +319,7 @@ export function Section4Form() {
 										</div>
 										<FormControl>
 											<Switch
-												checked={field.value}
+												checked={field.value || false}
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
@@ -346,15 +333,15 @@ export function Section4Form() {
 							control={form.control}
 							name='belongsToSpecialPopulations'
 							render={({ field }) => (
-								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-									<div className="space-y-0.5">
-										<FormLabel className="text-base">
-											¿Pertenece a alguno de estos grupos poblacionales?
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Pertenece a poblaciones especiales?
 										</FormLabel>
 									</div>
 									<FormControl>
 										<Switch
-											checked={field.value}
+											checked={field.value || false}
 											onCheckedChange={field.onChange}
 										/>
 									</FormControl>
@@ -371,7 +358,8 @@ export function Section4Form() {
 										options={SPECIAL_POPULATIONS}
 										value={field.value || []}
 										onChange={field.onChange}
-										label='Selecciona los grupos poblacionales a los que perteneces:'
+										label='Seleccione las poblaciones especiales a las que pertenece:'
+										required={false}
 									/>
 								)}
 							/>
@@ -461,7 +449,7 @@ export function Section4Form() {
 									</div>
 									<FormControl>
 										<Switch
-											checked={field.value}
+											checked={field.value || false}
 											onCheckedChange={field.onChange}
 										/>
 									</FormControl>
@@ -529,7 +517,7 @@ export function Section4Form() {
 											</div>
 											<FormControl>
 												<Switch
-													checked={field.value}
+													checked={field.value || false}
 													onCheckedChange={field.onChange}
 												/>
 											</FormControl>
@@ -551,7 +539,7 @@ export function Section4Form() {
 									</div>
 									<FormControl>
 										<Switch
-											checked={field.value}
+											checked={field.value || false}
 											onCheckedChange={field.onChange}
 										/>
 									</FormControl>

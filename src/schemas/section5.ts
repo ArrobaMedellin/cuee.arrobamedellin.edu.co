@@ -2,121 +2,80 @@ import { z } from 'zod'
 
 export const section5Schema = z
 	.object({
-		// Dispositivos tecnológicos (ampliados)
-		devices: z.array(z.string()).min(1, 'Selecciona al menos un dispositivo'),
+		// Discapacidades
+		hasDisability: z.boolean(),
+		disabilityTypes: z.array(z.string()).optional(),
+		disabilityDescription: z.string().optional(),
+		requiresSupport: z.boolean().optional(),
+		supportType: z.string().optional(),
+		// Grupos étnicos
+		belongsToEthnicGroup: z.boolean(),
+		ethnicGroups: z.array(z.string()).optional(),
+		afroSubgroup: z.string().optional(),
+		indigenousPeople: z.string().optional(),
 
-		// Vivienda (expandido)
-		housingType: z.string().min(1, 'Tipo de tenencia de vivienda es requerido'),
-		familyMembers: z
-			.number()
-			.min(1, 'Número de personas en la familia es requerido'),
+		// Víctima de violencia
+		isViolenceVictim: z.boolean(),
+		victimizingActs: z.array(z.string()).optional(),
+		violenceType: z.string().optional(),
+		registeredWithVictimUnit: z.boolean().optional(),
+		victimRegistrationNumber: z.string().optional(),
 
-		// Ocupación y trabajo (expandido)
-		occupation: z.string().min(1, 'Actividad actual es requerida'),
-		otherOccupation: z.string().optional(),
-		dependents: z.number().min(0, 'Debe ser 0 o más'),
-		workStatus: z.enum([
-			'TRABAJANDO',
-			'BUSCANDO_TRABAJO',
-			'ESTUDIANDO',
-			'INDEPENDIENTE',
-			'OTRO',
-		]),
-		monthlyIncome: z.string().optional(),
+		// Poblaciones especiales del conflicto
+		isExcombatant: z.boolean(),
+		isReintegrated: z.boolean(),
+		isFamilyOfExcombatant: z.boolean(),
+		isInternallyDisplaced: z.boolean(),
+		isRefugee: z.boolean(),
 
-		// Situación maternal
-		isPregnant: z.enum(['SI', 'NO']),
-		isLactating: z.enum(['SI', 'NO']),
-
-		// Ventero informal
-		isInformalVendor: z.array(z.string()).optional(),
-		isFamilyOfInformalVendor: z.array(z.string()).optional(),
-
-		// Otras características sociales
-		isFamilyCaregiver: z.array(z.string()).optional(),
-		isYouthCouncilor: z.array(z.string()).optional(),
-		isCertifiedBarrista: z.array(z.string()).optional(),
-
-		// Poblaciones especiales
-		belongsToSpecialPopulations: z.boolean().default(false),
-		specialPopulations: z.array(z.string()).optional(),
-
-		// Salud y educación
-		healthSystem: z.string().min(1, 'Sistema de salud es requerido'),
-		educationLevel: z.string().min(1, 'Nivel de estudio es requerido'),
-
-		// Internet y conectividad
-		internetConnection: z.string().min(1, 'Conexión a internet es requerida'),
-
-		// Información familiar
-		hasChildren: z.array(z.string()).optional(),
-		numberOfChildren: z.number().optional(),
-		singleParent: z.array(z.string()).optional(),
-		firstChildAge: z.number().optional(),
-		pregnantOrLactating: z.array(z.string()).optional(),
-
-		// Seguridad social
-		socialSecurityContributions: z.array(z.string()).optional(),
-
-		// Salario emocional
-		emotionalSalaryOptions: z.array(z.string()).optional(),
-
-		// Competencias
-		missingCompetencies: z.array(z.string()).optional(),
-		otherMissingCompetencies: z.string().optional(),
-
-		// Empleo y búsqueda laboral
-		graduationToEmploymentTime: z.string().optional(),
-		englishLevel: z.string().optional(),
-		jobSearchAreas: z.array(z.string()).optional(),
-		otherJobSearchArea: z.string().optional(),
-		salaryExpectationsMet: z.string().optional(),
-		jobSatisfaction: z.string().optional(),
-		remoteWorkOption: z.string().optional(),
-		remoteWorkSpace: z.string().optional(),
+		// Otras características especiales
+		isFamilyCaregiver: z.boolean(),
+		isYouthCouncilor: z.boolean(),
+		isCertifiedBarrista: z.boolean()
 	})
 	.refine(
 		data => {
 			if (
-				data.hasChildren &&
-				data.hasChildren.length > 0 &&
-				!data.numberOfChildren
+				data.hasDisability &&
+				(!data.disabilityTypes || data.disabilityTypes.length === 0)
 			) {
 				return false
 			}
 			return true
 		},
 		{
-			message: 'Número de hijos es requerido si tiene hijos',
-			path: ['numberOfChildren'],
+			message: 'Selecciona al menos un tipo de discapacidad',
+			path: ['disabilityTypes']
 		}
 	)
 	.refine(
 		data => {
 			if (
-				data.hasChildren &&
-				data.hasChildren.length > 0 &&
-				!data.firstChildAge
+				data.belongsToEthnicGroup &&
+				(!data.ethnicGroups || data.ethnicGroups.length === 0)
 			) {
 				return false
 			}
 			return true
 		},
 		{
-			message: 'Edad del primer hijo es requerida si tiene hijos',
-			path: ['firstChildAge'],
+			message: 'Selecciona al menos un grupo étnico',
+			path: ['ethnicGroups']
 		}
 	)
 	.refine(
 		data => {
-			if (data.occupation === 'otro' && !data.otherOccupation) {
+			if (
+				data.isViolenceVictim &&
+				(!data.victimizingActs || data.victimizingActs.length === 0)
+			) {
 				return false
 			}
 			return true
 		},
 		{
-			message: 'Especifica la otra actividad',
-			path: ['otherOccupation'],
+			message: 'Selecciona al menos un hecho victimizante',
+			path: ['victimizingActs']
 		}
 	)
 

@@ -27,13 +27,18 @@ export function useCities(departmentId?: number) {
 			)
 		}
 
-		return filtered
+		// Ordenar para que Medellín siempre esté de primero
+		return filtered.sort((a, b) => {
+			if (a.name === 'Medellín') return -1
+			if (b.name === 'Medellín') return 1
+			return 0
+		})
 	}, [cities, departmentId, searchQuery])
 
 	return {
 		cities,
 		filteredCities,
 		searchQuery,
-		setSearchQuery,
+		setSearchQuery
 	}
 }

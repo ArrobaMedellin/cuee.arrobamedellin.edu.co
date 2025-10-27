@@ -10,7 +10,7 @@ import type {
 	Section4,
 	Section5,
 	Section6,
-	Section7,
+	Section7
 } from '@/types/form'
 
 type Primitive = string | number | boolean | null | undefined
@@ -38,7 +38,7 @@ function hasRealData(section: SectionData | undefined): boolean {
 
 function Kv({
 	label,
-	value,
+	value
 }: {
 	label: string
 	value: Primitive | string[] | undefined
@@ -597,8 +597,7 @@ export function Summary() {
 								label='Tipo de apoyo'
 								value={s6.supportType}
 							/>
-						)}
-
+						)}{' '}
 						{/* Grupos étnicos */}
 						<Kv
 							label='Pertenece a grupo étnico'
@@ -612,7 +611,18 @@ export function Summary() {
 									value={s6.ethnicGroups}
 								/>
 							)}
-
+						{s6.afroSubgroup && (
+							<Kv
+								label='Subgrupo Afrodescendiente'
+								value={s6.afroSubgroup}
+							/>
+						)}
+						{s6.indigenousPeople && (
+							<Kv
+								label='Pueblo Indígena'
+								value={s6.indigenousPeople}
+							/>
+						)}
 						{/* Víctima de violencia */}
 						<Kv
 							label='Víctima de violencia en Colombia'
@@ -644,7 +654,6 @@ export function Summary() {
 								value={s6.victimRegistrationNumber}
 							/>
 						)}
-
 						{/* Poblaciones especiales del conflicto */}
 						<Kv
 							label='Es excombatiente'
@@ -666,13 +675,6 @@ export function Summary() {
 							label='Es refugiado'
 							value={s6.isRefugee}
 						/>
-
-						{/* Accesibilidad */}
-						<Kv
-							label='Accesibilidad'
-							value={s6.accessibility}
-						/>
-
 						{/* Otras características */}
 						<Kv
 							label='Cuidador familiar'

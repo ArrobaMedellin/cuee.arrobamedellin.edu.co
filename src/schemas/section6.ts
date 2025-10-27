@@ -1,69 +1,15 @@
 import { z } from 'zod'
 
-export const section6Schema = z
-	.object({
-		// Discapacidades (expandido con tipos específicos)
-		hasDisability: z.boolean(),
-		disabilityTypes: z.array(z.string()).optional(),
-		disabilityDescription: z.string().optional(),
-		requiresSupport: z.boolean().optional(),
-		supportType: z.string().optional(),
+export const section6Schema = z.object({
+	// Selección de cursos (máximo 3)
+	selectedCourses: z
+		.array(z.string())
+		.min(1, 'Debe seleccionar al menos un curso')
+		.max(3, 'Puede seleccionar máximo 3 cursos'),
 
-		// Grupos étnicos
-		belongsToEthnicGroup: z.boolean().default(false),
-		ethnicGroups: z.array(z.string()).optional(),
-
-		// Víctima de violencia (expandido)
-		isViolenceVictim: z.boolean(),
-		victimizingActs: z.array(z.string()).optional(),
-		violenceType: z.string().optional(),
-		registeredWithVictimUnit: z.boolean().optional(),
-		victimRegistrationNumber: z.string().optional(),
-
-		// Poblaciones especiales del conflicto
-		isExcombatant: z.boolean(),
-		isReintegrated: z.boolean(),
-		isFamilyOfExcombatant: z.boolean(),
-		isInternallyDisplaced: z.boolean(),
-		isRefugee: z.boolean(),
-
-		// Accesibilidad y apoyo
-		accessibility: z.string().min(1, 'Accesibilidad es requerida'),
-
-		// Otras características especiales
-		isFamilyCaregiver: z.boolean(),
-		isYouthCouncilor: z.boolean(),
-		isCertifiedBarrista: z.boolean(),
-	})
-	.refine(
-		data => {
-			if (
-				data.hasDisability &&
-				(!data.disabilityTypes || data.disabilityTypes.length === 0)
-			) {
-				return false
-			}
-			return true
-		},
-		{
-			message: 'Selecciona al menos un tipo de discapacidad',
-			path: ['disabilityTypes'],
-		}
-	)
-	.refine(
-		data => {
-			if (
-				data.isViolenceVictim &&
-				(!data.victimizingActs || data.victimizingActs.length === 0)
-			) {
-				return false
-			}
-			return true
-		},
-		{
-			message: 'Selecciona al menos un hecho victimizante',
-			path: ['victimizingActs'],
-		}
-	)
+	// Cómo se enteró de la convocatoria
+	howDidYouHear: z.string().min(1, 'Este campo es requerido'),
+	otherSource: z.string().optional()
+})
 
 export type Section6Form = z.infer<typeof section6Schema>

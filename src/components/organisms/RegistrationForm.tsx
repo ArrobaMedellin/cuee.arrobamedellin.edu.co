@@ -10,7 +10,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger,
+	AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { useFormStore } from '@/stores/formStore'
@@ -23,6 +23,7 @@ import { Section3Form } from './form-sections/Section3Form'
 import { Section4Form } from './form-sections/Section4Form'
 import { Section5Form } from './form-sections/Section5Form'
 import { Section6Form } from './form-sections/Section6Form'
+import { Section7Form } from './form-sections/Section7Form'
 import { Summary } from './Summary'
 
 export function RegistrationForm() {
@@ -35,44 +36,50 @@ export function RegistrationForm() {
 				key: 1,
 				title: 'Información Personal',
 				description: 'Datos básicos',
-				tooltip: 'Nombres, apellidos y documento',
+				tooltip: 'Nombres, apellidos y documento'
 			},
 			{
 				key: 2,
 				title: 'Datos Personales',
 				description: 'Contacto y perfil',
-				tooltip: 'Nacimiento, contacto, género y representante (si aplica)',
+				tooltip: 'Nacimiento, contacto, género y representante (si aplica)'
 			},
 			{
 				key: 3,
 				title: 'Ubicación',
 				description: 'Dirección y nacimiento',
-				tooltip: 'Residencia y ciudad de nacimiento',
+				tooltip: 'Residencia y ciudad de nacimiento'
 			},
 			{
 				key: 4,
 				title: 'Socioeconómica',
 				description: 'Condiciones y hogar',
-				tooltip: 'Salud, vivienda, hijos',
+				tooltip: 'Salud, vivienda, hijos'
 			},
 			{
 				key: 5,
 				title: 'Población y Etnias',
 				description: 'Discapacidad y pertenencia étnica',
-				tooltip: 'Discapacidad y pertenencia étnica',
+				tooltip: 'Discapacidad y pertenencia étnica'
 			},
 			{
 				key: 6,
 				title: 'Elección de Cursos',
 				description: 'Selección de formación',
-				tooltip: 'Cursos y cómo se enteró',
+				tooltip: 'Cursos y cómo se enteró'
 			},
 			{
 				key: 7,
+				title: 'Educación',
+				description: 'Información académica',
+				tooltip: 'Graduación y Saber Pro'
+			},
+			{
+				key: 8,
 				title: 'Resumen',
 				description: 'Verificación final',
-				tooltip: 'Revisa y envía',
-			},
+				tooltip: 'Revisa y envía'
+			}
 		]
 
 		return baseSteps
@@ -97,6 +104,8 @@ export function RegistrationForm() {
 			case 6:
 				return <Section6Form />
 			case 7:
+				return <Section7Form />
+			case 8:
 				return <Summary />
 			default:
 				return <Section1Form />

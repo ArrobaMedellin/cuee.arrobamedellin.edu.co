@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  basePath: '/registration',
+  // basePath: '/registration',
   images: {
     remotePatterns: [
       {

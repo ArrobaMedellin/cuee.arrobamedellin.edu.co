@@ -1,3 +1,5 @@
+import Footer from '@/components/molecules/Footer'
+import Header from '@/components/molecules/Header'
 import { TermsModal } from '@/components/molecules/TermsModal'
 import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
@@ -6,21 +8,21 @@ import './globals.css'
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
-	subsets: ['latin'],
+	subsets: ['latin']
 })
 
 const geistMono = Geist_Mono({
 	variable: '--font-geist-mono',
-	subsets: ['latin'],
+	subsets: ['latin']
 })
 
 export const metadata: Metadata = {
 	title: 'Inscripciones Sapiencia',
-	description: 'Inscripciones Sapiencia',
+	description: 'Inscripciones Sapiencia'
 }
 
 export default function RootLayout({
-	children,
+	children
 }: Readonly<{
 	children: React.ReactNode
 }>) {
@@ -29,13 +31,17 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				{children}
-				<TermsModal />
-				<Toaster
-					richColors
-					closeButton
-					position='top-right'
-				/>
+				<main className='min-h-screen bg-secondary flex flex-col'>
+					<Header />
+					<div className='flex-grow'>{children}</div>
+					<TermsModal />
+					<Toaster
+						richColors
+						closeButton
+						position='top-right'
+					/>
+					<Footer />
+				</main>
 			</body>
 		</html>
 	)

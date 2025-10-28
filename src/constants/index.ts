@@ -1,5 +1,5 @@
 export const API_URL =
-	process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+	process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'
 
 // Tipos de documento de identidad
 export const DOCUMENT_TYPE_OPTIONS = [

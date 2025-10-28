@@ -9,7 +9,7 @@ export const section7Schema = z
 			.min(1, 'Institución donde se graduó es requerida'),
 
 		// Información Saber Pro
-		hasIcfesPro: z.enum(['SI', 'NO']).default('NO'),
+		hasIcfesPro: z.enum(['SI', 'NO']),
 		icfesProScore: z.string().optional(),
 		icfesProYear: z.string().optional()
 	})

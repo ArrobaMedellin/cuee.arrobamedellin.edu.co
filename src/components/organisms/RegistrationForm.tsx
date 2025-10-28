@@ -13,10 +13,10 @@ import {
 	AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { useFormSubmission } from '@/hooks/use-form-submission'
 import { useFormStore } from '@/stores/formStore'
 import { useModalStore } from '@/stores/modalStore'
 import { useMemo } from 'react'
-import { toast } from 'sonner'
 import { Section1Form } from './form-sections/Section1Form'
 import { Section2Form } from './form-sections/Section2Form'
 import { Section3Form } from './form-sections/Section3Form'
@@ -27,8 +27,18 @@ import { Section7Form } from './form-sections/Section7Form'
 import { Summary } from './Summary'
 
 export function RegistrationForm() {
-	const { currentSection, setCurrentSection } = useFormStore()
+	const { currentSection, setCurrentSection, data } = useFormStore()
 	const { hasAcceptedTerms } = useModalStore()
+	const { isSubmitting, submitForm } = useFormSubmission()
+
+	const handleFormSubmit = async () => {
+		try {
+			await submitForm(data)
+		} catch (err) {
+			// Error handling is done in the hook
+			console.error('Form submission failed:', err)
+		}
+	}
 
 	const steps = useMemo(() => {
 		const baseSteps = [
@@ -193,9 +203,9 @@ export function RegistrationForm() {
 									<AlertDialogTrigger asChild>
 										<Button
 											className='bg-primary hover:bg-primary/90'
-											disabled={!hasAcceptedTerms}
+											disabled={!hasAcceptedTerms || isSubmitting}
 										>
-											Confirmar y Enviar
+											{isSubmitting ? 'Enviando...' : 'Confirmar y Enviar'}
 										</Button>
 									</AlertDialogTrigger>
 									<AlertDialogContent>
@@ -211,11 +221,10 @@ export function RegistrationForm() {
 										<AlertDialogFooter>
 											<AlertDialogCancel>Cancelar</AlertDialogCancel>
 											<AlertDialogAction
-												onClick={() => {
-													toast.success('Información enviada correctamente')
-												}}
+												onClick={handleFormSubmit}
+												disabled={isSubmitting}
 											>
-												Enviar
+												{isSubmitting ? 'Enviando...' : 'Enviar'}
 											</AlertDialogAction>
 										</AlertDialogFooter>
 									</AlertDialogContent>

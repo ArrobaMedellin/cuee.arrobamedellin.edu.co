@@ -17,6 +17,7 @@ export const section4Schema = z
 		isFamilyCaregiver: z.boolean(),
 		isYouthCouncilor: z.boolean(),
 		isCertifiedBarrista: z.boolean(),
+		isVictimOfGenderViolence: z.boolean(),
 		belongsToSpecialPopulations: z.boolean(),
 		specialPopulations: z.array(z.string()).optional(),
 

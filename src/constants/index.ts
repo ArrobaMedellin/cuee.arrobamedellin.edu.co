@@ -84,10 +84,6 @@ export const SPECIAL_POPULATIONS = [
 		value: 'restablecimiento',
 		label: 'Jóven perteneciente al Sistema de Restablecimiento de Derechos'
 	},
-	{
-		value: 'violencia-genero',
-		label: 'Población víctima de hechos basados en género'
-	},
 	{ value: 'ninguna', label: 'No pertenezco a ninguna' }
 ]
 

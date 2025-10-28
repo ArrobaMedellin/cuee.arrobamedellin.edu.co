@@ -1,6 +1,5 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Form,
@@ -379,228 +378,74 @@ export function Section5Form() {
 									</FormItem>
 								)}
 							/>
-
-							<FormField
-								control={form.control}
-								name='registeredWithVictimUnit'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Está registrado en la Unidad de Víctimas?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							{form.watch('registeredWithVictimUnit') && (
-								<FormField
-									control={form.control}
-									name='victimRegistrationNumber'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Número de registro</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Número de registro en la Unidad de Víctimas'
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							)}
 						</>
 					)}
 				</div>
 
-				{/* Poblaciones especiales del conflicto */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Poblaciones Especiales</CardTitle>
-					</CardHeader>
-					<CardContent className='space-y-6'>
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-							<FormField
-								control={form.control}
-								name='isExcombatant'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es excombatiente?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name='isReintegrated'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es reintegrado?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name='isFamilyOfExcombatant'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es familiar de excombatiente?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name='isInternallyDisplaced'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es desplazado interno?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name='isRefugee'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es refugiado?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-						</div>
-					</CardContent>
-				</Card>
-
 				{/* Características laborales y sociales */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Características Adicionales</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-							<FormField
-								control={form.control}
-								name='isFamilyCaregiver'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es un cuidador familiar en situación de discapacidad?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
+				<div>
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+						<FormField
+							control={form.control}
+							name='isFamilyCaregiver'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es un cuidador familiar en situación de discapacidad?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
 
-							<FormField
-								control={form.control}
-								name='isYouthCouncilor'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es concejal juvenil?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
+						<FormField
+							control={form.control}
+							name='isYouthCouncilor'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es concejal juvenil?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
 
-							<FormField
-								control={form.control}
-								name='isCertifiedBarrista'
-								render={({ field }) => (
-									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-										<div className='space-y-0.5'>
-											<FormLabel className='text-base'>
-												¿Es barrista certificado?
-											</FormLabel>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-						</div>
-					</CardContent>
-				</Card>
+						<FormField
+							control={form.control}
+							name='isCertifiedBarrista'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es barrista certificado?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+					</div>
+				</div>
 			</form>
 		</Form>
 	)

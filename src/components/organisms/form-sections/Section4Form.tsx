@@ -46,6 +46,7 @@ export function Section4Form() {
 			isFamilyCaregiver: false,
 			isYouthCouncilor: false,
 			isCertifiedBarrista: false,
+			isVictimOfGenderViolence: false,
 			belongsToSpecialPopulations: false,
 			specialPopulations: [],
 			healthSystem: '',
@@ -312,6 +313,26 @@ export function Section4Form() {
 										<div className='space-y-0.5'>
 											<FormLabel className='text-base'>
 												¿Es barrista certificado de algún equipo de fútbol?
+											</FormLabel>
+										</div>
+										<FormControl>
+											<Switch
+												checked={field.value || false}
+												onCheckedChange={field.onChange}
+											/>
+										</FormControl>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name='isVictimOfGenderViolence'
+								render={({ field }) => (
+									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+										<div className='space-y-0.5'>
+											<FormLabel className='text-base'>
+												¿Es víctima de hechos basados en género?
 											</FormLabel>
 										</div>
 										<FormControl>

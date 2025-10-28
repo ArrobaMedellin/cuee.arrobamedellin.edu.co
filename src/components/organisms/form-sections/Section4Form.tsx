@@ -22,8 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import {
 	DEVICE_OPTIONS,
 	HOUSING_TYPE_OPTIONS,
-	OCCUPATION_OPTIONS,
-	SPECIAL_POPULATIONS
+	OCCUPATION_OPTIONS
 } from '@/constants'
 import type { Section4Form } from '@/schemas/section4'
 import { section4Schema } from '@/schemas/section4'
@@ -346,43 +345,6 @@ export function Section4Form() {
 								)}
 							/>
 						</div>
-
-						{/* Poblaciones especiales */}
-						<FormField
-							control={form.control}
-							name='belongsToSpecialPopulations'
-							render={({ field }) => (
-								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-									<div className='space-y-0.5'>
-										<FormLabel className='text-base'>
-											¿Pertenece a poblaciones especiales?
-										</FormLabel>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value || false}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						{belongsToSpecialPopulations && (
-							<FormField
-								control={form.control}
-								name='specialPopulations'
-								render={({ field }) => (
-									<MultiCheckboxField
-										options={SPECIAL_POPULATIONS}
-										value={field.value || []}
-										onChange={field.onChange}
-										label='Seleccione las poblaciones especiales a las que pertenece:'
-										required={false}
-									/>
-								)}
-							/>
-						)}
 					</CardContent>
 				</Card>
 

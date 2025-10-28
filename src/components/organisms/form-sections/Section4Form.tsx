@@ -55,7 +55,8 @@ export function Section4Form() {
 			numberOfChildren: undefined,
 			singleParent: false,
 			firstChildAge: undefined,
-			pregnantOrLactating: false
+			pregnantOrLactating: false,
+			isHeadOfHousehold: false
 		}
 	})
 
@@ -553,6 +554,26 @@ export function Section4Form() {
 									<div className='space-y-0.5'>
 										<FormLabel className='text-base'>
 											¿Está embarazada o en lactancia?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value || false}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='isHeadOfHousehold'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es madre cabeza de familia?
 										</FormLabel>
 									</div>
 									<FormControl>

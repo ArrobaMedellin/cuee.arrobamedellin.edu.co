@@ -30,7 +30,8 @@ export const section4Schema = z
 		numberOfChildren: z.number().optional(),
 		singleParent: z.boolean(),
 		firstChildAge: z.number().optional(),
-		pregnantOrLactating: z.boolean()
+		pregnantOrLactating: z.boolean(),
+		isHeadOfHousehold: z.boolean()
 	})
 	.refine(
 		data => {

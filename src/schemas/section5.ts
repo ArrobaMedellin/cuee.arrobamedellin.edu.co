@@ -31,7 +31,11 @@ export const section5Schema = z
 		// Otras características especiales
 		isFamilyCaregiver: z.boolean(),
 		isYouthCouncilor: z.boolean(),
-		isCertifiedBarrista: z.boolean()
+		isCertifiedBarrista: z.boolean(),
+		isMigrant: z.boolean(),
+		isPeasant: z.boolean(),
+		isVendor: z.boolean(),
+		isVeteran: z.boolean()
 	})
 	.refine(
 		data => {

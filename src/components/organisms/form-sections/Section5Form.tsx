@@ -51,7 +51,11 @@ export function Section5Form() {
 			isRefugee: false,
 			isFamilyCaregiver: false,
 			isYouthCouncilor: false,
-			isCertifiedBarrista: false
+			isCertifiedBarrista: false,
+			isMigrant: false,
+			isPeasant: false,
+			isVendor: false,
+			isVeteran: false
 		}
 	})
 
@@ -384,7 +388,7 @@ export function Section5Form() {
 
 				{/* Características laborales y sociales */}
 				<div>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
 						<FormField
 							control={form.control}
 							name='isFamilyCaregiver'
@@ -433,6 +437,84 @@ export function Section5Form() {
 									<div className='space-y-0.5'>
 										<FormLabel className='text-base'>
 											¿Es barrista certificado?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='isMigrant'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es población migrante?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='isPeasant'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es población campesina?
+										</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='isVendor'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>¿Es ventero?</FormLabel>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='isVeteran'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='text-base'>
+											¿Es veterano (retirado de las fuerzas militares)?
 										</FormLabel>
 									</div>
 									<FormControl>

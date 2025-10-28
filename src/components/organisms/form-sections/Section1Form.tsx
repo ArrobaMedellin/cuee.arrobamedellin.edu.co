@@ -32,7 +32,12 @@ export function Section1Form() {
 			lastName: '',
 			documentType: '',
 			documentNumber: '',
-			email: ''
+			email: '',
+			emailVerification: '',
+			countryOfBirth: '',
+			departmentOfBirth: '',
+			municipalityOfBirth: '',
+			otherDocumentType: ''
 		}
 	})
 
@@ -129,23 +134,43 @@ export function Section1Form() {
 						)}
 					/>
 				</div>
-				<FormField
-					control={form.control}
-					name='email'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Correo electrónico</FormLabel>
-							<FormControl>
-								<Input
-									type='email'
-									placeholder='correo@ejemplo.com'
-									{...field}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+					{' '}
+					<FormField
+						control={form.control}
+						name='email'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Correo electrónico</FormLabel>
+								<FormControl>
+									<Input
+										type='email'
+										placeholder='correo@ejemplo.com'
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name='emailVerification'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Verificar correo electrónico</FormLabel>
+								<FormControl>
+									<Input
+										type='email'
+										placeholder='correo@ejemplo.com'
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 			</form>
 		</Form>
 	)

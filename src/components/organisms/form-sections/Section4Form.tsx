@@ -74,9 +74,6 @@ export function Section4Form() {
 			>
 				{/* Dispositivos tecnológicos */}
 				<Card>
-					<CardHeader>
-						<CardTitle>Dispositivos Tecnológicos</CardTitle>
-					</CardHeader>
 					<CardContent>
 						<FormField
 							control={form.control}
@@ -86,7 +83,7 @@ export function Section4Form() {
 									options={DEVICE_OPTIONS}
 									value={field.value || []}
 									onChange={field.onChange}
-									label='¿Con cuáles de estos dispositivos cuenta para su formación?'
+									label='De los siguientes dispositivos ¿cuáles posee en su vivienda?'
 									required
 								/>
 							)}

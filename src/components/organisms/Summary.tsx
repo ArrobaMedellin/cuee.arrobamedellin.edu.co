@@ -153,6 +153,12 @@ export function Summary() {
 							label='Género'
 							value={s2?.gender}
 						/>
+						{s2?.isPregnant && (
+							<Kv
+								label='¿Está embarazada o en lactancia?'
+								value={s2?.isPregnant}
+							/>
+						)}
 						<Kv
 							label='Orientación sexual'
 							value={
@@ -299,39 +305,91 @@ export function Summary() {
 			{s4 && hasRealData(s4) && (
 				<Card>
 					<CardHeader>
-						<CardTitle>Información Educativa</CardTitle>
+						<CardTitle>Información Socioeconómica</CardTitle>
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
-							label='Año de graduación'
-							value={s4.graduationYear}
+							label='Dispositivos tecnológicos'
+							value={s4.devices}
 						/>
 						<Kv
-							label='Institución donde se graduó'
-							value={s4.graduatedFrom}
+							label='Tipo de vivienda'
+							value={s4.housingType}
 						/>
 						<Kv
-							label='Cursos seleccionados'
+							label='Ocupación/Actividad actual'
 							value={
-								Array.isArray(s4.selectedCourses) ? s4.selectedCourses : []
+								s4.occupation === 'otro' ? s4.otherOccupation : s4.occupation
 							}
 						/>
 						<Kv
-							label='Tiene ICFES Pro'
-							value={s4.hasIcfesPro}
+							label='Personas a cargo'
+							value={s4.dependents}
 						/>
-						{s4.hasIcfesPro === 'SI' && (
-							<>
-								<Kv
-									label='Puntaje ICFES Pro'
-									value={s4.icfesProScore}
-								/>
-								<Kv
-									label='Año ICFES Pro'
-									value={s4.icfesProYear}
-								/>
-							</>
+						<Kv
+							label='Sistema de salud'
+							value={s4.healthSystem}
+						/>
+						<Kv
+							label='Conexión a internet'
+							value={s4.internetConnection}
+						/>
+						<Kv
+							label='Tiene hijos'
+							value={s4.hasChildren}
+						/>
+						{s4.hasChildren && s4.numberOfChildren && (
+							<Kv
+								label='Número de hijos'
+								value={s4.numberOfChildren}
+							/>
 						)}
+						{s4.hasChildren && s4.firstChildAge && (
+							<Kv
+								label='Edad del primer hijo'
+								value={s4.firstChildAge}
+							/>
+						)}
+						<Kv
+							label='Cabeza de familia'
+							value={s4.singleParent}
+						/>
+						<Kv
+							label='Embarazada o en lactancia'
+							value={s4.pregnantOrLactating}
+						/>
+						<Kv
+							label='Es vendedor informal'
+							value={s4.isInformalVendor}
+						/>
+						<Kv
+							label='Es familiar de vendedor informal'
+							value={s4.isFamilyOfInformalVendor}
+						/>
+						<Kv
+							label='Es cuidador familiar'
+							value={s4.isFamilyCaregiver}
+						/>
+						<Kv
+							label='Es concejal juvenil'
+							value={s4.isYouthCouncilor}
+						/>
+						<Kv
+							label='Es barrista certificado'
+							value={s4.isCertifiedBarrista}
+						/>
+						<Kv
+							label='Pertenece a poblaciones especiales'
+							value={s4.belongsToSpecialPopulations}
+						/>
+						{s4.belongsToSpecialPopulations &&
+							s4.specialPopulations &&
+							s4.specialPopulations.length > 0 && (
+								<Kv
+									label='Poblaciones especiales'
+									value={s4.specialPopulations}
+								/>
+							)}
 					</CardContent>
 				</Card>
 			)}
@@ -339,224 +397,124 @@ export function Summary() {
 			{s5 && hasRealData(s5) && (
 				<Card>
 					<CardHeader>
-						<CardTitle>Información Socioeconómica</CardTitle>
+						<CardTitle>Características Especiales</CardTitle>
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+						{/* Discapacidad */}
 						<Kv
-							label='Sistema de salud'
-							value={s5.healthSystem}
+							label='Tiene discapacidad'
+							value={s5.hasDisability}
 						/>
-						<Kv
-							label='Conexión a internet'
-							value={s5.internetConnection}
-						/>
-						<Kv
-							label='Dispositivos'
-							value={s5.devices}
-						/>
-						<Kv
-							label='Ocupación/Actividad actual'
-							value={
-								s5.occupation === 'otro' ? s5.otherOccupation : s5.occupation
-							}
-						/>
-						<Kv
-							label='Nivel educativo'
-							value={s5.educationLevel}
-						/>
-						<Kv
-							label='Tipo de vivienda'
-							value={s5.housingType}
-						/>
-						<Kv
-							label='Personas en la familia'
-							value={s5.familyMembers}
-						/>
-						<Kv
-							label='Estado laboral'
-							value={s5.workStatus}
-						/>
-						{s5.monthlyIncome && (
-							<Kv
-								label='Ingresos mensuales'
-								value={s5.monthlyIncome}
-							/>
-						)}
-						<Kv
-							label='Personas a cargo'
-							value={s5.dependents}
-						/>
-
-						{/* Información maternal */}
-						<Kv
-							label='Gestante'
-							value={s5.isPregnant}
-						/>
-						<Kv
-							label='Lactante'
-							value={s5.isLactating}
-						/>
-
-						{/* Información de hijos */}
-						{s5.hasChildren && s5.hasChildren.length > 0 && (
-							<>
+						{s5.hasDisability &&
+							s5.disabilityTypes &&
+							s5.disabilityTypes.length > 0 && (
 								<Kv
-									label='Tiene hijos'
-									value={s5.hasChildren}
-								/>
-								{s5.numberOfChildren !== undefined && (
-									<Kv
-										label='Número de hijos'
-										value={s5.numberOfChildren}
-									/>
-								)}
-								{s5.firstChildAge !== undefined && (
-									<Kv
-										label='Edad del primer hijo'
-										value={s5.firstChildAge}
-									/>
-								)}
-							</>
-						)}
-
-						{s5.singleParent && s5.singleParent.length > 0 && (
-							<Kv
-								label='Cabeza de hogar'
-								value={s5.singleParent}
-							/>
-						)}
-
-						{s5.pregnantOrLactating && s5.pregnantOrLactating.length > 0 && (
-							<Kv
-								label='Gestante o lactante'
-								value={s5.pregnantOrLactating}
-							/>
-						)}
-
-						{/* Vendedor informal */}
-						{s5.isInformalVendor && s5.isInformalVendor.length > 0 && (
-							<Kv
-								label='Vendedor informal (ventero)'
-								value={s5.isInformalVendor}
-							/>
-						)}
-						{s5.isFamilyOfInformalVendor &&
-							s5.isFamilyOfInformalVendor.length > 0 && (
-								<Kv
-									label='Familia ventera'
-									value={s5.isFamilyOfInformalVendor}
+									label='Tipos de discapacidad'
+									value={s5.disabilityTypes}
 								/>
 							)}
+						{s5.disabilityDescription && (
+							<Kv
+								label='Descripción de discapacidad'
+								value={s5.disabilityDescription}
+							/>
+						)}
+						{s5.requiresSupport && (
+							<Kv
+								label='Requiere apoyo'
+								value={s5.requiresSupport}
+							/>
+						)}
+						{s5.supportType && (
+							<Kv
+								label='Tipo de apoyo'
+								value={s5.supportType}
+							/>
+						)}
 
-						{/* Otras características */}
-						{s5.isFamilyCaregiver && s5.isFamilyCaregiver.length > 0 && (
+						{/* Grupos étnicos */}
+						<Kv
+							label='Pertenece a grupo étnico'
+							value={s5.belongsToEthnicGroup}
+						/>
+						{s5.belongsToEthnicGroup && s5.ethnicGroups && (
 							<Kv
-								label='Cuidador familiar'
-								value={s5.isFamilyCaregiver}
+								label='Grupo étnico'
+								value={s5.ethnicGroups}
 							/>
 						)}
-						{s5.isYouthCouncilor && s5.isYouthCouncilor.length > 0 && (
+						{s5.afroSubgroup && (
 							<Kv
-								label='Concejal juvenil'
-								value={s5.isYouthCouncilor}
+								label='Subgrupo Afrodescendiente'
+								value={s5.afroSubgroup}
 							/>
 						)}
-						{s5.isCertifiedBarrista && s5.isCertifiedBarrista.length > 0 && (
+						{s5.indigenousPeople && (
 							<Kv
-								label='Barrista certificado'
-								value={s5.isCertifiedBarrista}
+								label='Pueblo Indígena'
+								value={s5.indigenousPeople}
+							/>
+						)}
+
+						{/* Víctima de violencia */}
+						<Kv
+							label='Es víctima del conflicto armado'
+							value={s5.isViolenceVictim}
+						/>
+						{s5.isViolenceVictim &&
+							s5.victimizingActs &&
+							s5.victimizingActs.length > 0 && (
+								<Kv
+									label='Hechos victimizantes'
+									value={s5.victimizingActs}
+								/>
+							)}
+						{s5.registeredWithVictimUnit && (
+							<Kv
+								label='Registrado en Unidad de Víctimas'
+								value={s5.registeredWithVictimUnit}
+							/>
+						)}
+						{s5.victimRegistrationNumber && (
+							<Kv
+								label='Número de registro'
+								value={s5.victimRegistrationNumber}
 							/>
 						)}
 
 						{/* Poblaciones especiales */}
-						{s5.belongsToSpecialPopulations &&
-							s5.specialPopulations &&
-							s5.specialPopulations.length > 0 && (
-								<Kv
-									label='Poblaciones especiales'
-									value={s5.specialPopulations}
-								/>
-							)}
-
-						{/* Seguridad social */}
-						{s5.socialSecurityContributions &&
-							s5.socialSecurityContributions.length > 0 && (
-								<Kv
-									label='Aportes a seguridad social'
-									value={s5.socialSecurityContributions}
-								/>
-							)}
-
-						{/* Información laboral adicional */}
-						{s5.graduationToEmploymentTime && (
-							<Kv
-								label='Tiempo graduación-empleo'
-								value={s5.graduationToEmploymentTime}
-							/>
-						)}
-						{s5.englishLevel && (
-							<Kv
-								label='Nivel de inglés'
-								value={s5.englishLevel}
-							/>
-						)}
-						{s5.jobSearchAreas && s5.jobSearchAreas.length > 0 && (
-							<Kv
-								label='Áreas de búsqueda laboral'
-								value={s5.jobSearchAreas}
-							/>
-						)}
-						{s5.otherJobSearchArea && (
-							<Kv
-								label='Otra área de búsqueda'
-								value={s5.otherJobSearchArea}
-							/>
-						)}
-						{s5.salaryExpectationsMet && (
-							<Kv
-								label='Expectativas salariales cumplidas'
-								value={s5.salaryExpectationsMet}
-							/>
-						)}
-						{s5.jobSatisfaction && (
-							<Kv
-								label='Satisfacción laboral'
-								value={s5.jobSatisfaction}
-							/>
-						)}
-						{s5.remoteWorkOption && (
-							<Kv
-								label='Opción trabajo remoto'
-								value={s5.remoteWorkOption}
-							/>
-						)}
-						{s5.remoteWorkSpace && (
-							<Kv
-								label='Espacio para trabajo remoto'
-								value={s5.remoteWorkSpace}
-							/>
-						)}
-
-						{/* Competencias y capacitación */}
-						{s5.emotionalSalaryOptions &&
-							s5.emotionalSalaryOptions.length > 0 && (
-								<Kv
-									label='Opciones de salario emocional'
-									value={s5.emotionalSalaryOptions}
-								/>
-							)}
-						{s5.missingCompetencies && s5.missingCompetencies.length > 0 && (
-							<Kv
-								label='Competencias faltantes'
-								value={s5.missingCompetencies}
-							/>
-						)}
-						{s5.otherMissingCompetencies && (
-							<Kv
-								label='Otras competencias faltantes'
-								value={s5.otherMissingCompetencies}
-							/>
-						)}
+						<Kv
+							label='Es excombatiente'
+							value={s5.isExcombatant}
+						/>
+						<Kv
+							label='Es reintegrado'
+							value={s5.isReintegrated}
+						/>
+						<Kv
+							label='Es familiar de excombatiente'
+							value={s5.isFamilyOfExcombatant}
+						/>
+						<Kv
+							label='Es desplazado interno'
+							value={s5.isInternallyDisplaced}
+						/>
+						<Kv
+							label='Es refugiado'
+							value={s5.isRefugee}
+						/>
+						<Kv
+							label='Es cuidador familiar'
+							value={s5.isFamilyCaregiver}
+						/>
+						<Kv
+							label='Es concejal juvenil'
+							value={s5.isYouthCouncilor}
+						/>
+						<Kv
+							label='Es barrista certificado'
+							value={s5.isCertifiedBarrista}
+						/>
 					</CardContent>
 				</Card>
 			)}
@@ -564,129 +522,18 @@ export function Summary() {
 			{s6 && hasRealData(s6) && (
 				<Card>
 					<CardHeader>
-						<CardTitle>Información Adicional</CardTitle>
+						<CardTitle>Cursos y Comunicación</CardTitle>
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-						{/* Discapacidad */}
 						<Kv
-							label='Tiene discapacidad'
-							value={s6.hasDisability}
-						/>
-						{s6.hasDisability &&
-							s6.disabilityTypes &&
-							s6.disabilityTypes.length > 0 && (
-								<Kv
-									label='Tipos de discapacidad'
-									value={s6.disabilityTypes}
-								/>
-							)}
-						{s6.disabilityDescription && (
-							<Kv
-								label='Descripción de discapacidad'
-								value={s6.disabilityDescription}
-							/>
-						)}
-						{s6.requiresSupport !== undefined && (
-							<Kv
-								label='Requiere apoyo'
-								value={s6.requiresSupport}
-							/>
-						)}
-						{s6.supportType && (
-							<Kv
-								label='Tipo de apoyo'
-								value={s6.supportType}
-							/>
-						)}{' '}
-						{/* Grupos étnicos */}
-						<Kv
-							label='Pertenece a grupo étnico'
-							value={s6.belongsToEthnicGroup}
-						/>
-						{s6.belongsToEthnicGroup &&
-							s6.ethnicGroups &&
-							s6.ethnicGroups.length > 0 && (
-								<Kv
-									label='Grupos étnicos'
-									value={s6.ethnicGroups}
-								/>
-							)}
-						{s6.afroSubgroup && (
-							<Kv
-								label='Subgrupo Afrodescendiente'
-								value={s6.afroSubgroup}
-							/>
-						)}
-						{s6.indigenousPeople && (
-							<Kv
-								label='Pueblo Indígena'
-								value={s6.indigenousPeople}
-							/>
-						)}
-						{/* Víctima de violencia */}
-						<Kv
-							label='Víctima de violencia en Colombia'
-							value={s6.isViolenceVictim}
-						/>
-						{s6.isViolenceVictim &&
-							s6.victimizingActs &&
-							s6.victimizingActs.length > 0 && (
-								<Kv
-									label='Hechos victimizantes'
-									value={s6.victimizingActs}
-								/>
-							)}
-						{s6.violenceType && (
-							<Kv
-								label='Tipo de violencia'
-								value={s6.violenceType}
-							/>
-						)}
-						{s6.registeredWithVictimUnit !== undefined && (
-							<Kv
-								label='Registrado en Unidad de Víctimas'
-								value={s6.registeredWithVictimUnit}
-							/>
-						)}
-						{s6.victimRegistrationNumber && (
-							<Kv
-								label='Número de registro de víctima'
-								value={s6.victimRegistrationNumber}
-							/>
-						)}
-						{/* Poblaciones especiales del conflicto */}
-						<Kv
-							label='Es excombatiente'
-							value={s6.isExcombatant}
+							label='Cursos seleccionados'
+							value={s6.selectedCourses}
 						/>
 						<Kv
-							label='Es reintegrado'
-							value={s6.isReintegrated}
-						/>
-						<Kv
-							label='Familia de excombatiente'
-							value={s6.isFamilyOfExcombatant}
-						/>
-						<Kv
-							label='Desplazado interno'
-							value={s6.isInternallyDisplaced}
-						/>
-						<Kv
-							label='Es refugiado'
-							value={s6.isRefugee}
-						/>
-						{/* Otras características */}
-						<Kv
-							label='Cuidador familiar'
-							value={s6.isFamilyCaregiver}
-						/>
-						<Kv
-							label='Concejal juvenil'
-							value={s6.isYouthCouncilor}
-						/>
-						<Kv
-							label='Barrista certificado'
-							value={s6.isCertifiedBarrista}
+							label='¿Cómo se enteró de la convocatoria?'
+							value={
+								s6.howDidYouHear === 'Otro' ? s6.otherSource : s6.howDidYouHear
+							}
 						/>
 					</CardContent>
 				</Card>
@@ -695,23 +542,31 @@ export function Summary() {
 			{s7 && hasRealData(s7) && (
 				<Card>
 					<CardHeader>
-						<CardTitle>Selección de Cursos y Referencia</CardTitle>
+						<CardTitle>Información Académica</CardTitle>
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
-							label='Cursos seleccionados'
-							value={
-								Array.isArray(s7.selectedCourses) ? s7.selectedCourses : []
-							}
+							label='Año de graduación de bachillerato'
+							value={s7.graduationYear}
 						/>
 						<Kv
-							label='¿Cómo se enteró de la convocatoria?'
-							value={s7.howDidYouHear}
+							label='Institución donde se graduó'
+							value={s7.graduatedFrom}
 						/>
-						{s7.otherSource && (
+						<Kv
+							label='¿Tiene ICFES Pro?'
+							value={s7.hasIcfesPro}
+						/>
+						{s7.hasIcfesPro === 'SI' && s7.icfesProScore && (
 							<Kv
-								label='Otro medio (especifique)'
-								value={s7.otherSource}
+								label='Puntaje ICFES Pro'
+								value={s7.icfesProScore}
+							/>
+						)}
+						{s7.hasIcfesPro === 'SI' && s7.icfesProYear && (
+							<Kv
+								label='Año ICFES Pro'
+								value={s7.icfesProYear}
 							/>
 						)}
 					</CardContent>

@@ -70,12 +70,6 @@ export function RegistrationForm() {
 			},
 			{
 				key: 7,
-				title: 'Educación',
-				description: 'Información académica',
-				tooltip: 'Graduación y Saber Pro'
-			},
-			{
-				key: 8,
 				title: 'Resumen',
 				description: 'Verificación final',
 				tooltip: 'Revisa y envía'

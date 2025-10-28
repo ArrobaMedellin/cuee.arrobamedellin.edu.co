@@ -6,7 +6,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
+	FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,7 +14,7 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue,
+	SelectValue
 } from '@/components/ui/select'
 import type { Section3Form } from '@/schemas/section3'
 import { section3Schema } from '@/schemas/section3'
@@ -57,8 +57,8 @@ export function Section3Form() {
 			addressNumber3: '',
 			addressComplement: '',
 			fullAddress: '',
-			birthCity: '',
-		},
+			birthCity: ''
+		}
 	})
 
 	const onSubmit = (values: Section3Form) => {
@@ -68,7 +68,7 @@ export function Section3Form() {
 			departmentOfResidenceId: selectedDepartmentId,
 			cityOfResidenceId: selectedCityId,
 			communeId: selectedCommuneId,
-			neighborhoodId: form.watch('neighborhoodId'),
+			neighborhoodId: form.watch('neighborhoodId')
 		}
 		setSectionData('section3', submitData)
 	}
@@ -249,6 +249,12 @@ export function Section3Form() {
 										<SelectItem value='4'>4</SelectItem>
 										<SelectItem value='5'>5</SelectItem>
 										<SelectItem value='6'>6</SelectItem>
+										<SelectItem value='sin clasificar'>
+											Sin Clasificar
+										</SelectItem>
+										<SelectItem value='no sabe/no responde'>
+											No Sabe/No Responde
+										</SelectItem>
 									</SelectContent>
 								</Select>
 								<FormMessage />

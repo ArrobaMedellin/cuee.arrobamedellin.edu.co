@@ -37,7 +37,7 @@ export function Section5Form() {
 			requiresSupport: false,
 			supportType: '',
 			belongsToEthnicGroup: false,
-			ethnicGroups: [],
+			ethnicGroups: '',
 			afroSubgroup: '',
 			indigenousPeople: '',
 			isViolenceVictim: false,
@@ -66,41 +66,34 @@ export function Section5Form() {
 	const isViolenceVictim = form.watch('isViolenceVictim')
 
 	const disabilityTypeOptions = [
-		{ value: 'fisica', label: 'Física o motriz' },
+		{ value: 'auditiva', label: 'Auditiva' },
+		{ value: 'fisica', label: 'Física' },
 		{ value: 'intelectual', label: 'Intelectual' },
-		{ value: 'psicosocial', label: 'Psicosocial (mental)' },
-		{ value: 'visual', label: 'Sensorial visual' },
-		{ value: 'auditiva', label: 'Sensorial auditiva' },
+		{ value: 'visual', label: 'Visual' },
+		{ value: 'sordoceguera', label: 'Sordoceguera' },
+		{ value: 'psicosocial', label: 'Psicosocial' },
 		{ value: 'multiple', label: 'Múltiple' },
-		{ value: 'otra', label: 'Otra' }
+		{ value: 'prefiero no responder', label: 'Prefiero no responder' }
 	]
 
 	const victimizingActOptions = [
-		{ value: 'desplazamiento', label: 'Desplazamiento forzado' },
 		{ value: 'homicidio', label: 'Homicidio' },
-		{ value: 'masacre', label: 'Masacre' },
-		{ value: 'secuestro', label: 'Secuestro' },
-		{ value: 'desaparicion', label: 'Desaparición forzada' },
+		{ value: 'desplazamiento-forzado', label: 'Desplazamiento forzado' },
 		{ value: 'tortura', label: 'Tortura' },
+		{ value: 'secuestro', label: 'Secuestro' },
+		{ value: 'lesiones-personales', label: 'Lesiones personales' },
+		{ value: 'desaparicion-forzada', label: 'Desaparición forzada' },
 		{
-			value: 'delitos_sexuales',
-			label: 'Delitos contra la libertad e integridad sexual'
+			value: 'reclutamiento-ilegal-menores',
+			label: 'Reclutamiento ilegal de menores'
 		},
-		{
-			value: 'vinculacion_menores',
-			label: 'Vinculación de niños, niñas y adolescentes'
-		},
-		{ value: 'terrorismo', label: 'Acto terrorista' },
-		{ value: 'minas', label: 'Minas antipersonal' },
-		{
-			value: 'despojo_tierras',
-			label: 'Abandono o despojo forzado de tierras'
-		},
-		{ value: 'otro', label: 'Otro' }
+		{ value: 'mina-antipersonal', label: 'Mina antipersonal' },
+		{ value: 'amenazas', label: 'Amenazas' },
+		{ value: 'prefiero-no-responder', label: 'Prefiero no responder' }
 	]
 
-	const showAfroSubgroup = ethnicGroups?.includes('Afrodescendiente')
-	const showIndigenousPeople = ethnicGroups?.includes('Indígena')
+	const showAfroSubgroup = ethnicGroups === 'Afrodescendiente'
+	const showIndigenousPeople = ethnicGroups === 'Indígena'
 
 	return (
 		<Form {...form}>
@@ -109,371 +102,81 @@ export function Section5Form() {
 				className='space-y-6'
 			>
 				{/* Discapacidad */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Discapacidad</CardTitle>
-					</CardHeader>
-					<CardContent className='space-y-6'>
-						<FormField
-							control={form.control}
-							name='hasDisability'
-							render={({ field }) => (
-								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-									<div className='space-y-0.5'>
-										<FormLabel className='text-base'>
-											¿Tiene alguna discapacidad?
-										</FormLabel>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						{hasDisability && (
-							<>
-								<FormField
-									control={form.control}
-									name='disabilityTypes'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Tipos de discapacidad</FormLabel>
-											<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-												{disabilityTypeOptions.map(option => (
-													<FormItem
-														key={option.value}
-														className='flex flex-row items-start space-x-3 space-y-0'
-													>
-														<FormControl>
-															<Checkbox
-																checked={field.value?.includes(option.value)}
-																onCheckedChange={checked => {
-																	return checked
-																		? field.onChange([
-																				...(field.value || []),
-																				option.value
-																		  ])
-																		: field.onChange(
-																				field.value?.filter(
-																					value => value !== option.value
-																				) || []
-																		  )
-																}}
-															/>
-														</FormControl>
-														<FormLabel className='text-sm font-normal'>
-															{option.label}
-														</FormLabel>
-													</FormItem>
-												))}
-											</div>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name='disabilityDescription'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Descripción de la discapacidad</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Describe brevemente tu discapacidad'
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-									<FormField
-										control={form.control}
-										name='requiresSupport'
-										render={({ field }) => (
-											<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-												<div className='space-y-0.5'>
-													<FormLabel className='text-base'>
-														¿Requiere apoyo especial?
-													</FormLabel>
-												</div>
-												<FormControl>
-													<Switch
-														checked={field.value}
-														onCheckedChange={field.onChange}
-													/>
-												</FormControl>
-											</FormItem>
-										)}
+				<div className='space-y-6'>
+					<FormField
+						control={form.control}
+						name='hasDisability'
+						render={({ field }) => (
+							<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+								<div className='space-y-0.5'>
+									<FormLabel className='text-base'>
+										¿Tiene alguna de las siguientes discapacidades certificadas
+										por entidad o profesional competente?
+									</FormLabel>
+								</div>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
 									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
 
-									{form.watch('requiresSupport') && (
-										<FormField
-											control={form.control}
-											name='supportType'
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>Tipo de apoyo</FormLabel>
+					{hasDisability && (
+						<>
+							<FormField
+								control={form.control}
+								name='disabilityTypes'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Tipos de discapacidad</FormLabel>
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+											{disabilityTypeOptions.map(option => (
+												<FormItem
+													key={option.value}
+													className='flex flex-row items-start space-x-3 space-y-0'
+												>
 													<FormControl>
-														<Input
-															placeholder='Especifica el tipo de apoyo'
-															{...field}
+														<Checkbox
+															checked={field.value?.includes(option.value)}
+															onCheckedChange={checked => {
+																return checked
+																	? field.onChange([
+																			...(field.value || []),
+																			option.value
+																	  ])
+																	: field.onChange(
+																			field.value?.filter(
+																				value => value !== option.value
+																			) || []
+																	  )
+															}}
 														/>
 													</FormControl>
-													<FormMessage />
+													<FormLabel className='text-sm font-normal'>
+														{option.label}
+													</FormLabel>
 												</FormItem>
-											)}
-										/>
-									)}
-								</div>
-							</>
-						)}
-					</CardContent>
-				</Card>
-
-				{/* Grupos étnicos */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Pertenencia Étnica</CardTitle>
-					</CardHeader>
-					<CardContent className='space-y-6'>
-						<FormField
-							control={form.control}
-							name='belongsToEthnicGroup'
-							render={({ field }) => (
-								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-									<div className='space-y-0.5'>
-										<FormLabel className='text-base'>
-											¿Pertenece a algún grupo étnico?
-										</FormLabel>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						{belongsToEthnicGroup && (
-							<>
-								<FormField
-									control={form.control}
-									name='ethnicGroups'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Grupo étnico</FormLabel>
-											<div className='grid grid-cols-1 gap-2'>
-												{ETHNIC_GROUPS.map(option => (
-													<FormItem
-														key={option.value}
-														className='flex flex-row items-start space-x-3 space-y-0'
-													>
-														<FormControl>
-															<Checkbox
-																checked={field.value?.includes(option.value)}
-																onCheckedChange={checked => {
-																	return checked
-																		? field.onChange([
-																				...(field.value || []),
-																				option.value
-																		  ])
-																		: field.onChange(
-																				field.value?.filter(
-																					value => value !== option.value
-																				) || []
-																		  )
-																}}
-															/>
-														</FormControl>
-														<FormLabel className='text-sm font-normal'>
-															{option.label}
-														</FormLabel>
-													</FormItem>
-												))}
-											</div>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								{showAfroSubgroup && (
-									<FormField
-										control={form.control}
-										name='afroSubgroup'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Subgrupo Afrodescendiente</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													defaultValue={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder='Selecciona' />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{AFRO_SUBGROUPS.map(option => (
-															<SelectItem
-																key={option.value}
-																value={option.value}
-															>
-																{option.label}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
 								)}
+							/>
 
-								{showIndigenousPeople && (
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+								{form.watch('requiresSupport') && (
 									<FormField
 										control={form.control}
-										name='indigenousPeople'
+										name='supportType'
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Pueblo Indígena</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													defaultValue={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder='Selecciona' />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{INDIGENOUS_PEOPLES.map(option => (
-															<SelectItem
-																key={option.value}
-																value={option.value}
-															>
-																{option.label}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								)}
-							</>
-						)}
-					</CardContent>
-				</Card>
-
-				{/* Víctima de violencia */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Víctima del Conflicto Armado</CardTitle>
-					</CardHeader>
-					<CardContent className='space-y-6'>
-						<FormField
-							control={form.control}
-							name='isViolenceVictim'
-							render={({ field }) => (
-								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-									<div className='space-y-0.5'>
-										<FormLabel className='text-base'>
-											¿Es víctima del conflicto armado en Colombia?
-										</FormLabel>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						{isViolenceVictim && (
-							<>
-								<FormField
-									control={form.control}
-									name='victimizingActs'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Hechos victimizantes</FormLabel>
-											<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-												{victimizingActOptions.map(option => (
-													<FormItem
-														key={option.value}
-														className='flex flex-row items-start space-x-3 space-y-0'
-													>
-														<FormControl>
-															<Checkbox
-																checked={field.value?.includes(option.value)}
-																onCheckedChange={checked => {
-																	return checked
-																		? field.onChange([
-																				...(field.value || []),
-																				option.value
-																		  ])
-																		: field.onChange(
-																				field.value?.filter(
-																					value => value !== option.value
-																				) || []
-																		  )
-																}}
-															/>
-														</FormControl>
-														<FormLabel className='text-sm font-normal'>
-															{option.label}
-														</FormLabel>
-													</FormItem>
-												))}
-											</div>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name='registeredWithVictimUnit'
-									render={({ field }) => (
-										<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-											<div className='space-y-0.5'>
-												<FormLabel className='text-base'>
-													¿Está registrado en la Unidad de Víctimas?
-												</FormLabel>
-											</div>
-											<FormControl>
-												<Switch
-													checked={field.value}
-													onCheckedChange={field.onChange}
-												/>
-											</FormControl>
-										</FormItem>
-									)}
-								/>
-
-								{form.watch('registeredWithVictimUnit') && (
-									<FormField
-										control={form.control}
-										name='victimRegistrationNumber'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Número de registro</FormLabel>
+												<FormLabel>Tipo de apoyo</FormLabel>
 												<FormControl>
 													<Input
-														placeholder='Número de registro en la Unidad de Víctimas'
+														placeholder='Especifica el tipo de apoyo'
 														{...field}
 													/>
 												</FormControl>
@@ -482,10 +185,242 @@ export function Section5Form() {
 										)}
 									/>
 								)}
-							</>
+							</div>
+						</>
+					)}
+				</div>
+
+				{/* Grupos étnicos */}
+				<div className='space-y-6'>
+					<FormField
+						control={form.control}
+						name='belongsToEthnicGroup'
+						render={({ field }) => (
+							<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+								<div className='space-y-0.5'>
+									<FormLabel className='text-base'>
+										¿Pertenece a algún grupo étnico?
+									</FormLabel>
+								</div>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
+									/>
+								</FormControl>
+							</FormItem>
 						)}
-					</CardContent>
-				</Card>
+					/>
+
+					{belongsToEthnicGroup && (
+						<>
+							<FormField
+								control={form.control}
+								name='ethnicGroups'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Grupo étnico</FormLabel>
+										<div className='grid grid-cols-1 gap-2'>
+											{ETHNIC_GROUPS.map(option => (
+												<FormItem
+													key={option.value}
+													className='flex flex-row items-start space-x-3 space-y-0'
+												>
+													<FormControl>
+														<Checkbox
+															checked={field.value === option.value}
+															onCheckedChange={checked => {
+																// Si se selecciona, establecer este valor
+																// Si se deselecciona, limpiar el valor
+																field.onChange(checked ? option.value : '')
+															}}
+														/>
+													</FormControl>
+													<FormLabel className='text-sm font-normal'>
+														{option.label}
+													</FormLabel>
+												</FormItem>
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							{showAfroSubgroup && (
+								<FormField
+									control={form.control}
+									name='afroSubgroup'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Subgrupo Afrodescendiente</FormLabel>
+											<Select
+												onValueChange={field.onChange}
+												defaultValue={field.value}
+											>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder='Selecciona' />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{AFRO_SUBGROUPS.map(option => (
+														<SelectItem
+															key={option.value}
+															value={option.value}
+														>
+															{option.label}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{showIndigenousPeople && (
+								<FormField
+									control={form.control}
+									name='indigenousPeople'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Pueblo Indígena</FormLabel>
+											<Select
+												onValueChange={field.onChange}
+												defaultValue={field.value}
+											>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder='Selecciona' />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{INDIGENOUS_PEOPLES.map(option => (
+														<SelectItem
+															key={option.value}
+															value={option.value}
+														>
+															{option.label}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							)}
+						</>
+					)}
+				</div>
+
+				{/* Víctima de violencia */}
+				<div className='space-y-6'>
+					<FormField
+						control={form.control}
+						name='isViolenceVictim'
+						render={({ field }) => (
+							<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+								<div className='space-y-0.5'>
+									<FormLabel className='text-base'>
+										¿Es víctima del conflicto armado en Colombia?
+									</FormLabel>
+								</div>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+
+					{isViolenceVictim && (
+						<>
+							<FormField
+								control={form.control}
+								name='victimizingActs'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Hechos victimizantes</FormLabel>
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+											{victimizingActOptions.map(option => (
+												<FormItem
+													key={option.value}
+													className='flex flex-row items-start space-x-3 space-y-0'
+												>
+													<FormControl>
+														<Checkbox
+															checked={field.value?.includes(option.value)}
+															onCheckedChange={checked => {
+																return checked
+																	? field.onChange([
+																			...(field.value || []),
+																			option.value
+																	  ])
+																	: field.onChange(
+																			field.value?.filter(
+																				value => value !== option.value
+																			) || []
+																	  )
+															}}
+														/>
+													</FormControl>
+													<FormLabel className='text-sm font-normal'>
+														{option.label}
+													</FormLabel>
+												</FormItem>
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name='registeredWithVictimUnit'
+								render={({ field }) => (
+									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+										<div className='space-y-0.5'>
+											<FormLabel className='text-base'>
+												¿Está registrado en la Unidad de Víctimas?
+											</FormLabel>
+										</div>
+										<FormControl>
+											<Switch
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
+										</FormControl>
+									</FormItem>
+								)}
+							/>
+
+							{form.watch('registeredWithVictimUnit') && (
+								<FormField
+									control={form.control}
+									name='victimRegistrationNumber'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Número de registro</FormLabel>
+											<FormControl>
+												<Input
+													placeholder='Número de registro en la Unidad de Víctimas'
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							)}
+						</>
+					)}
+				</div>
 
 				{/* Poblaciones especiales del conflicto */}
 				<Card>
@@ -611,7 +546,7 @@ export function Section5Form() {
 									<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
 										<div className='space-y-0.5'>
 											<FormLabel className='text-base'>
-												¿Es cuidador familiar?
+												¿Es un cuidador familiar en situación de discapacidad?
 											</FormLabel>
 										</div>
 										<FormControl>

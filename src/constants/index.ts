@@ -93,11 +93,10 @@ export const SPECIAL_POPULATIONS = [
 
 // Grupos étnicos
 export const ETHNIC_GROUPS = [
-	{ value: 'Afrodescendiente', label: 'a. Afrodescendiente' },
-	{ value: 'Indígena', label: 'b. Indígena' },
-	{ value: 'Rom o gitano', label: 'c. Rom o gitano' },
-	{ value: 'Ninguno', label: 'd. Ninguno' },
-	{ value: 'Prefiero no responder', label: 'e. Prefiero no responder' }
+	{ value: 'Afrodescendiente', label: 'Afrodescendiente' },
+	{ value: 'Indígena', label: 'Indígena' },
+	{ value: 'Rom o gitano', label: 'Rom o gitano' },
+	{ value: 'Prefiero no responder', label: 'Prefiero no responder' }
 ]
 
 // Subgrupos de Afrodescendientes
@@ -174,7 +173,6 @@ export const DISABILITY_TYPES = [
 	{ value: 'sordoceguera', label: 'Sordoceguera' },
 	{ value: 'psicosocial', label: 'Psicosocial' },
 	{ value: 'multiple', label: 'Múltiple' },
-	{ value: 'ninguna', label: 'Ninguna' },
 	{ value: 'prefiero-no-responder', label: 'Prefiero no responder' }
 ]
 

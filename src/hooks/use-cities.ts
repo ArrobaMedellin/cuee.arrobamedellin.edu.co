@@ -27,11 +27,11 @@ export function useCities(departmentId?: number) {
 			)
 		}
 
-		// Ordenar para que Medellín siempre esté de primero
+		// Ordenar para que Medellín siempre esté de primero y el resto alfabéticamente
 		return filtered.sort((a, b) => {
 			if (a.name === 'Medellín') return -1
 			if (b.name === 'Medellín') return 1
-			return 0
+			return a.name.localeCompare(b.name)
 		})
 	}, [cities, departmentId, searchQuery])
 

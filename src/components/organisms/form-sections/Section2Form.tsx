@@ -17,7 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
-import { GENDER_IDENTITY_OPTIONS } from '@/constants'
+import { DOCUMENT_TYPE_OPTIONS, GENDER_IDENTITY_OPTIONS } from '@/constants'
 import { useCities } from '@/hooks/use-cities'
 import { useCommunes } from '@/hooks/use-communes'
 import { useConditionalFields } from '@/hooks/use-conditional-fields'
@@ -69,6 +69,7 @@ export function Section2Form() {
 			commune: '',
 			phone: '',
 			gender: '',
+			isPregnant: '',
 			sexualOrientation: '',
 			genderIdentity: '',
 			representativeFirstName: '',
@@ -119,7 +120,15 @@ export function Section2Form() {
 	}, [selectedCommuneId, communes.communes, form])
 
 	const birthDate = form.watch('birthDate')
+	const gender = form.watch('gender')
 	const { showRepresentativeFields } = useConditionalFields(birthDate)
+
+	// Limpiar campo de embarazo si no es mujer
+	useEffect(() => {
+		if (gender !== 'Femenino') {
+			form.setValue('isPregnant', '')
+		}
+	}, [gender, form])
 
 	const onSubmit = (values: Section2Form) => {
 		setSectionData('section2', values)
@@ -149,11 +158,6 @@ export function Section2Form() {
 		setSelectedCityId(cityId)
 		setSelectedCommuneId(undefined)
 		form.setValue('commune', '')
-		form.setValue('neighborhood', '')
-	}
-
-	const handleCommuneChange = (communeId: number) => {
-		setSelectedCommuneId(communeId)
 		form.setValue('neighborhood', '')
 	}
 
@@ -238,7 +242,7 @@ export function Section2Form() {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{allCities.cities
+												{allCities.filteredCities
 													.filter(city => {
 														// Solo ciudades de departamentos de Colombia
 														const department = allDepartments.departments.find(
@@ -246,7 +250,6 @@ export function Section2Form() {
 														)
 														return department && department.countryId === 1
 													})
-													.sort((a, b) => a.name.localeCompare(b.name))
 													.map(city => {
 														// Obtener el nombre del departamento para ciudades duplicadas
 														const department = allDepartments.departments.find(
@@ -532,8 +535,14 @@ export function Section2Form() {
 											<FormLabel>Comuna</FormLabel>
 											<Select
 												onValueChange={value => {
-													const communeId = Number(value)
-													handleCommuneChange(communeId)
+													// El valor ahora es el nombre completo (ej: "1 - POPULAR")
+													const commune = communes.communes.find(
+														c => c.name === value
+													)
+													if (commune) {
+														setSelectedCommuneId(commune.id)
+														form.setValue('commune', value)
+													}
 												}}
 											>
 												<FormControl>
@@ -545,7 +554,7 @@ export function Section2Form() {
 													{communes.communes.map(commune => (
 														<SelectItem
 															key={commune.id}
-															value={commune.id.toString()}
+															value={commune.name}
 														>
 															{commune.name}
 														</SelectItem>
@@ -629,17 +638,18 @@ export function Section2Form() {
 											>
 												<FormControl>
 													<SelectTrigger>
-														<SelectValue placeholder='Seleccione' />
+														<SelectValue placeholder='Selecciona tipo' />
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
-													<SelectItem value='CC'>
-														Cédula de Ciudadanía
-													</SelectItem>
-													<SelectItem value='CE'>
-														Cédula de Extranjería
-													</SelectItem>
-													<SelectItem value='PP'>Pasaporte</SelectItem>
+													{DOCUMENT_TYPE_OPTIONS.map(option => (
+														<SelectItem
+															key={option.value}
+															value={option.value}
+														>
+															{option.label}
+														</SelectItem>
+													))}
 												</SelectContent>
 											</Select>
 											<FormMessage />

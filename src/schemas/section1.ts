@@ -17,13 +17,14 @@ export const section1Schema = z
 			.min(1, 'Número de documento es requerido')
 			.regex(/^\d+$/, 'Solo números'),
 		email: z.string().email('Correo electrónico inválido'),
+		emailVerification: z.string().email('Correo electrónico inválido'),
 		countryOfBirth: z.string().min(1, 'País de nacimiento es requerido'),
 		departmentOfBirth: z
 			.string()
 			.min(1, 'Departamento de nacimiento es requerido'),
 		municipalityOfBirth: z
 			.string()
-			.min(1, 'Municipio de nacimiento es requerido'),
+			.min(1, 'Municipio de nacimiento es requerido')
 	})
 	.refine(
 		data => {
@@ -34,8 +35,12 @@ export const section1Schema = z
 		},
 		{
 			message: 'Especifica el otro tipo de documento',
-			path: ['otherDocumentType'],
+			path: ['otherDocumentType']
 		}
 	)
+	.refine(data => data.email === data.emailVerification, {
+		message: 'Los correos electrónicos no coinciden',
+		path: ['emailVerification']
+	})
 
 export type Section1Form = z.infer<typeof section1Schema>

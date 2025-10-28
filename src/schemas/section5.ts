@@ -10,7 +10,7 @@ export const section5Schema = z
 		supportType: z.string().optional(),
 		// Grupos étnicos
 		belongsToEthnicGroup: z.boolean(),
-		ethnicGroups: z.array(z.string()).optional(),
+		ethnicGroups: z.string().optional(),
 		afroSubgroup: z.string().optional(),
 		indigenousPeople: z.string().optional(),
 
@@ -52,14 +52,14 @@ export const section5Schema = z
 		data => {
 			if (
 				data.belongsToEthnicGroup &&
-				(!data.ethnicGroups || data.ethnicGroups.length === 0)
+				(!data.ethnicGroups || data.ethnicGroups.trim() === '')
 			) {
 				return false
 			}
 			return true
 		},
 		{
-			message: 'Selecciona al menos un grupo étnico',
+			message: 'Selecciona un grupo étnico',
 			path: ['ethnicGroups']
 		}
 	)

@@ -5,7 +5,7 @@ export const section6Schema = z.object({
 	selectedCourses: z
 		.array(z.string())
 		.min(1, 'Debe seleccionar al menos un curso')
-		.max(3, 'Puede seleccionar máximo 3 cursos'),
+		.max(1, 'Puede seleccionar máximo 1 curso'),
 
 	// Cómo se enteró de la convocatoria
 	howDidYouHear: z.string().min(1, 'Este campo es requerido'),

@@ -17,6 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
+import { COURSE_MAPPINGS } from '@/constants/courses'
 import type { Section6Form } from '@/schemas/section6'
 import { section6Schema } from '@/schemas/section6'
 import { useFormStore } from '@/stores/formStore'
@@ -126,14 +127,10 @@ export function Section6Form() {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className='text-base font-semibold'>
-								Seleccione uno o máximo 3 cursos/diplomados en los que quiera
-								participar
+								Seleccione una de las siguientes rutas en la que quieras participar
 							</FormLabel>
-							<div className='text-sm text-muted-foreground mb-4'>
-								Puede seleccionar hasta 3 opciones haciendo clic en cada una
-							</div>
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-								{courseOptions.map(option => (
+								{COURSE_MAPPINGS.map(option => (
 									<FormItem
 										key={option.value}
 										className='flex flex-row items-start space-x-3 space-y-0'
@@ -143,8 +140,8 @@ export function Section6Form() {
 												checked={field.value?.includes(option.value)}
 												onCheckedChange={checked => {
 													if (checked) {
-														// Verificar que no exceda el límite de 3
-														if ((field.value || []).length < 3) {
+														// Verificar que no exceda el límite de 1
+														if ((field.value || []).length < 1) {
 															field.onChange([
 																...(field.value || []),
 																option.value
@@ -171,7 +168,7 @@ export function Section6Form() {
 								))}
 							</div>
 							<div className='text-sm text-muted-foreground mt-2'>
-								Cursos seleccionados: {selectedCourses?.length || 0}/3
+								Cursos seleccionados: {selectedCourses?.length || 0}/1
 							</div>
 							<FormMessage />
 						</FormItem>

@@ -7,93 +7,104 @@ export interface CourseMapping {
 	apiId: string // This should match the course IDs from your API
 }
 
-// Course mappings - Update the apiId values to match your actual API course IDs
+// Course mappings - Oracle Cloud Infrastructure courses
 export const COURSE_MAPPINGS: CourseMapping[] = [
 	{
-		value: 'big-data-none-little',
-		label: 'Big data; None data y Little data',
-		apiId: 'course-bigdata-001' // Replace with actual API ID
+		value: 'nuevo-oracle-cloud-inicia-aqui',
+		label: 'Nuevo en Oracle Cloud – Inicia aquí',
+		apiId: '30502580',
 	},
 	{
-		value: 'captura-analisis-big-data',
-		label: 'Captura y análisis de datos en Big Data',
-		apiId: 'course-analytics-001' // Replace with actual API ID
+		value: 'asociado-oci-foundations',
+		label: 'Conviértete en asociado de OCI Foundations',
+		apiId: '30502581',
 	},
 	{
-		value: 'ciencia-ingenieria-datos',
-		label: 'Ciencia e Ingeniería de Datos',
-		apiId: 'course-datascience-001' // Replace with actual API ID
+		value: 'asociado-oci-ai-foundations',
+		label: 'Conviértete en asociado de OCI AI Foundations',
+		apiId: '30502582',
 	},
 	{
-		value: 'inteligencia-negocios-bi',
-		label: 'Inteligencia de Negocios BI',
-		apiId: 'course-bi-001' // Replace with actual API ID
+		value: 'asociado-oracle-data-platform-foundations',
+		label: 'Conviértase en asociado de Oracle Data Platform Foundations',
+		apiId: '30502583',
 	},
 	{
-		value: 'excel-avanzado',
-		label: 'Excel Avanzado para la gestión y optimización de datos',
-		apiId: 'course-excel-advanced-001' // Replace with actual API ID
+		value: 'arquitecto-asociado-oci',
+		label: 'Conviértete en arquitecto asociado de OCI',
+		apiId: '30502584',
 	},
 	{
-		value: 'que-es-ia',
-		label: 'Que es la inteligencia artificial',
-		apiId: 'course-ai-intro-001' // Replace with actual API ID
+		value: 'arquitecto-profesional-oci-2024',
+		label: 'Conviértete en un arquitecto profesional de OCI (2024)',
+		apiId: '30502585',
 	},
 	{
-		value: 'marketing-digital',
-		label: 'Preparando los negocios hacia el marketing digital',
-		apiId: 'course-marketing-001' // Replace with actual API ID
+		value: 'desarrollo-aplicaciones-oci',
+		label: 'Desarrollo de aplicaciones en OCI',
+		apiId: '30502586',
 	},
 	{
-		value: 'excel-intermedio',
-		label: 'Excel intermedio: fundamentos para la formulación y análisis',
-		apiId: 'course-excel-intermediate-001' // Replace with actual API ID
+		value: 'profesional-devops-oci',
+		label: 'Conviértete en un profesional de DevOps de OCI',
+		apiId: '30502587',
 	},
 	{
-		value: 'crea-tu-ia',
-		label: 'Crea tu propia IA',
-		apiId: 'course-ai-create-001' // Replace with actual API ID
+		value: 'profesional-desarrollador-oracle-apex',
+		label: 'Conviértase en un profesional desarrollador de Oracle APEX',
+		apiId: '30502588',
 	},
 	{
-		value: 'ingles-basico',
-		label: 'Inglés Básico',
-		apiId: 'course-english-basic-001' // Replace with actual API ID
+		value: 'profesional-ia-generativa-oci',
+		label: 'Conviértete en un profesional de la IA generativa de OCI',
+		apiId: '30502589',
 	},
 	{
-		value: 'ingles-intermedio',
-		label: 'Inglés intermedio',
-		apiId: 'course-english-intermediate-001' // Replace with actual API ID
+		value: 'profesional-ciencia-datos-oci',
+		label: 'Conviértete en un profesional de la ciencia de datos de OCI',
+		apiId: '30502590',
 	},
 	{
-		value: 'ingles-turismo',
-		label: 'Inglés básico para el sector turístico',
-		apiId: 'course-english-tourism-001' // Replace with actual API ID
+		value: 'profesional-oracle-ai-vector-search',
+		label: 'Conviértase en un profesional de Oracle AI Vector Search',
+		apiId: '30502591',
 	},
 	{
-		value: 'primeros-auxilios-psicologicos',
-		label: 'Primeros auxilios psicológicos',
-		apiId: 'course-psychology-001' // Replace with actual API ID
+		value: 'profesional-servicios-base-datos-nube-oracle',
+		label:
+			'Conviértase en un profesional de los servicios de base de datos en la nube de Oracle',
+		apiId: '30502592',
 	},
 	{
-		value: 'vida-independiente',
-		label: 'Vida independiente y toma de decisiones con apoyo',
-		apiId: 'course-independent-life-001' // Replace with actual API ID
+		value: 'profesional-oracle-autonomous-database',
+		label: 'Conviértase en un profesional de Oracle Autonomous Database',
+		apiId: '30502593',
 	},
 	{
-		value: 'buenas-practicas-ambientales',
-		label: 'Buenas prácticas ambientales en el hogar',
-		apiId: 'course-environment-001' // Replace with actual API ID
+		value: 'profesional-seguridad-nube',
+		label: 'Conviértete en un profesional de la seguridad en la nube',
+		apiId: '30502594',
 	},
 	{
-		value: 'economia-circular',
-		label: 'Herramientas prácticas de economía circular',
-		apiId: 'course-circular-economy-001' // Replace with actual API ID
+		value: 'fundamentos-proceso-hcm-oracle-fusion',
+		label: 'Fundamentos del proceso HCM de Oracle Fusion Cloud Applications',
+		apiId: '30502595',
 	},
 	{
-		value: 'conmemorando-etnico',
-		label: 'Conmemorando lo étnico',
-		apiId: 'course-ethnic-001' // Replace with actual API ID
-	}
+		value: 'fundamentos-proceso-erp-oracle-fusion',
+		label: 'Fundamentos del proceso ERP de Oracle Fusion Cloud Applications',
+		apiId: '30502596',
+	},
+	{
+		value: 'fundamentos-proceso-scm-oracle-fusion',
+		label: 'Fundamentos del proceso SCM de Oracle Fusion Cloud Applications',
+		apiId: '30502597',
+	},
+	{
+		value: 'fundamentos-proceso-cx-oracle-fusion',
+		label: 'Fundamentos del proceso CX de Oracle Fusion Cloud Applications',
+		apiId: '30502598',
+	},
 ]
 
 // Helper function to get API ID from form value

@@ -41,10 +41,46 @@ export function RegistrationForm() {
 	const { isSectionValid } = useValidateSection()
 	const [showIneligibleDialog, setShowIneligibleDialog] = useState(false)
 	const [showSubmitDialog, setShowSubmitDialog] = useState(false)
+	const [showMaxAttemptsDialog, setShowMaxAttemptsDialog] = useState(false)
+	const [ineligibilityAttempts, setIneligibilityAttempts] = useState(0)
 	const router = useRouter()
 
 	// Verificar elegibilidad después de completar section2
-	const isEligible = useMemo(() => isEligibleForFullProcess(data), [data])
+	const isEligible = useMemo(() => {
+		const eligible = isEligibleForFullProcess(data)
+		console.log('🔍 Verificación de elegibilidad:', {
+			eligible,
+			section2: data.section2,
+			age: data.section2?.birthDate
+				? (() => {
+						const birth = new Date(data.section2.birthDate)
+						const today = new Date()
+						let age = today.getFullYear() - birth.getFullYear()
+						const monthDiff = today.getMonth() - birth.getMonth()
+						if (
+							monthDiff < 0 ||
+							(monthDiff === 0 && today.getDate() < birth.getDate())
+						) {
+							age--
+						}
+						return age
+				  })()
+				: null,
+			cityOfResidence: data.section2?.cityOfResidence,
+			bornCity: data.section2?.bornCity,
+			worksInMedellin: data.section2?.worksInMedellin,
+		})
+
+		// Resetear contador si el usuario ahora es elegible
+		if (eligible && ineligibilityAttempts > 0) {
+			console.log(
+				'✅ Usuario ahora es elegible - reseteando contador de intentos'
+			)
+			setIneligibilityAttempts(0)
+		}
+
+		return eligible
+	}, [data, ineligibilityAttempts])
 
 	const handleFormSubmit = async () => {
 		try {
@@ -154,19 +190,44 @@ export function RegistrationForm() {
 
 	// Check eligibility after completing section 2
 	const handleNext = () => {
+		console.log('🚀 handleNext llamado', {
+			currentSection,
+			isEligible,
+			nextKey,
+		})
+
 		if (currentSection === 2) {
 			// Check if user is eligible to continue
+			console.log('✅ Validando elegibilidad en paso 2')
 			if (!isEligible) {
+				console.log('❌ Usuario NO elegible - mostrando diálogo')
+
+				// Incrementar contador de intentos
+				const newAttempts = ineligibilityAttempts + 1
+				setIneligibilityAttempts(newAttempts)
+
+				console.log(`⚠️ Intento ${newAttempts} de 2`)
+
+				// Si ya llegó al máximo de intentos (2), forzar envío automático
+				if (newAttempts >= 2) {
+					console.log('Máximo de intentos alcanzado - mostrando diálogo final')
+					setShowMaxAttemptsDialog(true)
+					return
+				}
+
 				setShowIneligibleDialog(true)
 				return
 			}
+			console.log('✅ Usuario elegible - continuando al siguiente paso')
 		}
 		goto(nextKey)
 	}
 
 	const handlePartialSubmit = async () => {
 		// Submit only section 1 and 2 data for ineligible users
+		console.log('📤 Enviando información parcial (section1 + section2)')
 		setShowIneligibleDialog(false)
+		setShowMaxAttemptsDialog(false)
 
 		try {
 			// Create partial data with only section1 and section2
@@ -174,6 +235,8 @@ export function RegistrationForm() {
 				section1: data.section1,
 				section2: data.section2,
 			}
+
+			console.log('📦 Datos parciales a enviar:', partialData)
 
 			await submitForm(partialData, () => {
 				// Redireccionar a la página de confirmación después del envío exitoso
@@ -184,11 +247,15 @@ export function RegistrationForm() {
 				'Tu información básica ha sido enviada. Gracias por tu interés en nuestros programas.'
 			)
 		} catch (error) {
-			console.error('Error submitting partial data:', error)
+			console.error('❌ Error submitting partial data:', error)
 			toast.error(
 				'Hubo un error al enviar la información. Por favor intenta nuevamente.'
 			)
 		}
+	}
+
+	const handleFormAttempts = async () => {
+		router.push('/thanks')
 	}
 
 	return (
@@ -200,14 +267,42 @@ export function RegistrationForm() {
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>Requisitos no cumplidos</AlertDialogTitle>
-						<AlertDialogDescription>
-							{getIneligibilityMessage(data)}
+						<AlertDialogDescription className='text-black'>
+							<span>{getIneligibilityMessage(data)}</span>
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Revisar información</AlertDialogCancel>
 						<AlertDialogAction onClick={handlePartialSubmit}>
 							Enviar información básica
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
+			<AlertDialog
+				open={showMaxAttemptsDialog}
+				onOpenChange={setShowMaxAttemptsDialog}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Requisitos no cumplidos</AlertDialogTitle>
+						<AlertDialogDescription className='text-black'>
+							<span className='mb-3 block'>
+								Gracias por tu interés en hacer parte de @Medellín. En este
+								momento, los cursos están dirigidos a personas mayores de 18
+								años que hayan nacido en Medellín, residan en la ciudad o
+								trabajen en alguna de sus empresas, según los criterios
+								definidos para esta convocatoria.
+							</span>
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogAction
+							onClick={handleFormAttempts}
+							className='bg-primary hover:bg-primary/90'
+						>
+							Cerrar
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

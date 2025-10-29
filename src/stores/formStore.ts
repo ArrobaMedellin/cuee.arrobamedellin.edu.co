@@ -42,6 +42,7 @@ const initialData: Partial<RegistrationFormData> = {
 		neighborhood: '',
 		commune: '',
 		phone: '',
+		worksInMedellin: false,
 		gender: '',
 		isPregnant: '',
 		sexualOrientation: '',

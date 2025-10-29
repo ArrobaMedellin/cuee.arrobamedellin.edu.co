@@ -368,6 +368,16 @@ export function mapFormDataToDto(
 	// Calculate age from birth date
 	const age = section2?.birthDate ? calculateAge(section2.birthDate) || 0 : 0
 
+	// Detectar si es un envío parcial (solo section1 y section2)
+	const isPartialSubmit = !section3 && !section4 && !section5 && !section6
+
+	console.log('🗺️ Mapper ejecutándose:', {
+		isPartialSubmit,
+		hasSection1: !!section1,
+		hasSection2: !!section2,
+		hasSection3: !!section3,
+	})
+
 	// Map course names to IDs using the configuration
 	const courseIds = getCourseApiIds(section6?.selectedCourses || [])
 
@@ -408,7 +418,10 @@ export function mapFormDataToDto(
 		document: section1?.documentNumber || '',
 
 		// Datos de nacimiento
-		birthCountry: section2?.countryOfResidence || 'Colombia',
+		birthCountry:
+			section2?.countryOfResidence ||
+			section3?.countryOfResidence ||
+			'Colombia',
 		birthDepartment:
 			section2?.departmentOfResidence ||
 			section3?.departmentOfResidence ||
@@ -487,24 +500,32 @@ export function mapFormDataToDto(
 		isVeteran: boolToSiNo(section5?.isVeteran),
 		isHeadOfHousehold: boolToSiNo(section4?.isHeadOfHousehold),
 
-		// Ubicación de residencia
-		stratum: section3?.stratum,
+		// Ubicación de residencia - con valores por defecto para envío parcial
+		stratum: section3?.stratum || (isPartialSubmit ? 'N/A' : ''),
 		residenceCountry:
 			section2?.countryOfResidence ||
 			section3?.countryOfResidence ||
 			'Colombia',
 		residenceDepartment:
-			section2?.departmentOfResidence || section3?.departmentOfResidence || '',
+			section2?.departmentOfResidence ||
+			section3?.departmentOfResidence ||
+			(isPartialSubmit ? 'N/A' : ''),
 		residenceMunicipality:
-			section2?.cityOfResidence || section3?.cityOfResidence || '',
-		neighborhood: section2?.neighborhood || section3?.neighborhood,
-		commune: section2?.commune || section3?.commune,
+			section2?.cityOfResidence ||
+			section3?.cityOfResidence ||
+			(isPartialSubmit ? 'N/A' : ''),
+		neighborhood:
+			section2?.neighborhood ||
+			section3?.neighborhood ||
+			(isPartialSubmit ? 'N/A' : ''),
+		commune:
+			section2?.commune || section3?.commune || (isPartialSubmit ? 'N/A' : ''),
 
-		// Campos de dirección
-		addressType: section3?.addressType || 'CARRERA',
-		addressNumber1: section3?.addressNumber1 || 'N/A',
-		addressNumber2: section3?.addressNumber2 || 'N/A',
-		addressNumber3: section3?.addressNumber3 || 'N/A',
+		// Campos de dirección - con valores por defecto para envío parcial
+		addressType: section3?.addressType || (isPartialSubmit ? 'N/A' : 'CARRERA'),
+		addressNumber1: section3?.addressNumber1 || (isPartialSubmit ? 'N/A' : ''),
+		addressNumber2: section3?.addressNumber2 || (isPartialSubmit ? 'N/A' : ''),
+		addressNumber3: section3?.addressNumber3 || (isPartialSubmit ? 'N/A' : ''),
 		...addressFields,
 
 		// Contacto

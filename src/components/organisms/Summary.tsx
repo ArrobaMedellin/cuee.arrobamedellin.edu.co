@@ -10,8 +10,9 @@ import type {
 	Section4,
 	Section5,
 	Section6,
-	Section7
+	Section7,
 } from '@/types/form'
+import { calculateAge } from '@/utils/age'
 
 type Primitive = string | number | boolean | null | undefined
 type SectionData =
@@ -23,6 +24,21 @@ type SectionData =
 	| Section5
 	| Section6
 	| Section7
+
+// Mapeo de valores de "Cómo se enteró" a sus labels
+const howDidYouHearLabels: Record<string, string> = {
+	facebook: 'Redes sociales - Facebook',
+	'x-twitter': 'Redes sociales - X',
+	instagram: 'Redes sociales - Instagram',
+	linkedin: 'Redes sociales - Linkedin',
+	tiktok: 'Redes sociales - TikTok',
+	'medios-digitales': 'Medios de comunicación digitales',
+	'medios-tradicionales':
+		'Medios de comunicación tradicionales (radio, televisión, prensa)',
+	recomendacion: 'Recomendación de un conocido',
+	'stand-informativo': 'Stand informativo en algún lugar de la ciudad',
+	otro: 'Otro',
+}
 
 function display(value: Primitive | string[] | undefined): string {
 	if (Array.isArray(value)) return value.length ? value.join(', ') : '—'
@@ -38,7 +54,7 @@ function hasRealData(section: SectionData | undefined): boolean {
 
 function Kv({
 	label,
-	value
+	value,
 }: {
 	label: string
 	value: Primitive | string[] | undefined
@@ -63,7 +79,9 @@ export function Summary() {
 	const s4 = data.section4
 	const s5 = data.section5
 	const s6 = data.section6
-	const s7 = data.section7
+
+	// Calcular edad si hay fecha de nacimiento
+	const calculatedAge = s2?.birthDate ? calculateAge(s2.birthDate) : null
 
 	return (
 		<div className='space-y-6'>
@@ -99,18 +117,6 @@ export function Summary() {
 							label='Correo electrónico'
 							value={s1?.email}
 						/>
-						<Kv
-							label='País de nacimiento'
-							value={s1?.countryOfBirth}
-						/>
-						<Kv
-							label='Departamento de nacimiento'
-							value={s1?.departmentOfBirth}
-						/>
-						<Kv
-							label='Municipio de nacimiento'
-							value={s1?.municipalityOfBirth}
-						/>
 					</CardContent>
 				</Card>
 			)}
@@ -127,7 +133,7 @@ export function Summary() {
 						/>
 						<Kv
 							label='Edad'
-							value={s2?.age}
+							value={calculatedAge !== null ? calculatedAge : '—'}
 						/>
 						<Kv
 							label='Ciudad de nacimiento'
@@ -221,31 +227,36 @@ export function Summary() {
 				</Card>
 			)}
 
-			{s21 && hasRealData(s21) && (
-				<Card>
-					<CardHeader>
-						<CardTitle>Información del Representante</CardTitle>
-					</CardHeader>
-					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-						<Kv
-							label='Nombres del representante'
-							value={s21?.representativeFirstName}
-						/>
-						<Kv
-							label='Tipo de documento'
-							value={s21?.representativeDocumentType}
-						/>
-						<Kv
-							label='Número de documento'
-							value={s21?.representativeDocumentNumber}
-						/>
-						<Kv
-							label='Correo electrónico'
-							value={s21?.representativeEmail}
-						/>
-					</CardContent>
-				</Card>
-			)}
+			{s21 &&
+				hasRealData(s21) &&
+				(s21.representativeFirstName ||
+					s21.representativeDocumentType ||
+					s21.representativeDocumentNumber ||
+					s21.representativeEmail) && (
+					<Card>
+						<CardHeader>
+							<CardTitle>Información del Representante</CardTitle>
+						</CardHeader>
+						<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+							<Kv
+								label='Nombres del representante'
+								value={s21?.representativeFirstName}
+							/>
+							<Kv
+								label='Tipo de documento'
+								value={s21?.representativeDocumentType}
+							/>
+							<Kv
+								label='Número de documento'
+								value={s21?.representativeDocumentNumber}
+							/>
+							<Kv
+								label='Correo electrónico'
+								value={s21?.representativeEmail}
+							/>
+						</CardContent>
+					</Card>
+				)}
 
 			{s3 && hasRealData(s3) && (
 				<Card>
@@ -253,28 +264,6 @@ export function Summary() {
 						<CardTitle>Ubicación y Residencia</CardTitle>
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-						<Kv
-							label='País de residencia'
-							value={s3?.countryOfResidence}
-						/>
-						<Kv
-							label='Departamento'
-							value={s3?.departmentOfResidence}
-						/>
-						<Kv
-							label='Ciudad'
-							value={s3?.cityOfResidence}
-						/>
-						<Kv
-							label='Barrio'
-							value={s3?.neighborhood}
-						/>
-						{s3?.commune && (
-							<Kv
-								label='Comuna'
-								value={s3?.commune}
-							/>
-						)}
 						<Kv
 							label='Estrato'
 							value={s3?.stratum}
@@ -293,10 +282,6 @@ export function Summary() {
 									.trim()
 									.replace(/\s+/g, ' ')
 							}
-						/>
-						<Kv
-							label='Ciudad de nacimiento'
-							value={s3?.birthCity}
 						/>
 					</CardContent>
 				</Card>
@@ -532,43 +517,13 @@ export function Summary() {
 						<Kv
 							label='¿Cómo se enteró de la convocatoria?'
 							value={
-								s6.howDidYouHear === 'Otro' ? s6.otherSource : s6.howDidYouHear
+								s6.howDidYouHear
+									? s6.howDidYouHear === 'otro'
+										? s6.otherSource || '—'
+										: howDidYouHearLabels[s6.howDidYouHear] || s6.howDidYouHear
+									: '—'
 							}
 						/>
-					</CardContent>
-				</Card>
-			)}
-
-			{s7 && hasRealData(s7) && (
-				<Card>
-					<CardHeader>
-						<CardTitle>Información Académica</CardTitle>
-					</CardHeader>
-					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-						<Kv
-							label='Año de graduación de bachillerato'
-							value={s7.graduationYear}
-						/>
-						<Kv
-							label='Institución donde se graduó'
-							value={s7.graduatedFrom}
-						/>
-						<Kv
-							label='¿Tiene ICFES Pro?'
-							value={s7.hasIcfesPro}
-						/>
-						{s7.hasIcfesPro === 'SI' && s7.icfesProScore && (
-							<Kv
-								label='Puntaje ICFES Pro'
-								value={s7.icfesProScore}
-							/>
-						)}
-						{s7.hasIcfesPro === 'SI' && s7.icfesProYear && (
-							<Kv
-								label='Año ICFES Pro'
-								value={s7.icfesProYear}
-							/>
-						)}
 					</CardContent>
 				</Card>
 			)}

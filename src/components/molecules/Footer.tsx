@@ -8,6 +8,7 @@ export default function Foooter() {
 				alt='Logo Arrobamedellín'
 				width={300}
 				height={200}
+				style={{ height: 'auto' }}
 			/>
 		</footer>
 	)

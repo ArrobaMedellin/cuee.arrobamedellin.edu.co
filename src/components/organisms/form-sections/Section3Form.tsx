@@ -6,7 +6,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,13 +14,13 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/components/ui/select'
 import type { Section3Form } from '@/schemas/section3'
 import { section3Schema } from '@/schemas/section3'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section3Form() {
@@ -57,9 +57,34 @@ export function Section3Form() {
 			addressNumber3: '',
 			addressComplement: '',
 			fullAddress: '',
-			birthCity: ''
-		}
+			birthCity: '',
+		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			if (values && Object.keys(values).length > 0) {
+				const submitData = {
+					...values,
+					countryOfResidenceId: selectedCountryId,
+					departmentOfResidenceId: selectedDepartmentId,
+					cityOfResidenceId: selectedCityId,
+					communeId: selectedCommuneId,
+					neighborhoodId: form.getValues('neighborhoodId'),
+				}
+				setSectionData('section3', submitData as Section3Form)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [
+		form,
+		setSectionData,
+		selectedCountryId,
+		selectedDepartmentId,
+		selectedCityId,
+		selectedCommuneId,
+	])
 
 	const onSubmit = (values: Section3Form) => {
 		const submitData = {
@@ -68,7 +93,7 @@ export function Section3Form() {
 			departmentOfResidenceId: selectedDepartmentId,
 			cityOfResidenceId: selectedCityId,
 			communeId: selectedCommuneId,
-			neighborhoodId: form.watch('neighborhoodId')
+			neighborhoodId: form.watch('neighborhoodId'),
 		}
 		setSectionData('section3', submitData)
 	}

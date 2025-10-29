@@ -1,3 +1,9 @@
+import { section1Schema } from '@/schemas/section1'
+import { section2Schema } from '@/schemas/section2'
+import { section3Schema } from '@/schemas/section3'
+import { section4Schema } from '@/schemas/section4'
+import { section5Schema } from '@/schemas/section5'
+import { section6Schema } from '@/schemas/section6'
 import { RegistrationFormData } from '@/types/form'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -159,11 +165,39 @@ export const useFormStore = create<FormStore>()(
 			resetForm: () => set({ data: initialData, currentSection: 1 }),
 			isSectionValid: section => {
 				const sectionData = get().data[section]
-				return sectionData
-					? Object.values(sectionData).every(
-							value => value !== '' && value !== undefined && value !== null
-					  )
-					: false
+				if (!sectionData) return false
+
+				try {
+					// Validar usando los esquemas Zod correspondientes
+					switch (section) {
+						case 'section1':
+							section1Schema.parse(sectionData)
+							return true
+						case 'section2':
+							section2Schema.parse(sectionData)
+							return true
+						case 'section3':
+							section3Schema.parse(sectionData)
+							return true
+						case 'section4':
+							section4Schema.parse(sectionData)
+							return true
+						case 'section5':
+							section5Schema.parse(sectionData)
+							return true
+						case 'section6':
+							section6Schema.parse(sectionData)
+							return true
+						case 'section7':
+						case 'section21':
+							// Estas secciones son opcionales
+							return true
+						default:
+							return false
+					}
+				} catch {
+					return false
+				}
 			},
 		}),
 		{

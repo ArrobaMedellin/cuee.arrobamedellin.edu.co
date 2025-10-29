@@ -7,7 +7,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,7 +15,7 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { AFRO_SUBGROUPS, ETHNIC_GROUPS, INDIGENOUS_PEOPLES } from '@/constants'
@@ -23,6 +23,7 @@ import type { Section5Form } from '@/schemas/section5'
 import { section5Schema } from '@/schemas/section5'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section5Form() {
@@ -55,9 +56,19 @@ export function Section5Form() {
 			isMigrant: false,
 			isPeasant: false,
 			isVendor: false,
-			isVeteran: false
-		}
+			isVeteran: false,
+		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			if (values && Object.keys(values).length > 0) {
+				setSectionData('section5', values as Section5Form)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [form, setSectionData])
 
 	const onSubmit = (values: Section5Form) => {
 		setSectionData('section5', values)
@@ -76,7 +87,7 @@ export function Section5Form() {
 		{ value: 'sordoceguera', label: 'Sordoceguera' },
 		{ value: 'psicosocial', label: 'Psicosocial' },
 		{ value: 'multiple', label: 'Múltiple' },
-		{ value: 'prefiero no responder', label: 'Prefiero no responder' }
+		{ value: 'prefiero no responder', label: 'Prefiero no responder' },
 	]
 
 	const victimizingActOptions = [
@@ -88,11 +99,11 @@ export function Section5Form() {
 		{ value: 'desaparicion-forzada', label: 'Desaparición forzada' },
 		{
 			value: 'reclutamiento-ilegal-menores',
-			label: 'Reclutamiento ilegal de menores'
+			label: 'Reclutamiento ilegal de menores',
 		},
 		{ value: 'mina-antipersonal', label: 'Mina antipersonal' },
 		{ value: 'amenazas', label: 'Amenazas' },
-		{ value: 'prefiero-no-responder', label: 'Prefiero no responder' }
+		{ value: 'prefiero-no-responder', label: 'Prefiero no responder' },
 	]
 
 	const showAfroSubgroup = ethnicGroups === 'Afrodescendiente'
@@ -148,7 +159,7 @@ export function Section5Form() {
 																return checked
 																	? field.onChange([
 																			...(field.value || []),
-																			option.value
+																			option.value,
 																	  ])
 																	: field.onChange(
 																			field.value?.filter(
@@ -362,7 +373,7 @@ export function Section5Form() {
 																return checked
 																	? field.onChange([
 																			...(field.value || []),
-																			option.value
+																			option.value,
 																	  ])
 																	: field.onChange(
 																			field.value?.filter(
@@ -418,24 +429,6 @@ export function Section5Form() {
 										<FormLabel className='text-base'>
 											¿Es población campesina?
 										</FormLabel>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name='isVendor'
-							render={({ field }) => (
-								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-									<div className='space-y-0.5'>
-										<FormLabel className='text-base'>¿Es ventero?</FormLabel>
 									</div>
 									<FormControl>
 										<Switch

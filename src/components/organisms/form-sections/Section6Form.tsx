@@ -7,7 +7,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,13 +15,14 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/components/ui/select'
 import { COURSE_MAPPINGS } from '@/constants/courses'
 import type { Section6Form } from '@/schemas/section6'
 import { section6Schema } from '@/schemas/section6'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section6Form() {
@@ -31,9 +32,19 @@ export function Section6Form() {
 		defaultValues: data.section6 || {
 			selectedCourses: [],
 			howDidYouHear: '',
-			otherSource: ''
-		}
+			otherSource: '',
+		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			if (values && Object.keys(values).length > 0) {
+				setSectionData('section6', values as Section6Form)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [form, setSectionData])
 
 	const onSubmit = (values: Section6Form) => {
 		setSectionData('section6', values)
@@ -42,54 +53,54 @@ export function Section6Form() {
 	const courseOptions = [
 		{
 			value: 'big-data-none-little',
-			label: 'Big data; None data y Little data'
+			label: 'Big data; None data y Little data',
 		},
 		{
 			value: 'captura-analisis-big-data',
-			label: 'Captura y análisis de datos en Big Data'
+			label: 'Captura y análisis de datos en Big Data',
 		},
 		{
 			value: 'ciencia-ingenieria-datos',
-			label: 'Ciencia e Ingeniería de Datos'
+			label: 'Ciencia e Ingeniería de Datos',
 		},
 		{ value: 'inteligencia-negocios-bi', label: 'Inteligencia de Negocios BI' },
 		{
 			value: 'excel-avanzado',
-			label: 'Excel Avanzado para la gestión y optimización de datos'
+			label: 'Excel Avanzado para la gestión y optimización de datos',
 		},
 		{ value: 'que-es-ia', label: 'Que es la inteligencia artificial' },
 		{
 			value: 'marketing-digital',
-			label: 'Preparando los negocios hacia el marketing digital'
+			label: 'Preparando los negocios hacia el marketing digital',
 		},
 		{
 			value: 'excel-intermedio',
-			label: 'Excel intermedio: fundamentos para la formulación y análisis'
+			label: 'Excel intermedio: fundamentos para la formulación y análisis',
 		},
 		{ value: 'crea-tu-ia', label: 'Crea tu propia IA' },
 		{ value: 'ingles-basico', label: 'Inglés Básico' },
 		{ value: 'ingles-intermedio', label: 'Inglés intermedio' },
 		{
 			value: 'ingles-turismo',
-			label: 'Inglés básico para el sector turístico'
+			label: 'Inglés básico para el sector turístico',
 		},
 		{
 			value: 'primeros-auxilios-psicologicos',
-			label: 'Primeros auxilios psicológicos'
+			label: 'Primeros auxilios psicológicos',
 		},
 		{
 			value: 'vida-independiente',
-			label: 'Vida independiente y toma de decisiones con apoyo'
+			label: 'Vida independiente y toma de decisiones con apoyo',
 		},
 		{
 			value: 'buenas-practicas-ambientales',
-			label: 'Buenas prácticas ambientales en el hogar'
+			label: 'Buenas prácticas ambientales en el hogar',
 		},
 		{
 			value: 'economia-circular',
-			label: 'Herramientas prácticas de economía circular'
+			label: 'Herramientas prácticas de economía circular',
 		},
-		{ value: 'conmemorando-etnico', label: 'Conmemorando lo étnico' }
+		{ value: 'conmemorando-etnico', label: 'Conmemorando lo étnico' },
 	]
 
 	const howDidYouHearOptions = [
@@ -101,14 +112,14 @@ export function Section6Form() {
 		{ value: 'medios-digitales', label: 'Medios de comunicación digitales' },
 		{
 			value: 'medios-tradicionales',
-			label: 'Medios de comunicación tradicionales (radio, televisión, prensa)'
+			label: 'Medios de comunicación tradicionales (radio, televisión, prensa)',
 		},
 		{ value: 'recomendacion', label: 'Recomendación de un conocido' },
 		{
 			value: 'stand-informativo',
-			label: 'Stand informativo en algún lugar de la ciudad'
+			label: 'Stand informativo en algún lugar de la ciudad',
 		},
-		{ value: 'otro', label: 'Otro' }
+		{ value: 'otro', label: 'Otro' },
 	]
 
 	const selectedCourses = form.watch('selectedCourses')
@@ -127,7 +138,8 @@ export function Section6Form() {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className='text-base font-semibold'>
-								Seleccione una de las siguientes rutas en la que quieras participar
+								Seleccione una de las siguientes rutas en la que quieras
+								participar
 							</FormLabel>
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
 								{COURSE_MAPPINGS.map(option => (
@@ -144,7 +156,7 @@ export function Section6Form() {
 														if ((field.value || []).length < 1) {
 															field.onChange([
 																...(field.value || []),
-																option.value
+																option.value,
 															])
 														}
 													} else {

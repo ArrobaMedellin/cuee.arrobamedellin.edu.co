@@ -18,6 +18,7 @@ export interface CreateApplicantDto {
 	birthCountry: string
 	birthDepartment: string
 	birthMunicipality: string
+	bornCity: string
 	birthDate: string
 	age: number
 
@@ -39,6 +40,7 @@ export interface CreateApplicantDto {
 
 	// Tecnología y dispositivos
 	hasInternetConnection?: string // 'SI' | 'NO'
+	devices: string[]
 	hasDesktopComputer?: string // 'SI' | 'NO'
 	hasLaptop?: string // 'SI' | 'NO'
 	hasTablet?: string // 'SI' | 'NO'
@@ -64,6 +66,14 @@ export interface CreateApplicantDto {
 	isGenderViolenceVictim?: string // 'SI' | 'NO'
 	isNotInPoblation?: string // 'SI' | 'NO'
 	isBarrister?: string // 'SI' | 'NO'
+	isExcombatant?: string // 'SI' | 'NO'
+	isFamilyOfExcombatant?: string // 'SI' | 'NO'
+	isRefugee?: string // 'SI' | 'NO'
+	isMigrant?: string // 'SI' | 'NO'
+	isPeasant?: string // 'SI' | 'NO'
+	isVendor?: string // 'SI' | 'NO'
+	isVeteran?: string // 'SI' | 'NO'
+	isHeadOfHousehold?: string // 'SI' | 'NO'
 
 	// Ubicación de residencia
 	stratum?: string
@@ -74,6 +84,10 @@ export interface CreateApplicantDto {
 	commune?: string
 
 	// Campos de dirección
+	addressType: string
+	addressNumber1: string
+	addressNumber2: string
+	addressNumber3: string
 	addressField1?: string
 	addressField2?: string
 	addressField3?: string
@@ -87,6 +101,7 @@ export interface CreateApplicantDto {
 
 	// Contacto
 	cellphone: string
+	worksInMedellin?: boolean
 	secondaryCellphone?: string
 	email: string
 	confirmEmail?: string
@@ -129,11 +144,24 @@ export interface CreateApplicantDto {
 	hasPsychosocialDisability?: string // 'SI' | 'NO'
 	hasMultipleDisabilities?: string // 'SI' | 'NO'
 	hasNoDisability?: string // 'SI' | 'NO'
-	prefers_not_to_answer_disability?: string // 'SI' | 'NO'
+	requiresSupport?: string // 'SI' | 'NO'
+	supportType?: string
+	disabilityDescription?: string
+	registeredWithVictimUnit?: string // 'SI' | 'NO'
+	victimRegistrationNumber?: string
 
 	// Cómo se enteró
+	selectedCourses: string[]
+	howDidYouHear: string
 	foundOutAboutCall?: string
 	otherMedium?: string
+
+	// Información académica
+	graduationYear?: string
+	graduatedFrom?: string
+	hasIcfesPro: string
+	icfesProScore?: string
+	icfesProYear?: string
 
 	// Timestamp
 	date?: string
@@ -157,7 +185,7 @@ function mapDevices(devices: string[] = []) {
 		hasLaptop: boolToSiNo(devices.includes('Laptop')),
 		hasTablet: boolToSiNo(devices.includes('Tablet')),
 		hasSmartphone: boolToSiNo(devices.includes('Smartphone')),
-		hasNoDevice: boolToSiNo(devices.includes('Ninguno'))
+		hasNoDevice: boolToSiNo(devices.includes('Ninguno')),
 	}
 }
 
@@ -175,7 +203,7 @@ function mapDisabilityTypes(
 			hasDeafblindness: 'NO',
 			hasPsychosocialDisability: 'NO',
 			hasMultipleDisabilities: 'NO',
-			hasNoDisability: 'SI'
+			hasNoDisability: 'SI',
 		}
 	}
 
@@ -191,7 +219,7 @@ function mapDisabilityTypes(
 			disabilityTypes.includes('Psicosocial')
 		),
 		hasMultipleDisabilities: boolToSiNo(disabilityTypes.includes('Múltiple')),
-		hasNoDisability: 'NO'
+		hasNoDisability: 'NO',
 	}
 }
 
@@ -205,7 +233,7 @@ function mapEthnicity(section5: RegistrationFormData['section5'] | undefined) {
 			isPalenquero: 'NO',
 			isIndigenous: 'NO',
 			isRomGypsy: 'NO',
-			isNotInAnyGroup: 'SI'
+			isNotInAnyGroup: 'SI',
 		}
 	}
 
@@ -227,7 +255,7 @@ function mapEthnicity(section5: RegistrationFormData['section5'] | undefined) {
 			!!section5.indigenousPeople && section5.indigenousPeople.trim() !== ''
 		),
 		isRomGypsy: boolToSiNo(ethnicGroup === 'Rom (gitano)'),
-		isNotInAnyGroup: 'NO'
+		isNotInAnyGroup: 'NO',
 	}
 }
 
@@ -252,7 +280,7 @@ function mapVictimizingActs(
 			hasPhysicalPersonalInjuries: 'NO',
 			isVictimOfTerroristActs: 'NO',
 			hasPsychologicalPersonalInjuries: 'NO',
-			hasConfinement: 'NO'
+			hasConfinement: 'NO',
 		}
 	}
 
@@ -289,7 +317,7 @@ function mapVictimizingActs(
 		hasPsychologicalPersonalInjuries: boolToSiNo(
 			victimizingActs.includes('Lesiones psicológicas')
 		),
-		hasConfinement: boolToSiNo(victimizingActs.includes('Confinamiento'))
+		hasConfinement: boolToSiNo(victimizingActs.includes('Confinamiento')),
 	}
 }
 
@@ -319,7 +347,7 @@ function buildAddressFields(
 				section3.addressOrientation2 || ''
 			} - ${section3.addressNumber3 || ''} ${section3.addressComplement || ''}`
 				.trim()
-				.replace(/\s+/g, ' ')
+				.replace(/\s+/g, ' '),
 	}
 }
 
@@ -327,8 +355,15 @@ function buildAddressFields(
 export function mapFormDataToDto(
 	formData: Partial<RegistrationFormData>
 ): CreateApplicantDto {
-	const { section1, section2, section3, section4, section5, section6 } =
-		formData
+	const {
+		section1,
+		section2,
+		section3,
+		section4,
+		section5,
+		section6,
+		section7,
+	} = formData
 
 	// Calculate age from birth date
 	const age = section2?.birthDate ? calculateAge(section2.birthDate) || 0 : 0
@@ -359,7 +394,7 @@ export function mapFormDataToDto(
 
 	return {
 		// Metadata
-		period: '1', // Default period, you might want to make this configurable
+		period: '32', // Default period, you might want to make this configurable
 		date: new Date().toISOString(),
 
 		// Información personal básica
@@ -373,9 +408,18 @@ export function mapFormDataToDto(
 		document: section1?.documentNumber || '',
 
 		// Datos de nacimiento
-		birthCountry: section1?.countryOfBirth || '',
-		birthDepartment: section1?.departmentOfBirth || '',
-		birthMunicipality: section1?.municipalityOfBirth || '',
+		birthCountry: section2?.countryOfResidence || 'Colombia',
+		birthDepartment:
+			section2?.departmentOfResidence ||
+			section3?.departmentOfResidence ||
+			'N/A',
+		birthMunicipality:
+			section2?.cityOfResidence || section3?.cityOfResidence || 'N/A',
+		bornCity:
+			section2?.bornCity ||
+			section2?.cityOfResidence ||
+			section3?.cityOfResidence ||
+			'N/A',
 		birthDate: section2?.birthDate || '',
 		age,
 
@@ -404,6 +448,7 @@ export function mapFormDataToDto(
 
 		// Tecnología y dispositivos
 		hasInternetConnection: section4?.internetConnection === 'SI' ? 'SI' : 'NO',
+		devices: section4?.devices || [],
 		...deviceFields,
 
 		// Vivienda y ocupación
@@ -428,16 +473,26 @@ export function mapFormDataToDto(
 		isYouthWithRightsRestored: 'NO', // No hay campo específico en el formulario
 		isReinserted: boolToSiNo(section5?.isReintegrated),
 		isPostPenitentiary: 'NO', // No hay campo específico en el formulario
-		isGenderViolenceVictim: 'NO', // Se podría derivar de victimizingActs
+		isGenderViolenceVictim: 'NO', // Movido de section4 a section5, pero no existe en el tipo
 		isNotInPoblation: boolToSiNo(!section4?.belongsToSpecialPopulations),
 		isBarrister: boolToSiNo(
 			section4?.isCertifiedBarrista || section5?.isCertifiedBarrista
 		),
+		isExcombatant: boolToSiNo(section5?.isExcombatant),
+		isFamilyOfExcombatant: boolToSiNo(section5?.isFamilyOfExcombatant),
+		isRefugee: boolToSiNo(section5?.isRefugee),
+		isMigrant: boolToSiNo(section5?.isMigrant),
+		isPeasant: boolToSiNo(section5?.isPeasant),
+		isVendor: boolToSiNo(section5?.isVendor),
+		isVeteran: boolToSiNo(section5?.isVeteran),
+		isHeadOfHousehold: boolToSiNo(section4?.isHeadOfHousehold),
 
 		// Ubicación de residencia
 		stratum: section3?.stratum,
 		residenceCountry:
-			section2?.countryOfResidence || section3?.countryOfResidence || '',
+			section2?.countryOfResidence ||
+			section3?.countryOfResidence ||
+			'Colombia',
 		residenceDepartment:
 			section2?.departmentOfResidence || section3?.departmentOfResidence || '',
 		residenceMunicipality:
@@ -446,10 +501,15 @@ export function mapFormDataToDto(
 		commune: section2?.commune || section3?.commune,
 
 		// Campos de dirección
+		addressType: section3?.addressType || 'CARRERA',
+		addressNumber1: section3?.addressNumber1 || 'N/A',
+		addressNumber2: section3?.addressNumber2 || 'N/A',
+		addressNumber3: section3?.addressNumber3 || 'N/A',
 		...addressFields,
 
 		// Contacto
 		cellphone: section2?.phone || '',
+		worksInMedellin: section2?.worksInMedellin,
 		secondaryCellphone: section2?.representativePhone,
 		email: section1?.email || '',
 		confirmEmail: section1?.emailVerification,
@@ -464,16 +524,51 @@ export function mapFormDataToDto(
 
 		// Discapacidad
 		...disabilityFields,
-		prefers_not_to_answer_disability: 'NO', // No hay campo específico
+		requiresSupport: boolToSiNo(section5?.requiresSupport),
+		supportType: section5?.supportType || undefined,
+		disabilityDescription: section5?.disabilityDescription || undefined,
+		registeredWithVictimUnit: boolToSiNo(section5?.registeredWithVictimUnit),
+		victimRegistrationNumber: section5?.victimRegistrationNumber || undefined,
 
 		// Cómo se enteró
+		selectedCourses: section6?.selectedCourses || [],
+		howDidYouHear: section6?.howDidYouHear || 'N/A',
 		foundOutAboutCall:
-			section6?.howDidYouHear === 'Otro' ? undefined : section6?.howDidYouHear,
+			section6?.howDidYouHear === 'otro' ? undefined : section6?.howDidYouHear,
 		otherMedium:
-			section6?.howDidYouHear === 'Otro' ? section6?.otherSource : undefined,
+			section6?.howDidYouHear === 'otro' ? section6?.otherSource : undefined,
+
+		// Información académica (Section 7) - Solo incluir si tienen valores válidos
+		// graduationYear: debe tener al menos 4 caracteres si se envía
+		...(section7?.graduationYear &&
+		section7.graduationYear.trim() !== '' &&
+		section7.graduationYear.trim().length >= 4
+			? { graduationYear: section7.graduationYear.trim() }
+			: {}),
+		// graduatedFrom: debe tener al menos 1 carácter si se envía
+		...(section7?.graduatedFrom &&
+		section7.graduatedFrom.trim() !== '' &&
+		section7.graduatedFrom.trim().length >= 1
+			? { graduatedFrom: section7.graduatedFrom.trim() }
+			: {}),
+		// hasIcfesPro: siempre se envía, por defecto 'NO'
+		hasIcfesPro: section7?.hasIcfesPro || 'NO',
+		// icfesProScore: solo si hasIcfesPro es 'SI' y tiene valor
+		...(section7?.hasIcfesPro === 'SI' &&
+		section7?.icfesProScore &&
+		section7.icfesProScore.trim() !== ''
+			? { icfesProScore: section7.icfesProScore.trim() }
+			: {}),
+		// icfesProYear: solo si hasIcfesPro es 'SI' y tiene al menos 4 caracteres
+		...(section7?.hasIcfesPro === 'SI' &&
+		section7?.icfesProYear &&
+		section7.icfesProYear.trim() !== '' &&
+		section7.icfesProYear.trim().length >= 4
+			? { icfesProYear: section7.icfesProYear.trim() }
+			: {}),
 
 		// Cursos seleccionados
-		courseIds
+		courseIds,
 	}
 }
 

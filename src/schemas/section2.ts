@@ -12,16 +12,19 @@ export const section2Schema = z
 			),
 		age: z.number().optional(), // Calculada automáticamente
 		bornCity: z.string().min(1, 'Ciudad de nacimiento es requerida'),
-		countryOfResidence: z.string().optional(),
-		departmentOfResidence: z.string().optional(),
+		countryOfResidence: z.string().min(1, 'País de residencia es requerido'),
+		departmentOfResidence: z
+			.string()
+			.min(1, 'Departamento de residencia es requerido'),
 		cityOfResidence: z.string().min(1, 'Ciudad dónde vive es requerida'),
-		commune: z.string().optional(),
-		neighborhood: z.string().optional(),
+		commune: z.string().min(1, 'Comuna es requerida'),
+		neighborhood: z.string().min(1, 'Barrio es requerido'),
 		neighborhoodId: z.number().optional(),
 		phone: z
 			.string()
 			.min(1, 'Teléfono es requerido')
 			.regex(/^\d+$/, 'Solo números'),
+		worksInMedellin: z.boolean().optional(), // ¿Trabaja para alguna empresa de Medellín?
 		gender: z.string().min(1, 'Sexo es requerido'),
 		isPregnant: z.string().optional(), // Campo condicional para embarazo
 		sexualOrientation: z.string().min(1, 'Orientación sexual es requerida'),
@@ -32,7 +35,7 @@ export const section2Schema = z
 		representativeDocumentType: z.string().optional(),
 		representativeDocumentNumber: z.string().optional(),
 		representativeEmail: z.string().optional(),
-		representativePhone: z.string().optional()
+		representativePhone: z.string().optional(),
 	})
 	.superRefine((data, ctx) => {
 		// Si selecciona "Otro" en orientación sexual, debe especificar
@@ -40,7 +43,7 @@ export const section2Schema = z
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: 'Especifica la otra orientación sexual',
-				path: ['otherSexualOrientation']
+				path: ['otherSexualOrientation'],
 			})
 		}
 
@@ -51,34 +54,34 @@ export const section2Schema = z
 					code: z.ZodIssueCode.custom,
 					message:
 						'Nombres del representante es requerido para menores de edad',
-					path: ['representativeFirstName']
+					path: ['representativeFirstName'],
 				})
 			}
 			if (!data.representativeDocumentType) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Tipo de documento del representante es requerido',
-					path: ['representativeDocumentType']
+					path: ['representativeDocumentType'],
 				})
 			}
 			if (!data.representativeDocumentNumber) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Número de documento del representante es requerido',
-					path: ['representativeDocumentNumber']
+					path: ['representativeDocumentNumber'],
 				})
 			} else if (!/^\d+$/.test(data.representativeDocumentNumber)) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Solo números permitidos',
-					path: ['representativeDocumentNumber']
+					path: ['representativeDocumentNumber'],
 				})
 			}
 			if (!data.representativeEmail) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Correo del representante es requerido',
-					path: ['representativeEmail']
+					path: ['representativeEmail'],
 				})
 			} else {
 				// Validar formato de email
@@ -87,7 +90,7 @@ export const section2Schema = z
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
 						message: 'Correo electrónico inválido',
-						path: ['representativeEmail']
+						path: ['representativeEmail'],
 					})
 				}
 			}
@@ -95,13 +98,13 @@ export const section2Schema = z
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Teléfono del representante es requerido',
-					path: ['representativePhone']
+					path: ['representativePhone'],
 				})
 			} else if (!/^\d+$/.test(data.representativePhone)) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Solo números permitidos en el teléfono',
-					path: ['representativePhone']
+					path: ['representativePhone'],
 				})
 			}
 		}

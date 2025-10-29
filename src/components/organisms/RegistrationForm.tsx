@@ -10,30 +10,45 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger
+	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { useFormSubmission } from '@/hooks/use-form-submission'
+import { useValidateSection } from '@/hooks/use-validate-section'
 import { useFormStore } from '@/stores/formStore'
 import { useModalStore } from '@/stores/modalStore'
-import { useMemo } from 'react'
+import { RegistrationFormData } from '@/types/form'
+import {
+	getIneligibilityMessage,
+	isEligibleForFullProcess,
+} from '@/utils/eligibility'
+import { Loader2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import { Section1Form } from './form-sections/Section1Form'
 import { Section2Form } from './form-sections/Section2Form'
 import { Section3Form } from './form-sections/Section3Form'
 import { Section4Form } from './form-sections/Section4Form'
 import { Section5Form } from './form-sections/Section5Form'
 import { Section6Form } from './form-sections/Section6Form'
-import { Section7Form } from './form-sections/Section7Form'
 import { Summary } from './Summary'
 
 export function RegistrationForm() {
 	const { currentSection, setCurrentSection, data } = useFormStore()
 	const { hasAcceptedTerms } = useModalStore()
 	const { isSubmitting, submitForm } = useFormSubmission()
+	const { isSectionValid, sectionErrors } = useValidateSection()
+	const [showIneligibleDialog, setShowIneligibleDialog] = useState(false)
+	const [showSubmitDialog, setShowSubmitDialog] = useState(false)
+
+	// Verificar elegibilidad después de completar section2
+	const isEligible = useMemo(() => isEligibleForFullProcess(data), [data])
 
 	const handleFormSubmit = async () => {
 		try {
 			await submitForm(data)
+			// Cerrar el diálogo después de un envío exitoso
+			setShowSubmitDialog(false)
 		} catch (err) {
 			// Error handling is done in the hook
 			console.error('Form submission failed:', err)
@@ -46,44 +61,44 @@ export function RegistrationForm() {
 				key: 1,
 				title: 'Información Personal',
 				description: 'Datos básicos',
-				tooltip: 'Nombres, apellidos y documento'
+				tooltip: 'Nombres, apellidos y documento',
 			},
 			{
 				key: 2,
 				title: 'Datos Personales',
 				description: 'Contacto y perfil',
-				tooltip: 'Nacimiento, contacto, género y representante (si aplica)'
+				tooltip: 'Nacimiento, contacto, género y representante (si aplica)',
 			},
 			{
 				key: 3,
 				title: 'Ubicación',
 				description: 'Dirección y nacimiento',
-				tooltip: 'Residencia y ciudad de nacimiento'
+				tooltip: 'Residencia y ciudad de nacimiento',
 			},
 			{
 				key: 4,
 				title: 'Socioeconómica',
 				description: 'Condiciones y hogar',
-				tooltip: 'Salud, vivienda, hijos'
+				tooltip: 'Salud, vivienda, hijos',
 			},
 			{
 				key: 5,
 				title: 'Población y Etnias',
 				description: 'Discapacidad y pertenencia étnica',
-				tooltip: 'Discapacidad y pertenencia étnica'
+				tooltip: 'Discapacidad y pertenencia étnica',
 			},
 			{
 				key: 6,
 				title: 'Elección de Cursos',
 				description: 'Selección de formación',
-				tooltip: 'Cursos y cómo se enteró'
+				tooltip: 'Cursos y cómo se enteró',
 			},
 			{
 				key: 7,
 				title: 'Resumen',
 				description: 'Verificación final',
-				tooltip: 'Revisa y envía'
-			}
+				tooltip: 'Revisa y envía',
+			},
 		]
 
 		return baseSteps
@@ -107,8 +122,6 @@ export function RegistrationForm() {
 				return <Section5Form />
 			case 6:
 				return <Section6Form />
-			case 7:
-				return <Section7Form />
 			case 8:
 				return <Summary />
 			default:
@@ -134,8 +147,69 @@ export function RegistrationForm() {
 	const nextKey = getNextStep()
 	const prevKey = getPrevStep()
 
+	// Check eligibility after completing section 2
+	const handleNext = () => {
+		if (currentSection === 2) {
+			// Check if user is eligible to continue
+			if (!isEligible) {
+				setShowIneligibleDialog(true)
+				return
+			}
+		}
+		goto(nextKey)
+	}
+
+	const handlePartialSubmit = async () => {
+		// Submit only section 1 and 2 data for ineligible users
+		setShowIneligibleDialog(false)
+
+		try {
+			// Create partial data with only section1 and section2
+			const partialData: Partial<RegistrationFormData> = {
+				section1: data.section1,
+				section2: data.section2,
+			}
+
+			await submitForm(partialData)
+
+			toast.success(
+				'Tu información básica ha sido enviada. Gracias por tu interés en nuestros programas.'
+			)
+
+			// Reset form after successful submission
+			setTimeout(() => {
+				window.location.reload()
+			}, 2000)
+		} catch (error) {
+			console.error('Error submitting partial data:', error)
+			toast.error(
+				'Hubo un error al enviar la información. Por favor intenta nuevamente.'
+			)
+		}
+	}
+
 	return (
 		<div className='mx-auto max-w-6xl p-6 min-h-[70vh]'>
+			<AlertDialog
+				open={showIneligibleDialog}
+				onOpenChange={setShowIneligibleDialog}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Requisitos no cumplidos</AlertDialogTitle>
+						<AlertDialogDescription>
+							{getIneligibilityMessage(data)}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Revisar información</AlertDialogCancel>
+						<AlertDialogAction onClick={handlePartialSubmit}>
+							Enviar información básica
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
 			<div className='grid gap-6 md:grid-cols-[280px_1fr]'>
 				<aside className='rounded-xl border bg-card p-2'>
 					<Stepper>
@@ -192,19 +266,44 @@ export function RegistrationForm() {
 						</Button>
 						<div className='flex items-center gap-3'>
 							{canGoNext ? (
-								<Button
-									disabled={!hasAcceptedTerms}
-									onClick={() => goto(nextKey)}
-								>
-									Siguiente
-								</Button>
+								<div className='flex flex-col items-end gap-2'>
+									<Button
+										disabled={!hasAcceptedTerms || !isSectionValid}
+										onClick={handleNext}
+										className='w-full sm:w-auto'
+									>
+										Siguiente
+									</Button>
+									{!isSectionValid && sectionErrors.length > 0 && (
+										<div className='text-sm text-destructive max-w-md text-right'>
+											<p className='font-medium'>
+												Complete los siguientes campos:
+											</p>
+											<ul className='list-disc list-inside mt-1 text-xs'>
+												{sectionErrors.slice(0, 3).map((error, idx) => (
+													<li key={idx}>{error}</li>
+												))}
+												{sectionErrors.length > 3 && (
+													<li>... y {sectionErrors.length - 3} campo(s) más</li>
+												)}
+											</ul>
+										</div>
+									)}
+								</div>
 							) : (
-								<AlertDialog>
+								<AlertDialog
+									open={showSubmitDialog}
+									onOpenChange={setShowSubmitDialog}
+								>
 									<AlertDialogTrigger asChild>
 										<Button
 											className='bg-primary hover:bg-primary/90'
 											disabled={!hasAcceptedTerms || isSubmitting}
+											onClick={() => setShowSubmitDialog(true)}
 										>
+											{isSubmitting && (
+												<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+											)}
 											{isSubmitting ? 'Enviando...' : 'Confirmar y Enviar'}
 										</Button>
 									</AlertDialogTrigger>
@@ -219,11 +318,16 @@ export function RegistrationForm() {
 											</AlertDialogDescription>
 										</AlertDialogHeader>
 										<AlertDialogFooter>
-											<AlertDialogCancel>Cancelar</AlertDialogCancel>
+											<AlertDialogCancel disabled={isSubmitting}>
+												Cancelar
+											</AlertDialogCancel>
 											<AlertDialogAction
 												onClick={handleFormSubmit}
 												disabled={isSubmitting}
 											>
+												{isSubmitting && (
+													<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+												)}
 												{isSubmitting ? 'Enviando...' : 'Enviar'}
 											</AlertDialogAction>
 										</AlertDialogFooter>

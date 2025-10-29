@@ -7,7 +7,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,8 +15,9 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { DOCUMENT_TYPE_OPTIONS, GENDER_IDENTITY_OPTIONS } from '@/constants'
 import { useCities } from '@/hooks/use-cities'
 import { useCommunes } from '@/hooks/use-communes'
@@ -68,6 +69,7 @@ export function Section2Form() {
 			neighborhood: '',
 			commune: '',
 			phone: '',
+			worksInMedellin: false,
 			gender: '',
 			isPregnant: '',
 			sexualOrientation: '',
@@ -76,9 +78,20 @@ export function Section2Form() {
 			representativeDocumentType: '',
 			representativeDocumentNumber: '',
 			representativeEmail: '',
-			representativePhone: ''
-		}
+			representativePhone: '',
+		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			// Solo guardar si hay datos válidos (no vacíos)
+			if (values && Object.keys(values).length > 0) {
+				setSectionData('section2', values as Section2Form)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [form, setSectionData])
 
 	// Sincronizar nombres con IDs
 	useEffect(() => {
@@ -178,9 +191,6 @@ export function Section2Form() {
 				className='space-y-6'
 			>
 				<Card>
-					<CardHeader>
-						<CardTitle>Información Personal</CardTitle>
-					</CardHeader>
 					<CardContent className='space-y-4'>
 						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 							<FormField
@@ -305,7 +315,6 @@ export function Section2Form() {
 									</FormItem>
 								)}
 							/>
-
 							<FormField
 								control={form.control}
 								name='gender'
@@ -604,7 +613,25 @@ export function Section2Form() {
 						)}
 					</CardContent>
 				</Card>
-
+				<FormField
+					control={form.control}
+					name='worksInMedellin'
+					render={({ field }) => (
+						<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+							<div className='space-y-0.5'>
+								<FormLabel className='text-base'>
+									¿Trabajas para alguna empresa de Medellín?
+								</FormLabel>
+							</div>
+							<FormControl>
+								<Switch
+									checked={field.value}
+									onCheckedChange={field.onChange}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
 				{showRepresentativeFields && (
 					<Card>
 						<CardHeader>

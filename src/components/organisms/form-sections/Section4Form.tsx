@@ -8,7 +8,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -16,18 +16,19 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import {
 	DEVICE_OPTIONS,
 	HOUSING_TYPE_OPTIONS,
-	OCCUPATION_OPTIONS
+	OCCUPATION_OPTIONS,
 } from '@/constants'
 import type { Section4Form } from '@/schemas/section4'
 import { section4Schema } from '@/schemas/section4'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section4Form() {
@@ -55,9 +56,19 @@ export function Section4Form() {
 			singleParent: false,
 			firstChildAge: undefined,
 			pregnantOrLactating: false,
-			isHeadOfHousehold: false
-		}
+			isHeadOfHousehold: false,
+		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			if (values && Object.keys(values).length > 0) {
+				setSectionData('section4', values as Section4Form)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [form, setSectionData])
 
 	const hasChildren = form.watch('hasChildren')
 	const occupation = form.watch('occupation')

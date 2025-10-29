@@ -6,7 +6,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,13 +14,14 @@ import {
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/components/ui/select'
 import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
 import type { Section1Form } from '@/schemas/section1'
 import { section1Schema } from '@/schemas/section1'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section1Form() {
@@ -37,9 +38,20 @@ export function Section1Form() {
 			countryOfBirth: '',
 			departmentOfBirth: '',
 			municipalityOfBirth: '',
-			otherDocumentType: ''
-		}
+			otherDocumentType: '',
+		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			// Solo guardar si hay datos válidos (no vacíos)
+			if (values && Object.keys(values).length > 0) {
+				setSectionData('section1', values as Section1Form)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [form, setSectionData])
 
 	const onSubmit = (values: Section1Form) => {
 		setSectionData('section1', values)
@@ -86,7 +98,6 @@ export function Section1Form() {
 					/>
 				</div>
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					{' '}
 					<FormField
 						control={form.control}
 						name='documentType'
@@ -117,6 +128,24 @@ export function Section1Form() {
 							</FormItem>
 						)}
 					/>
+					{form.watch('documentType') === 'Otro' && (
+						<FormField
+							control={form.control}
+							name='otherDocumentType'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Especifica el tipo de documento</FormLabel>
+									<FormControl>
+										<Input
+											placeholder='Ingresa el tipo de documento'
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					)}
 					<FormField
 						control={form.control}
 						name='documentNumber'
@@ -135,7 +164,6 @@ export function Section1Form() {
 					/>
 				</div>
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					{' '}
 					<FormField
 						control={form.control}
 						name='email'

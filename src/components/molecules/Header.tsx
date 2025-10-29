@@ -8,6 +8,7 @@ export default function Header() {
 				alt='Logo Arrobamedellín'
 				width={200}
 				height={100}
+				style={{ height: 'auto' }}
 			/>
 			<h1 className='mb-6 text-center text-2xl font-bold text-white'>
 				Inscripciones Sapiencia {new Date().getFullYear()}

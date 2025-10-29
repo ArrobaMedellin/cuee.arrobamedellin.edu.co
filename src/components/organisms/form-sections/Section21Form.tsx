@@ -20,6 +20,7 @@ import type { Section21Form as Section21Values } from '@/schemas/section21'
 import { section21Schema } from '@/schemas/section21'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section21Form() {
@@ -33,6 +34,16 @@ export function Section21Form() {
 			representativeEmail: '',
 		},
 	})
+
+	// Guardar datos automáticamente cuando cambian los valores del formulario
+	useEffect(() => {
+		const subscription = form.watch(values => {
+			if (values && Object.keys(values).length > 0) {
+				setSectionData('section21', values as Section21Values)
+			}
+		})
+		return () => subscription.unsubscribe()
+	}, [form, setSectionData])
 
 	const onSubmit = (values: Section21Values) => {
 		setSectionData('section21', values)

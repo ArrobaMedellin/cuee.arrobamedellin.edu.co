@@ -8,7 +8,10 @@ interface UseFormSubmissionReturn {
 	isSubmitting: boolean
 	isSuccess: boolean
 	error: string | null
-	submitForm: (formData: Partial<RegistrationFormData>) => Promise<void>
+	submitForm: (
+		formData: Partial<RegistrationFormData>,
+		onSuccess?: () => void
+	) => Promise<void>
 	reset: () => void
 }
 
@@ -28,7 +31,10 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 	const [isSuccess, setIsSuccess] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
-	const submitForm = async (formData: Partial<RegistrationFormData>) => {
+	const submitForm = async (
+		formData: Partial<RegistrationFormData>,
+		onSuccess?: () => void
+	) => {
 		try {
 			setIsSubmitting(true)
 			setError(null)
@@ -62,6 +68,11 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 
 			setIsSuccess(true)
 			console.log('Applicant saved:', result)
+
+			// Ejecutar callback de éxito si se proporciona
+			if (onSuccess) {
+				onSuccess()
+			}
 		} catch (err) {
 			const errorMessage =
 				err instanceof Error ? err.message : 'Error al enviar la información'
@@ -84,6 +95,6 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 		isSuccess,
 		error,
 		submitForm,
-		reset
+		reset,
 	}
 }

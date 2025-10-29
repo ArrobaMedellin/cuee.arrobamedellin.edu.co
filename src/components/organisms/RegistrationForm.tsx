@@ -23,6 +23,7 @@ import {
 	isEligibleForFullProcess,
 } from '@/utils/eligibility'
 import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Section1Form } from './form-sections/Section1Form'
@@ -37,16 +38,20 @@ export function RegistrationForm() {
 	const { currentSection, setCurrentSection, data } = useFormStore()
 	const { hasAcceptedTerms } = useModalStore()
 	const { isSubmitting, submitForm } = useFormSubmission()
-	const { isSectionValid, sectionErrors } = useValidateSection()
+	const { isSectionValid } = useValidateSection()
 	const [showIneligibleDialog, setShowIneligibleDialog] = useState(false)
 	const [showSubmitDialog, setShowSubmitDialog] = useState(false)
+	const router = useRouter()
 
 	// Verificar elegibilidad después de completar section2
 	const isEligible = useMemo(() => isEligibleForFullProcess(data), [data])
 
 	const handleFormSubmit = async () => {
 		try {
-			await submitForm(data)
+			await submitForm(data, () => {
+				// Redireccionar a la página de confirmación después del envío exitoso
+				router.push('/confirmation')
+			})
 			// Cerrar el diálogo después de un envío exitoso
 			setShowSubmitDialog(false)
 		} catch (err) {
@@ -170,16 +175,14 @@ export function RegistrationForm() {
 				section2: data.section2,
 			}
 
-			await submitForm(partialData)
+			await submitForm(partialData, () => {
+				// Redireccionar a la página de confirmación después del envío exitoso
+				router.push('/confirmation')
+			})
 
 			toast.success(
 				'Tu información básica ha sido enviada. Gracias por tu interés en nuestros programas.'
 			)
-
-			// Reset form after successful submission
-			setTimeout(() => {
-				window.location.reload()
-			}, 2000)
 		} catch (error) {
 			console.error('Error submitting partial data:', error)
 			toast.error(
@@ -274,7 +277,7 @@ export function RegistrationForm() {
 									>
 										Siguiente
 									</Button>
-									{!isSectionValid && sectionErrors.length > 0 && (
+									{/* {!isSectionValid && sectionErrors.length > 0 && (
 										<div className='text-sm text-destructive max-w-md text-right'>
 											<p className='font-medium'>
 												Complete los siguientes campos:
@@ -288,7 +291,7 @@ export function RegistrationForm() {
 												)}
 											</ul>
 										</div>
-									)}
+									)} */}
 								</div>
 							) : (
 								<AlertDialog

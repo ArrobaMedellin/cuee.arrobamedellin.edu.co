@@ -1,6 +1,5 @@
 import Footer from '@/components/molecules/Footer'
 import Header from '@/components/molecules/Header'
-import { TermsModal } from '@/components/molecules/TermsModal'
 import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
@@ -34,7 +33,6 @@ export default function RootLayout({
 				<main className='min-h-screen bg-secondary flex flex-col'>
 					<Header />
 					<div className='flex-grow'>{children}</div>
-					<TermsModal />
 					<Toaster
 						richColors
 						closeButton

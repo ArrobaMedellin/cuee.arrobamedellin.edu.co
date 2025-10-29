@@ -1,3 +1,4 @@
+import { TermsModal } from '@/components/molecules/TermsModal';
 import { RegistrationForm } from '@/components/organisms/RegistrationForm'
 import Image from 'next/image';
 
@@ -11,6 +12,7 @@ export default function RegistrationPage() {
 				</h1>
 			</div>
 			<RegistrationForm />
+			<TermsModal />
 		</main>
 	)
 }

@@ -25,7 +25,7 @@ const initialData: Partial<RegistrationFormData> = {
 		countryOfBirth: '',
 		departmentOfBirth: '',
 		municipalityOfBirth: '',
-		otherDocumentType: ''
+		otherDocumentType: '',
 	},
 	section2: {
 		birthDate: '',
@@ -46,7 +46,7 @@ const initialData: Partial<RegistrationFormData> = {
 		representativeDocumentType: '',
 		representativeDocumentNumber: '',
 		representativeEmail: '',
-		representativePhone: ''
+		representativePhone: '',
 	},
 	section3: {
 		countryOfResidence: '',
@@ -71,7 +71,7 @@ const initialData: Partial<RegistrationFormData> = {
 		cityOfResidenceId: undefined,
 		communeId: undefined,
 		neighborhoodId: undefined,
-		birthCityId: undefined
+		birthCityId: undefined,
 	},
 	section4: {
 		devices: [],
@@ -92,13 +92,16 @@ const initialData: Partial<RegistrationFormData> = {
 		numberOfChildren: undefined,
 		singleParent: false,
 		firstChildAge: undefined,
-		pregnantOrLactating: false
+		pregnantOrLactating: false,
+		// Propiedades añadidas para coincidir con el esquema zod (section4Schema)
+		isVictimOfGenderViolence: false,
+		isHeadOfHousehold: false,
 	},
 	section21: {
 		representativeFirstName: '',
 		representativeDocumentType: '',
 		representativeDocumentNumber: '',
-		representativeEmail: ''
+		representativeEmail: '',
 	},
 	section5: {
 		hasDisability: false,
@@ -122,20 +125,25 @@ const initialData: Partial<RegistrationFormData> = {
 		isRefugee: false,
 		isFamilyCaregiver: false,
 		isYouthCouncilor: false,
-		isCertifiedBarrista: false
+		isCertifiedBarrista: false,
+		// Propiedades añadidas para coincidir con el esquema zod (section5Schema)
+		isMigrant: false,
+		isPeasant: false,
+		isVendor: false,
+		isVeteran: false,
 	},
 	section6: {
 		selectedCourses: [],
 		howDidYouHear: '',
-		otherSource: ''
+		otherSource: '',
 	},
 	section7: {
 		graduationYear: '',
 		graduatedFrom: '',
 		hasIcfesPro: 'NO' as const,
 		icfesProScore: '',
-		icfesProYear: ''
-	}
+		icfesProYear: '',
+	},
 }
 
 export const useFormStore = create<FormStore>()(
@@ -145,7 +153,7 @@ export const useFormStore = create<FormStore>()(
 			currentSection: 1,
 			setSectionData: (section, data) =>
 				set(state => ({
-					data: { ...state.data, [section]: data }
+					data: { ...state.data, [section]: data },
 				})),
 			setCurrentSection: section => set({ currentSection: section }),
 			resetForm: () => set({ data: initialData, currentSection: 1 }),
@@ -156,15 +164,15 @@ export const useFormStore = create<FormStore>()(
 							value => value !== '' && value !== undefined && value !== null
 					  )
 					: false
-			}
+			},
 		}),
 		{
 			name: 'registration-form',
 			storage: createJSONStorage(() => localStorage),
 			partialize: state => ({
 				data: state.data,
-				currentSection: state.currentSection
-			})
+				currentSection: state.currentSection,
+			}),
 		}
 	)
 )

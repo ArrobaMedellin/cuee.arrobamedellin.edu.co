@@ -255,7 +255,7 @@ export function RegistrationForm() {
 	}
 
 	const handleFormAttempts = async () => {
-		router.push('/thanks')
+		window.location.replace('https://arrobamedellin.edu.co')
 	}
 
 	return (

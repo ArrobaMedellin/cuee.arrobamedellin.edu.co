@@ -19,17 +19,16 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { DOCUMENT_TYPE_OPTIONS, GENDER_IDENTITY_OPTIONS } from '@/constants'
-import { useCities } from '@/hooks/use-cities'
 import { useCommunes } from '@/hooks/use-communes'
 import { useConditionalFields } from '@/hooks/use-conditional-fields'
 import { useCountries } from '@/hooks/use-countries'
-import { useDepartments } from '@/hooks/use-departments'
+import { useDepartmentsCities } from '@/hooks/use-departments-cities'
 import { useNeighborhoods } from '@/hooks/use-neighborhoods'
 import type { Section2Form } from '@/schemas/section2'
 import { section2Schema } from '@/schemas/section2'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section2Form() {
@@ -39,24 +38,24 @@ export function Section2Form() {
 	const [selectedCountryId, setSelectedCountryId] = useState<
 		number | undefined
 	>()
-	const [selectedDepartmentId, setSelectedDepartmentId] = useState<
-		number | undefined
-	>()
-	const [selectedCityId, setSelectedCityId] = useState<number | undefined>()
+	const [selectedDepartmentName, setSelectedDepartmentName] =
+		useState<string>('')
+	const [selectedCityName, setSelectedCityName] = useState<string>('')
 	const [selectedCommuneId, setSelectedCommuneId] = useState<
 		number | undefined
 	>()
 
 	// Hooks para obtener datos geográficos
 	const countries = useCountries()
-	const departments = useDepartments(selectedCountryId)
-	const cities = useCities(selectedDepartmentId)
-	const communes = useCommunes(selectedCityId)
+	const departmentsCities = useDepartmentsCities()
+	const communes = useCommunes(5001) // Medellín tiene ID 5001
 	const neighborhoods = useNeighborhoods(selectedCommuneId)
 
-	// Hook para obtener todas las ciudades de Colombia (para ciudad de nacimiento)
-	const allCitiesData = useCities() // Todas las ciudades sin filtro
-	const allDepartments = useDepartments(1) // Departamentos de Colombia (countryId: 1)
+	// Obtener ciudades del departamento seleccionado
+	const citiesOfSelectedDepartment = useMemo(() => {
+		if (!selectedDepartmentName) return []
+		return departmentsCities.getCitiesByDepartmentName(selectedDepartmentName)
+	}, [selectedDepartmentName, departmentsCities])
 
 	const form = useForm<Section2Form>({
 		resolver: zodResolver(section2Schema),
@@ -82,7 +81,7 @@ export function Section2Form() {
 		},
 	})
 
-	// Restaurar IDs desde los nombres guardados cuando se carga el componente (solo una vez)
+	// Restaurar valores desde los nombres guardados cuando se carga el componente (solo una vez)
 	useEffect(() => {
 		if (data.section2) {
 			// Restaurar país
@@ -95,38 +94,20 @@ export function Section2Form() {
 				}
 			}
 
-			// Restaurar departamento (solo si es Colombia)
-			if (
-				data.section2.departmentOfResidence &&
-				selectedCountryId === 1 &&
-				!selectedDepartmentId
-			) {
-				const savedDepartment = departments.departments.find(
-					d => d.name === data.section2?.departmentOfResidence
-				)
-				if (savedDepartment) {
-					setSelectedDepartmentId(savedDepartment.id)
-				}
+			// Restaurar departamento
+			if (data.section2.departmentOfResidence && !selectedDepartmentName) {
+				setSelectedDepartmentName(data.section2.departmentOfResidence)
 			}
 
 			// Restaurar ciudad
-			if (
-				data.section2.cityOfResidence &&
-				selectedDepartmentId &&
-				!selectedCityId
-			) {
-				const savedCity = cities.cities.find(
-					c => c.name === data.section2?.cityOfResidence
-				)
-				if (savedCity) {
-					setSelectedCityId(savedCity.id)
-				}
+			if (data.section2.cityOfResidence && !selectedCityName) {
+				setSelectedCityName(data.section2.cityOfResidence)
 			}
 
 			// Restaurar comuna (solo si es Medellín)
 			if (
 				data.section2.commune &&
-				selectedCityId === 5001 &&
+				data.section2.cityOfResidence === 'Medellín' &&
 				!selectedCommuneId
 			) {
 				const savedCommune = communes.communes.find(
@@ -138,15 +119,7 @@ export function Section2Form() {
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		data.section2,
-		countries.countries,
-		departments.departments,
-		cities.cities,
-		communes.communes,
-	])
-
-	// Guardar datos automáticamente cuando cambian los valores del formulario
+	}, [data.section2, countries.countries]) // Guardar datos automáticamente cuando cambian los valores del formulario
 	useEffect(() => {
 		const subscription = form.watch(values => {
 			// Solo guardar si hay datos válidos (no vacíos)
@@ -172,38 +145,6 @@ export function Section2Form() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedCountryId, countries.countries])
-
-	useEffect(() => {
-		if (selectedDepartmentId) {
-			const department = departments.departments.find(
-				d => d.id === selectedDepartmentId
-			)
-			const currentValue = form.getValues('departmentOfResidence')
-			if (department && currentValue !== department.name) {
-				form.setValue('departmentOfResidence', department.name, {
-					shouldValidate: false,
-					shouldDirty: false,
-					shouldTouch: false,
-				})
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedDepartmentId, departments.departments])
-
-	useEffect(() => {
-		if (selectedCityId) {
-			const city = cities.cities.find(c => c.id === selectedCityId)
-			const currentValue = form.getValues('cityOfResidence')
-			if (city && currentValue !== city.name) {
-				form.setValue('cityOfResidence', city.name, {
-					shouldValidate: false,
-					shouldDirty: false,
-					shouldTouch: false,
-				})
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedCityId, cities.cities])
 
 	useEffect(() => {
 		if (selectedCommuneId) {
@@ -237,8 +178,8 @@ export function Section2Form() {
 
 	const handleCountryChange = (countryId: number) => {
 		setSelectedCountryId(countryId)
-		setSelectedDepartmentId(undefined)
-		setSelectedCityId(undefined)
+		setSelectedDepartmentName('')
+		setSelectedCityName('')
 		setSelectedCommuneId(undefined)
 		form.setValue('departmentOfResidence', '')
 		form.setValue('cityOfResidence', '')
@@ -246,18 +187,20 @@ export function Section2Form() {
 		form.setValue('neighborhood', '')
 	}
 
-	const handleDepartmentChange = (departmentId: number) => {
-		setSelectedDepartmentId(departmentId)
-		setSelectedCityId(undefined)
+	const handleDepartmentChange = (departmentName: string) => {
+		setSelectedDepartmentName(departmentName)
+		setSelectedCityName('')
 		setSelectedCommuneId(undefined)
+		form.setValue('departmentOfResidence', departmentName)
 		form.setValue('cityOfResidence', '')
 		form.setValue('commune', '')
 		form.setValue('neighborhood', '')
 	}
 
-	const handleCityChange = (cityId: number) => {
-		setSelectedCityId(cityId)
+	const handleCityChange = (cityName: string) => {
+		setSelectedCityName(cityName)
 		setSelectedCommuneId(undefined)
+		form.setValue('cityOfResidence', cityName)
 		form.setValue('commune', '')
 		form.setValue('neighborhood', '')
 	}
@@ -296,30 +239,26 @@ export function Section2Form() {
 										<FormLabel>Ciudad de nacimiento</FormLabel>
 										<Select
 											onValueChange={value => {
-												// Extraer solo el nombre de la ciudad del formato "nombre-departmentId"
-												const cityName = value.split('-')[0]
+												// Extraer solo el nombre de la ciudad si viene en formato "ciudad|departamento"
+												const cityName = value.includes('|')
+													? value.split('|')[0]
+													: value
 												field.onChange(cityName)
 											}}
 											value={
 												field.value
 													? (() => {
-															// Buscar la ciudad que coincida con el nombre guardado
-															const matchingCity = allCitiesData.cities.find(
-																city => {
-																	const department =
-																		allDepartments.departments.find(
-																			d => d.id === city.departmentId
-																		)
-																	return (
-																		department &&
-																		department.countryId === 1 &&
-																		city.name === field.value
-																	)
-																}
-															)
-															return matchingCity
-																? `${matchingCity.name}-${matchingCity.departmentId}`
-																: ''
+															// Buscar la ciudad en el array para determinar si está duplicada
+															const matchingCities =
+																departmentsCities.citiesWithDepartment.filter(
+																	c => c.city === field.value
+																)
+															// Si hay múltiples ciudades con el mismo nombre, necesitamos el formato completo
+															if (matchingCities.length > 1) {
+																// Usar la primera coincidencia (podríamos mejorar esto guardando el departamento también)
+																return `${matchingCities[0].city}|${matchingCities[0].department}`
+															}
+															return field.value
 													  })()
 													: ''
 											}
@@ -330,49 +269,38 @@ export function Section2Form() {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{allCitiesData.filteredCities
-													.filter(city => {
-														// Solo ciudades de departamentos de Colombia
-														const department = allDepartments.departments.find(
-															d => d.id === city.departmentId
-														)
-														return department && department.countryId === 1
-													})
-													.map(city => {
-														// Obtener el nombre del departamento para ciudades duplicadas
-														const department = allDepartments.departments.find(
-															d => d.id === city.departmentId
-														)
-														const departmentName = department?.name || ''
-
-														// Verificar si hay otras ciudades con el mismo nombre
+												{departmentsCities.citiesWithDepartment.map(
+													({ city, department, departmentId }, index) => {
+														// Contar cuántas ciudades tienen el mismo nombre
 														const citiesWithSameName =
-															allCitiesData.cities.filter(
-																c =>
-																	c.name === city.name &&
-																	allDepartments.departments.find(
-																		d =>
-																			d.id === c.departmentId &&
-																			d.countryId === 1
-																	)
-															)
+															departmentsCities.citiesWithDepartment.filter(
+																c => c.city === city
+															).length
 
 														const displayName =
-															citiesWithSameName.length > 1
-																? `${city.name} (${departmentName})`
-																: city.name
+															citiesWithSameName > 1
+																? `${city} (${department})`
+																: city
 
-														const uniqueValue = `${city.name}-${city.departmentId}`
+														// Usar ciudad + departamento como value para hacerlo único
+														const uniqueValue =
+															citiesWithSameName > 1
+																? `${city}|${department}`
+																: city
+
+														// Usar ciudad + departmentId + index como key única
+														const uniqueKey = `${city}-${departmentId}-${index}`
 
 														return (
 															<SelectItem
-																key={city.id}
+																key={uniqueKey}
 																value={uniqueValue}
 															>
 																{displayName}
 															</SelectItem>
 														)
-													})}
+													}
+												)}
 											</SelectContent>
 										</Select>
 										<FormMessage />
@@ -549,14 +477,13 @@ export function Section2Form() {
 								<FormField
 									control={form.control}
 									name='departmentOfResidence'
-									render={() => (
+									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Departamento</FormLabel>
 											<Select
-												value={selectedDepartmentId?.toString()}
+												value={field.value}
 												onValueChange={value => {
-													const departmentId = Number(value)
-													handleDepartmentChange(departmentId)
+													handleDepartmentChange(value)
 												}}
 											>
 												<FormControl>
@@ -565,12 +492,12 @@ export function Section2Form() {
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
-													{departments.departments.map(department => (
+													{departmentsCities.departments.map(department => (
 														<SelectItem
 															key={department.id}
-															value={department.id.toString()}
+															value={department.departamento}
 														>
-															{department.name}
+															{department.departamento}
 														</SelectItem>
 													))}
 												</SelectContent>
@@ -585,18 +512,17 @@ export function Section2Form() {
 						{/* Solo mostrar ciudad y comuna si el país es Colombia */}
 						{selectedCountryId === 1 && (
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-								{selectedDepartmentId && (
+								{selectedDepartmentName && (
 									<FormField
 										control={form.control}
 										name='cityOfResidence'
-										render={() => (
+										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Ciudad</FormLabel>
 												<Select
-													value={selectedCityId?.toString()}
+													value={field.value}
 													onValueChange={value => {
-														const cityId = Number(value)
-														handleCityChange(cityId)
+														handleCityChange(value)
 													}}
 												>
 													<FormControl>
@@ -605,12 +531,12 @@ export function Section2Form() {
 														</SelectTrigger>
 													</FormControl>
 													<SelectContent>
-														{cities.cities.map(city => (
+														{citiesOfSelectedDepartment.map((city, index) => (
 															<SelectItem
-																key={city.id}
-																value={city.id.toString()}
+																key={`${city}-${index}`}
+																value={city}
 															>
-																{city.name}
+																{city}
 															</SelectItem>
 														))}
 													</SelectContent>
@@ -621,8 +547,8 @@ export function Section2Form() {
 									/>
 								)}
 
-								{/* Solo mostrar comuna si la ciudad es Medellín (ID: 5001) */}
-								{selectedCityId === 5001 && (
+								{/* Solo mostrar comuna si la ciudad es Medellín */}
+								{selectedCityName === 'Medellín' && (
 									<FormField
 										control={form.control}
 										name='commune'
@@ -668,7 +594,7 @@ export function Section2Form() {
 
 						{/* Solo mostrar barrio si hay una comuna seleccionada (Medellín) */}
 						{selectedCountryId === 1 &&
-							selectedCityId === 5001 &&
+							selectedCityName === 'Medellín' &&
 							selectedCommuneId && (
 								<FormField
 									control={form.control}

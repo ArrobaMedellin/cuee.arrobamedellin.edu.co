@@ -39,6 +39,6 @@ export function useCities(departmentId?: number) {
 		cities,
 		filteredCities,
 		searchQuery,
-		setSearchQuery
+		setSearchQuery,
 	}
 }

@@ -13,12 +13,11 @@ export const section2Schema = z
 		age: z.number().optional(), // Calculada automáticamente
 		bornCity: z.string().min(1, 'Ciudad de nacimiento es requerida'),
 		countryOfResidence: z.string().min(1, 'País de residencia es requerido'),
-		departmentOfResidence: z
-			.string()
-			.min(1, 'Departamento de residencia es requerido'),
-		cityOfResidence: z.string().min(1, 'Ciudad dónde vive es requerida'),
-		commune: z.string().min(1, 'Comuna es requerida'),
-		neighborhood: z.string().min(1, 'Barrio es requerido'),
+		// Condicionales según el país de residencia
+		departmentOfResidence: z.string().optional(),
+		cityOfResidence: z.string().optional(),
+		commune: z.string().optional(),
+		neighborhood: z.string().optional(),
 		neighborhoodId: z.number().optional(),
 		phone: z
 			.string()
@@ -38,6 +37,42 @@ export const section2Schema = z
 		representativePhone: z.string().optional(),
 	})
 	.superRefine((data, ctx) => {
+		// Validación condicional según el país de residencia
+		// Si es Colombia, requerir departamento, ciudad, comuna y barrio
+		if (data.countryOfResidence === 'Colombia') {
+			if (!data.departmentOfResidence) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: 'Departamento de residencia es requerido',
+					path: ['departmentOfResidence'],
+				})
+			}
+			if (!data.cityOfResidence) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: 'Ciudad dónde vive es requerida',
+					path: ['cityOfResidence'],
+				})
+			}
+			// Solo requerir comuna y barrio si la ciudad es Medellín
+			if (data.cityOfResidence === 'Medellín') {
+				if (!data.commune) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'Comuna es requerida para residentes de Medellín',
+						path: ['commune'],
+					})
+				}
+				if (!data.neighborhood) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'Barrio es requerido para residentes de Medellín',
+						path: ['neighborhood'],
+					})
+				}
+			}
+		}
+
 		// Si selecciona "Otro" en orientación sexual, debe especificar
 		if (data.sexualOrientation === 'Otro' && !data.otherSexualOrientation) {
 			ctx.addIssue({

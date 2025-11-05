@@ -55,7 +55,7 @@ export function Section2Form() {
 	const neighborhoods = useNeighborhoods(selectedCommuneId)
 
 	// Hook para obtener todas las ciudades de Colombia (para ciudad de nacimiento)
-	const allCities = useCities()
+	const allCitiesData = useCities() // Todas las ciudades sin filtro
 	const allDepartments = useDepartments(1) // Departamentos de Colombia (countryId: 1)
 
 	const form = useForm<Section2Form>({
@@ -82,6 +82,70 @@ export function Section2Form() {
 		},
 	})
 
+	// Restaurar IDs desde los nombres guardados cuando se carga el componente (solo una vez)
+	useEffect(() => {
+		if (data.section2) {
+			// Restaurar país
+			if (data.section2.countryOfResidence && !selectedCountryId) {
+				const savedCountry = countries.countries.find(
+					c => c.name === data.section2?.countryOfResidence
+				)
+				if (savedCountry) {
+					setSelectedCountryId(savedCountry.id)
+				}
+			}
+
+			// Restaurar departamento (solo si es Colombia)
+			if (
+				data.section2.departmentOfResidence &&
+				selectedCountryId === 1 &&
+				!selectedDepartmentId
+			) {
+				const savedDepartment = departments.departments.find(
+					d => d.name === data.section2?.departmentOfResidence
+				)
+				if (savedDepartment) {
+					setSelectedDepartmentId(savedDepartment.id)
+				}
+			}
+
+			// Restaurar ciudad
+			if (
+				data.section2.cityOfResidence &&
+				selectedDepartmentId &&
+				!selectedCityId
+			) {
+				const savedCity = cities.cities.find(
+					c => c.name === data.section2?.cityOfResidence
+				)
+				if (savedCity) {
+					setSelectedCityId(savedCity.id)
+				}
+			}
+
+			// Restaurar comuna (solo si es Medellín)
+			if (
+				data.section2.commune &&
+				selectedCityId === 5001 &&
+				!selectedCommuneId
+			) {
+				const savedCommune = communes.communes.find(
+					c => c.name === data.section2?.commune
+				)
+				if (savedCommune) {
+					setSelectedCommuneId(savedCommune.id)
+				}
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		data.section2,
+		countries.countries,
+		departments.departments,
+		cities.cities,
+		communes.communes,
+	])
+
 	// Guardar datos automáticamente cuando cambian los valores del formulario
 	useEffect(() => {
 		const subscription = form.watch(values => {
@@ -93,44 +157,68 @@ export function Section2Form() {
 		return () => subscription.unsubscribe()
 	}, [form, setSectionData])
 
-	// Sincronizar nombres con IDs
+	// Sincronizar nombres con IDs (solo cuando cambian los IDs por interacción del usuario)
 	useEffect(() => {
 		if (selectedCountryId) {
 			const country = countries.countries.find(c => c.id === selectedCountryId)
-			if (country) {
-				form.setValue('countryOfResidence', country.name)
+			const currentValue = form.getValues('countryOfResidence')
+			if (country && currentValue !== country.name) {
+				form.setValue('countryOfResidence', country.name, {
+					shouldValidate: false,
+					shouldDirty: false,
+					shouldTouch: false,
+				})
 			}
 		}
-	}, [selectedCountryId, countries.countries, form])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedCountryId, countries.countries])
 
 	useEffect(() => {
 		if (selectedDepartmentId) {
 			const department = departments.departments.find(
 				d => d.id === selectedDepartmentId
 			)
-			if (department) {
-				form.setValue('departmentOfResidence', department.name)
+			const currentValue = form.getValues('departmentOfResidence')
+			if (department && currentValue !== department.name) {
+				form.setValue('departmentOfResidence', department.name, {
+					shouldValidate: false,
+					shouldDirty: false,
+					shouldTouch: false,
+				})
 			}
 		}
-	}, [selectedDepartmentId, departments.departments, form])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedDepartmentId, departments.departments])
 
 	useEffect(() => {
 		if (selectedCityId) {
 			const city = cities.cities.find(c => c.id === selectedCityId)
-			if (city) {
-				form.setValue('cityOfResidence', city.name)
+			const currentValue = form.getValues('cityOfResidence')
+			if (city && currentValue !== city.name) {
+				form.setValue('cityOfResidence', city.name, {
+					shouldValidate: false,
+					shouldDirty: false,
+					shouldTouch: false,
+				})
 			}
 		}
-	}, [selectedCityId, cities.cities, form])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedCityId, cities.cities])
 
 	useEffect(() => {
 		if (selectedCommuneId) {
 			const commune = communes.communes.find(c => c.id === selectedCommuneId)
-			if (commune) {
-				form.setValue('commune', commune.name)
+			const currentValue = form.getValues('commune')
+			if (commune && currentValue !== commune.name) {
+				form.setValue('commune', commune.name, {
+					shouldValidate: false,
+					shouldDirty: false,
+					shouldTouch: false,
+				})
 			}
 		}
-	}, [selectedCommuneId, communes.communes, form])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedCommuneId, communes.communes])
 
 	const birthDate = form.watch('birthDate')
 	const gender = form.watch('gender')
@@ -172,16 +260,6 @@ export function Section2Form() {
 		setSelectedCommuneId(undefined)
 		form.setValue('commune', '')
 		form.setValue('neighborhood', '')
-	}
-
-	const handleNeighborhoodChange = (neighborhoodId: number) => {
-		const neighborhood = neighborhoods.neighborhoods.find(
-			n => n.id === neighborhoodId
-		)
-		if (neighborhood) {
-			form.setValue('neighborhood', neighborhood.name)
-			form.setValue('neighborhoodId', neighborhoodId)
-		}
 	}
 
 	return (
@@ -226,7 +304,7 @@ export function Section2Form() {
 												field.value
 													? (() => {
 															// Buscar la ciudad que coincida con el nombre guardado
-															const matchingCity = allCities.cities.find(
+															const matchingCity = allCitiesData.cities.find(
 																city => {
 																	const department =
 																		allDepartments.departments.find(
@@ -252,7 +330,7 @@ export function Section2Form() {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{allCities.filteredCities
+												{allCitiesData.filteredCities
 													.filter(city => {
 														// Solo ciudades de departamentos de Colombia
 														const department = allDepartments.departments.find(
@@ -268,14 +346,16 @@ export function Section2Form() {
 														const departmentName = department?.name || ''
 
 														// Verificar si hay otras ciudades con el mismo nombre
-														const citiesWithSameName = allCities.cities.filter(
-															c =>
-																c.name === city.name &&
-																allDepartments.departments.find(
-																	d =>
-																		d.id === c.departmentId && d.countryId === 1
-																)
-														)
+														const citiesWithSameName =
+															allCitiesData.cities.filter(
+																c =>
+																	c.name === city.name &&
+																	allDepartments.departments.find(
+																		d =>
+																			d.id === c.departmentId &&
+																			d.countryId === 1
+																	)
+															)
 
 														const displayName =
 															citiesWithSameName.length > 1
@@ -323,7 +403,7 @@ export function Section2Form() {
 										<FormLabel>Sexo</FormLabel>
 										<Select
 											onValueChange={field.onChange}
-											defaultValue={field.value}
+											value={field.value}
 										>
 											<FormControl>
 												<SelectTrigger>
@@ -351,7 +431,7 @@ export function Section2Form() {
 										<FormLabel>Orientación sexual</FormLabel>
 										<Select
 											onValueChange={field.onChange}
-											defaultValue={field.value}
+											value={field.value}
 										>
 											<FormControl>
 												<SelectTrigger>
@@ -398,7 +478,7 @@ export function Section2Form() {
 										<FormLabel>Identidad de género</FormLabel>
 										<Select
 											onValueChange={field.onChange}
-											defaultValue={field.value}
+											value={field.value}
 										>
 											<FormControl>
 												<SelectTrigger>
@@ -437,6 +517,7 @@ export function Section2Form() {
 									<FormItem>
 										<FormLabel>País de residencia</FormLabel>
 										<Select
+											value={selectedCountryId?.toString()}
 											onValueChange={value => {
 												const countryId = Number(value)
 												handleCountryChange(countryId)
@@ -463,7 +544,8 @@ export function Section2Form() {
 								)}
 							/>
 
-							{selectedCountryId && (
+							{/* Solo mostrar departamento si el país es Colombia (ID: 1) */}
+							{selectedCountryId === 1 && (
 								<FormField
 									control={form.control}
 									name='departmentOfResidence'
@@ -471,6 +553,7 @@ export function Section2Form() {
 										<FormItem>
 											<FormLabel>Departamento</FormLabel>
 											<Select
+												value={selectedDepartmentId?.toString()}
 												onValueChange={value => {
 													const departmentId = Number(value)
 													handleDepartmentChange(departmentId)
@@ -499,75 +582,130 @@ export function Section2Form() {
 							)}
 						</div>
 
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-							{selectedDepartmentId && (
-								<FormField
-									control={form.control}
-									name='cityOfResidence'
-									render={() => (
-										<FormItem>
-											<FormLabel>Ciudad</FormLabel>
-											<Select
-												onValueChange={value => {
-													const cityId = Number(value)
-													handleCityChange(cityId)
-												}}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder='Seleccione ciudad' />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{cities.cities.map(city => (
-														<SelectItem
-															key={city.id}
-															value={city.id.toString()}
-														>
-															{city.name}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							)}
+						{/* Solo mostrar ciudad y comuna si el país es Colombia */}
+						{selectedCountryId === 1 && (
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+								{selectedDepartmentId && (
+									<FormField
+										control={form.control}
+										name='cityOfResidence'
+										render={() => (
+											<FormItem>
+												<FormLabel>Ciudad</FormLabel>
+												<Select
+													value={selectedCityId?.toString()}
+													onValueChange={value => {
+														const cityId = Number(value)
+														handleCityChange(cityId)
+													}}
+												>
+													<FormControl>
+														<SelectTrigger>
+															<SelectValue placeholder='Seleccione ciudad' />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														{cities.cities.map(city => (
+															<SelectItem
+																key={city.id}
+																value={city.id.toString()}
+															>
+																{city.name}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								)}
 
-							{selectedCityId && (
+								{/* Solo mostrar comuna si la ciudad es Medellín (ID: 5001) */}
+								{selectedCityId === 5001 && (
+									<FormField
+										control={form.control}
+										name='commune'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Comuna</FormLabel>
+												<Select
+													value={field.value}
+													onValueChange={value => {
+														// El valor ahora es el nombre completo (ej: "1 - Popular")
+														const commune = communes.communes.find(
+															c => c.name === value
+														)
+														if (commune) {
+															setSelectedCommuneId(commune.id)
+															form.setValue('commune', value)
+														}
+													}}
+												>
+													<FormControl>
+														<SelectTrigger>
+															<SelectValue placeholder='Seleccione comuna' />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														{communes.communes.map(commune => (
+															<SelectItem
+																key={commune.id}
+																value={commune.name}
+															>
+																{commune.name}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								)}
+							</div>
+						)}
+
+						{/* Solo mostrar barrio si hay una comuna seleccionada (Medellín) */}
+						{selectedCountryId === 1 &&
+							selectedCityId === 5001 &&
+							selectedCommuneId && (
 								<FormField
 									control={form.control}
-									name='commune'
-									render={() => (
+									name='neighborhood'
+									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Comuna</FormLabel>
+											<FormLabel>Barrio</FormLabel>
 											<Select
+												value={field.value}
 												onValueChange={value => {
-													// El valor ahora es el nombre completo (ej: "1 - POPULAR")
-													const commune = communes.communes.find(
-														c => c.name === value
-													)
-													if (commune) {
-														setSelectedCommuneId(commune.id)
-														form.setValue('commune', value)
+													// El value ahora es el nombre del barrio
+													const neighborhood =
+														neighborhoods.filteredNeighborhoods.find(
+															n => n.name === value
+														)
+													if (neighborhood) {
+														form.setValue('neighborhood', value)
+														form.setValue('neighborhoodId', neighborhood.id)
 													}
 												}}
 											>
 												<FormControl>
 													<SelectTrigger>
-														<SelectValue placeholder='Seleccione comuna' />
+														<SelectValue placeholder='Seleccione barrio' />
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
-													{communes.communes.map(commune => (
-														<SelectItem
-															key={commune.id}
-															value={commune.name}
-														>
-															{commune.name}
-														</SelectItem>
-													))}
+													{neighborhoods.filteredNeighborhoods.map(
+														neighborhood => (
+															<SelectItem
+																key={neighborhood.id}
+																value={neighborhood.name}
+															>
+																{neighborhood.name}
+															</SelectItem>
+														)
+													)}
 												</SelectContent>
 											</Select>
 											<FormMessage />
@@ -575,42 +713,6 @@ export function Section2Form() {
 									)}
 								/>
 							)}
-						</div>
-
-						{selectedCommuneId && (
-							<FormField
-								control={form.control}
-								name='neighborhood'
-								render={() => (
-									<FormItem>
-										<FormLabel>Barrio</FormLabel>
-										<Select
-											onValueChange={value => {
-												const neighborhoodId = Number(value)
-												handleNeighborhoodChange(neighborhoodId)
-											}}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder='Seleccione barrio' />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{neighborhoods.neighborhoods.map(neighborhood => (
-													<SelectItem
-														key={neighborhood.id}
-														value={neighborhood.id.toString()}
-													>
-														{neighborhood.name}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						)}
 					</CardContent>
 				</Card>
 				<FormField
@@ -661,7 +763,7 @@ export function Section2Form() {
 											<FormLabel>Tipo de documento</FormLabel>
 											<Select
 												onValueChange={field.onChange}
-												defaultValue={field.value}
+												value={field.value}
 											>
 												<FormControl>
 													<SelectTrigger>

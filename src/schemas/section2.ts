@@ -63,7 +63,9 @@ export const section2Schema = z
 						path: ['commune'],
 					})
 				}
-				if (!data.neighborhood) {
+				// Solo requerir barrio si NO es un corregimiento
+				const isCorregimiento = data.commune?.includes('(Corregimiento)')
+				if (!data.neighborhood && !isCorregimiento) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
 						message: 'Barrio es requerido para residentes de Medellín',

@@ -205,6 +205,15 @@ export function Section2Form() {
 		form.setValue('neighborhood', '')
 	}
 
+	// Verificar si la comuna seleccionada es un corregimiento
+	const isCorregimiento = () => {
+		if (!selectedCommuneId) return false
+		const selectedCommune = communes.communes.find(
+			c => c.id === selectedCommuneId
+		)
+		return selectedCommune?.name.includes('(Corregimiento)') || false
+	}
+
 	return (
 		<Form {...form}>
 			<form
@@ -592,10 +601,11 @@ export function Section2Form() {
 							</div>
 						)}
 
-						{/* Solo mostrar barrio si hay una comuna seleccionada (Medellín) */}
+						{/* Solo mostrar barrio si hay una comuna seleccionada (Medellín) y NO es corregimiento */}
 						{selectedCountryId === 1 &&
 							selectedCityName === 'Medellín' &&
-							selectedCommuneId && (
+							selectedCommuneId &&
+							!isCorregimiento() && (
 								<FormField
 									control={form.control}
 									name='neighborhood'

@@ -45,10 +45,10 @@ const initialData: Partial<RegistrationFormData> = {
 		worksInMedellin: false,
 		gender: '',
 		isPregnant: '',
-		sexualOrientation: '',
-		genderIdentity: '',
+		sexualOrientation: undefined, // Campo oculto
+		genderIdentity: undefined, // Campo oculto
 		age: 0,
-		otherSexualOrientation: '',
+		otherSexualOrientation: undefined, // Campo oculto
 		representativeFirstName: '',
 		representativeDocumentType: '',
 		representativeDocumentNumber: '',

@@ -26,9 +26,9 @@ export const section2Schema = z
 		worksInMedellin: z.boolean().optional(), // ¿Trabaja para alguna empresa de Medellín?
 		gender: z.string().min(1, 'Sexo es requerido'),
 		isPregnant: z.string().optional(), // Campo condicional para embarazo
-		sexualOrientation: z.string().optional(), // CAMPO OCULTO - Antes era requerido
+		sexualOrientation: z.string().optional().or(z.literal('')), // CAMPO OCULTO - Permite vacío
 		otherSexualOrientation: z.string().optional(),
-		genderIdentity: z.string().optional(), // CAMPO OCULTO - Antes era requerido
+		genderIdentity: z.string().optional().or(z.literal('')), // CAMPO OCULTO - Permite vacío
 		// Campos del representante legal (condicionales para menores de edad)
 		representativeFirstName: z.string().optional(),
 		representativeDocumentType: z.string().optional(),

@@ -177,7 +177,7 @@ export function Summary() {
 						<Kv
 							label='Identidad de género'
 							value={s2?.genderIdentity}
-						/> */
+						/> */}
 
 						{/* Campos del representante legal si es menor de edad */}
 						{(s2?.representativeFirstName ||

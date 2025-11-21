@@ -165,7 +165,8 @@ export function Summary() {
 								value={s2?.isPregnant}
 							/>
 						)}
-						<Kv
+						{/* CAMPOS OCULTOS: Orientación sexual e Identidad de género */}
+						{/* <Kv
 							label='Orientación sexual'
 							value={
 								s2?.sexualOrientation === 'Otro'
@@ -176,7 +177,7 @@ export function Summary() {
 						<Kv
 							label='Identidad de género'
 							value={s2?.genderIdentity}
-						/>
+						/> */
 
 						{/* Campos del representante legal si es menor de edad */}
 						{(s2?.representativeFirstName ||

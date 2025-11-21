@@ -29,14 +29,39 @@ export function isEligibleForFullProcess(
 	}
 
 	// Verificar que vive en Medellín O nació en Medellín O trabaja en Medellín
-	const livesInMedellin =
-		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
-		section2.cityOfResidence?.toLowerCase().includes('medellin')
+	// IMPORTANTE: Solo se acepta la ciudad de "Medellín", NO otros municipios del área metropolitana
+	// como La Estrella, Itagüí, Envigado, Sabaneta, Bello, Copacabana, Caldas, etc.
+	const checkIsMedellin = (city: string | undefined): boolean => {
+		if (!city) return false
+		const normalized = city.toLowerCase().trim()
+		const medellinVariations = ['medellin', 'medellín']
 
-	const bornInMedellin =
-		section2.bornCity?.toLowerCase().includes('medellín') ||
-		section2.bornCity?.toLowerCase().includes('medellin')
+		// La ciudad debe contener "medellin" pero no debe ser otro municipio
+		// Rechazamos explícitamente municipios del área metropolitana
+		const metropolitanMunicipalities = [
+			'la estrella',
+			'itagui',
+			'itagüí',
+			'envigado',
+			'sabaneta',
+			'bello',
+			'copacabana',
+			'caldas',
+			'girardota',
+			'barbosa',
+		]
 
+		// Si es un municipio del área metropolitana, rechazarlo
+		if (metropolitanMunicipalities.some(mun => normalized.includes(mun))) {
+			return false
+		}
+
+		// Debe contener "medellin" o "medellín"
+		return medellinVariations.some(variation => normalized.includes(variation))
+	}
+
+	const livesInMedellin = checkIsMedellin(section2.cityOfResidence)
+	const bornInMedellin = checkIsMedellin(section2.bornCity)
 	const worksInMedellin = section2.worksInMedellin === true
 
 	console.log('🏙️ Verificación de Medellín:', {
@@ -72,14 +97,34 @@ export function getIneligibilityMessage(
 	const age = calculateAge(section2.birthDate)
 	const isMinor = age !== null && age < 18
 
-	const livesInMedellin =
-		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
-		section2.cityOfResidence?.toLowerCase().includes('medellin')
+	// Reutilizar la misma lógica de checkIsMedellin
+	const checkIsMedellin = (city: string | undefined): boolean => {
+		if (!city) return false
+		const normalized = city.toLowerCase().trim()
+		const medellinVariations = ['medellin', 'medellín']
 
-	const bornInMedellin =
-		section2.bornCity?.toLowerCase().includes('medellín') ||
-		section2.bornCity?.toLowerCase().includes('medellin')
+		const metropolitanMunicipalities = [
+			'la estrella',
+			'itagui',
+			'itagüí',
+			'envigado',
+			'sabaneta',
+			'bello',
+			'copacabana',
+			'caldas',
+			'girardota',
+			'barbosa',
+		]
 
+		if (metropolitanMunicipalities.some(mun => normalized.includes(mun))) {
+			return false
+		}
+
+		return medellinVariations.some(variation => normalized.includes(variation))
+	}
+
+	const livesInMedellin = checkIsMedellin(section2.cityOfResidence)
+	const bornInMedellin = checkIsMedellin(section2.bornCity)
 	const worksInMedellin = section2.worksInMedellin === true
 
 	if (isMinor && !livesInMedellin && !bornInMedellin && !worksInMedellin) {
@@ -90,5 +135,5 @@ export function getIneligibilityMessage(
 		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
 	}
 
-			return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
+	return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
 }

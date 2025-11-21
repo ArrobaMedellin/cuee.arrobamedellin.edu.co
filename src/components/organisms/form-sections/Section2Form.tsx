@@ -18,7 +18,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { DOCUMENT_TYPE_OPTIONS, GENDER_IDENTITY_OPTIONS } from '@/constants'
+import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
 import { useCommunes } from '@/hooks/use-communes'
 import { useConditionalFields } from '@/hooks/use-conditional-fields'
 import { useCountries } from '@/hooks/use-countries'
@@ -359,7 +359,8 @@ export function Section2Form() {
 							/>
 						</div>
 
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+						{/* CAMPOS OCULTOS: Orientación sexual e Identidad de género */}
+						{/* <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 							<FormField
 								control={form.control}
 								name='sexualOrientation'
@@ -437,7 +438,7 @@ export function Section2Form() {
 									</FormItem>
 								)}
 							/>
-						</div>
+						</div> */}
 					</CardContent>
 				</Card>
 

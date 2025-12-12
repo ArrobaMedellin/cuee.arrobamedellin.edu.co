@@ -16,17 +16,21 @@ export function isEligibleForFullProcess(
 	const section2 = data.section2
 
 	if (!section2) {
-		console.log('⚠️ No hay datos de section2')
+		return false
+	}
+
+	// Validar que haya datos mínimos antes de evaluar
+	if (!section2.birthDate || !section2.cityOfResidence) {
 		return false
 	}
 
 	// Verificar edad (mayor de 18 años)
 	const age = calculateAge(section2.birthDate)
-	console.log('🎂 Edad calculada:', age)
 	if (age === null || age < 18) {
 		console.log('❌ No cumple requisito de edad (menor de 18 años)')
 		return false
 	}
+	console.log('✅ Edad válida:', age)
 
 	// Verificar que vive en Medellín O nació en Medellín O trabaja en Medellín
 	// IMPORTANTE: Solo se acepta la ciudad de "Medellín", NO otros municipios del área metropolitana

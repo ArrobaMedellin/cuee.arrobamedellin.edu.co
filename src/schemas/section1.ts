@@ -21,6 +21,8 @@ export const section1Schema = z
 		countryOfBirth: z.string().optional(),
 		departmentOfBirth: z.string().optional(),
 		municipalityOfBirth: z.string().optional(),
+		communeOfBirth: z.string().optional(),
+		neighborhoodOfBirth: z.string().optional(),
 	})
 	.refine(
 		data => {

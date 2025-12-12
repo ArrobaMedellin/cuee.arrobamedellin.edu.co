@@ -72,7 +72,6 @@ export function Section4Form() {
 
 	const hasChildren = form.watch('hasChildren')
 	const occupation = form.watch('occupation')
-	const belongsToSpecialPopulations = form.watch('belongsToSpecialPopulations')
 
 	const onSubmit = (values: Section4Form) => {
 		setSectionData('section4', values)

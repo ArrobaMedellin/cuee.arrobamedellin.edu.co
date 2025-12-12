@@ -50,59 +50,6 @@ export function Section6Form() {
 		setSectionData('section6', values)
 	}
 
-	const courseOptions = [
-		{
-			value: 'big-data-none-little',
-			label: 'Big data; None data y Little data',
-		},
-		{
-			value: 'captura-analisis-big-data',
-			label: 'Captura y análisis de datos en Big Data',
-		},
-		{
-			value: 'ciencia-ingenieria-datos',
-			label: 'Ciencia e Ingeniería de Datos',
-		},
-		{ value: 'inteligencia-negocios-bi', label: 'Inteligencia de Negocios BI' },
-		{
-			value: 'excel-avanzado',
-			label: 'Excel Avanzado para la gestión y optimización de datos',
-		},
-		{ value: 'que-es-ia', label: 'Que es la inteligencia artificial' },
-		{
-			value: 'marketing-digital',
-			label: 'Preparando los negocios hacia el marketing digital',
-		},
-		{
-			value: 'excel-intermedio',
-			label: 'Excel intermedio: fundamentos para la formulación y análisis',
-		},
-		{ value: 'crea-tu-ia', label: 'Crea tu propia IA' },
-		{ value: 'ingles-basico', label: 'Inglés Básico' },
-		{ value: 'ingles-intermedio', label: 'Inglés intermedio' },
-		{
-			value: 'ingles-turismo',
-			label: 'Inglés básico para el sector turístico',
-		},
-		{
-			value: 'primeros-auxilios-psicologicos',
-			label: 'Primeros auxilios psicológicos',
-		},
-		{
-			value: 'vida-independiente',
-			label: 'Vida independiente y toma de decisiones con apoyo',
-		},
-		{
-			value: 'buenas-practicas-ambientales',
-			label: 'Buenas prácticas ambientales en el hogar',
-		},
-		{
-			value: 'economia-circular',
-			label: 'Herramientas prácticas de economía circular',
-		},
-		{ value: 'conmemorando-etnico', label: 'Conmemorando lo étnico' },
-	]
-
 	const howDidYouHearOptions = [
 		{ value: 'facebook', label: 'Redes sociales - Facebook' },
 		{ value: 'x-twitter', label: 'Redes sociales - X' },

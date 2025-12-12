@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { CheckCircle } from 'lucide-react'
 
 export default function ConfirmationPage() {
 	const handleClose = () => {
@@ -23,7 +22,6 @@ export default function ConfirmationPage() {
 			<div className='mx-auto max-w-3xl p-6'>
 				<div className='rounded-xl border bg-card p-8 shadow-lg'>
 					<div className='flex flex-col items-center text-center space-y-6'>
-
 						<div className='space-y-4'>
 							<h2 className='text-3xl font-bold text-foreground'>
 								Requisitos no cumplidos
@@ -31,7 +29,11 @@ export default function ConfirmationPage() {
 
 							<div className='text-lg text-black space-y-4'>
 								<p>
-									Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.
+									Gracias por tu interés en hacer parte de @Medellín. En este
+									momento, los cursos están dirigidos a personas mayores de 18
+									años que hayan nacido en Medellín, residan en la ciudad o
+									trabajen en alguna de sus empresas, según los criterios
+									definidos para esta convocatoria.
 								</p>
 							</div>
 						</div>

@@ -57,9 +57,12 @@ export function useValidateSection() {
 			}
 		} catch (error) {
 			// Solo loggear si hay datos (evitar logs en formulario vacío)
-			const sectionData = (data as any)[`section${currentSection}`]
+			const sectionData = (data as Record<string, unknown>)[
+				`section${currentSection}`
+			] as Record<string, unknown> | undefined
 			const hasData =
 				sectionData &&
+				typeof sectionData === 'object' &&
 				Object.keys(sectionData).some(key => {
 					const value = sectionData[key]
 					return value !== '' && value !== undefined && value !== null
@@ -124,9 +127,12 @@ export function useValidateSection() {
 				})
 
 				// Solo loggear si hay datos (evitar logs en formulario vacío)
-				const sectionData = (data as any)[`section${currentSection}`]
+				const sectionData = (data as Record<string, unknown>)[
+					`section${currentSection}`
+				] as Record<string, unknown> | undefined
 				const hasData =
 					sectionData &&
+					typeof sectionData === 'object' &&
 					Object.keys(sectionData).some(key => {
 						const value = sectionData[key]
 						return value !== '' && value !== undefined && value !== null

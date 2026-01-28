@@ -101,7 +101,6 @@ export interface CreateApplicantDto {
 
 	// Contacto
 	cellphone: string
-	worksInMedellin?: boolean
 	secondaryCellphone?: string
 	email: string
 	confirmEmail?: string
@@ -180,7 +179,7 @@ function boolToSiNo(value: boolean | undefined): string {
 function mapDevices(devices: string[] = []) {
 	return {
 		hasDesktopComputer: boolToSiNo(
-			devices.includes('Computadora de escritorio')
+			devices.includes('Computadora de escritorio'),
 		),
 		hasLaptop: boolToSiNo(devices.includes('Laptop')),
 		hasTablet: boolToSiNo(devices.includes('Tablet')),
@@ -192,7 +191,7 @@ function mapDevices(devices: string[] = []) {
 // Helper function to map disability types
 function mapDisabilityTypes(
 	disabilityTypes: string[] = [],
-	hasDisability: boolean = false
+	hasDisability: boolean = false,
 ) {
 	if (!hasDisability) {
 		return {
@@ -211,12 +210,12 @@ function mapDisabilityTypes(
 		hasAuditoryDisability: boolToSiNo(disabilityTypes.includes('Auditiva')),
 		hasPhysicalDisability: boolToSiNo(disabilityTypes.includes('Física')),
 		hasIntellectualDisability: boolToSiNo(
-			disabilityTypes.includes('Intelectual')
+			disabilityTypes.includes('Intelectual'),
 		),
 		hasVisualDisability: boolToSiNo(disabilityTypes.includes('Visual')),
 		hasDeafblindness: boolToSiNo(disabilityTypes.includes('Sordoceguera')),
 		hasPsychosocialDisability: boolToSiNo(
-			disabilityTypes.includes('Psicosocial')
+			disabilityTypes.includes('Psicosocial'),
 		),
 		hasMultipleDisabilities: boolToSiNo(disabilityTypes.includes('Múltiple')),
 		hasNoDisability: 'NO',
@@ -242,17 +241,17 @@ function mapEthnicity(section5: RegistrationFormData['section5'] | undefined) {
 
 	return {
 		isBlackPopulation: boolToSiNo(
-			ethnicGroup === 'Negro o de ascendencia afrocolombiana'
+			ethnicGroup === 'Negro o de ascendencia afrocolombiana',
 		),
 		isAfrodescendant: boolToSiNo(afroSubgroup === 'Afrodescendiente'),
 		isRaizal: boolToSiNo(
-			afroSubgroup === 'Raizal del archipiélago de San Andrés y Providencia'
+			afroSubgroup === 'Raizal del archipiélago de San Andrés y Providencia',
 		),
 		isPalenquero: boolToSiNo(
-			afroSubgroup === 'Palenquero de San Basilio de Palenque'
+			afroSubgroup === 'Palenquero de San Basilio de Palenque',
 		),
 		isIndigenous: boolToSiNo(
-			!!section5.indigenousPeople && section5.indigenousPeople.trim() !== ''
+			!!section5.indigenousPeople && section5.indigenousPeople.trim() !== '',
 		),
 		isRomGypsy: boolToSiNo(ethnicGroup === 'Rom (gitano)'),
 		isNotInAnyGroup: 'NO',
@@ -262,7 +261,7 @@ function mapEthnicity(section5: RegistrationFormData['section5'] | undefined) {
 // Helper function to map victimizing acts
 function mapVictimizingActs(
 	victimizingActs: string[] = [],
-	isVictim: boolean = false
+	isVictim: boolean = false,
 ) {
 	if (!isVictim) {
 		return {
@@ -286,36 +285,36 @@ function mapVictimizingActs(
 
 	return {
 		isTerroristActVictim: boolToSiNo(
-			victimizingActs.includes('Acto terrorista')
+			victimizingActs.includes('Acto terrorista'),
 		),
 		hasThreats: boolToSiNo(victimizingActs.includes('Amenaza')),
 		hasFreedomOffenses: boolToSiNo(
-			victimizingActs.includes('Delitos contra la libertad')
+			victimizingActs.includes('Delitos contra la libertad'),
 		),
 		hasForcedDisappearance: boolToSiNo(
-			victimizingActs.includes('Desaparición forzada')
+			victimizingActs.includes('Desaparición forzada'),
 		),
 		hasForcedDisplacement: boolToSiNo(
-			victimizingActs.includes('Desplazamiento forzado')
+			victimizingActs.includes('Desplazamiento forzado'),
 		),
 		hasHomicide: boolToSiNo(victimizingActs.includes('Homicidio')),
 		isAntiPersonnelMineVictim: boolToSiNo(
-			victimizingActs.includes('Minas antipersonal')
+			victimizingActs.includes('Minas antipersonal'),
 		),
 		isKidnappingVictim: boolToSiNo(victimizingActs.includes('Secuestro')),
 		isTortureVictim: boolToSiNo(victimizingActs.includes('Tortura')),
 		isLinkedToArmedGroups: boolToSiNo(
-			victimizingActs.includes('Vinculación a grupos armados')
+			victimizingActs.includes('Vinculación a grupos armados'),
 		),
 		hasLostAssets: boolToSiNo(victimizingActs.includes('Pérdida de bienes')),
 		hasPhysicalPersonalInjuries: boolToSiNo(
-			victimizingActs.includes('Lesiones personales físicas')
+			victimizingActs.includes('Lesiones personales físicas'),
 		),
 		isVictimOfTerroristActs: boolToSiNo(
-			victimizingActs.includes('Actos terroristas')
+			victimizingActs.includes('Actos terroristas'),
 		),
 		hasPsychologicalPersonalInjuries: boolToSiNo(
-			victimizingActs.includes('Lesiones psicológicas')
+			victimizingActs.includes('Lesiones psicológicas'),
 		),
 		hasConfinement: boolToSiNo(victimizingActs.includes('Confinamiento')),
 	}
@@ -323,7 +322,7 @@ function mapVictimizingActs(
 
 // Helper function to build address fields from section3
 function buildAddressFields(
-	section3: RegistrationFormData['section3'] | undefined
+	section3: RegistrationFormData['section3'] | undefined,
 ) {
 	if (!section3) return {}
 
@@ -353,7 +352,7 @@ function buildAddressFields(
 
 // Mapper function to transform form data to API DTO
 export function mapFormDataToDto(
-	formData: Partial<RegistrationFormData>
+	formData: Partial<RegistrationFormData>,
 ): CreateApplicantDto {
 	const {
 		section1,
@@ -387,7 +386,7 @@ export function mapFormDataToDto(
 	// Map disability types
 	const disabilityFields = mapDisabilityTypes(
 		section5?.disabilityTypes,
-		section5?.hasDisability
+		section5?.hasDisability,
 	)
 
 	// Map ethnicity
@@ -396,7 +395,7 @@ export function mapFormDataToDto(
 	// Map victimizing acts
 	const victimFields = mapVictimizingActs(
 		section5?.victimizingActs,
-		section5?.isViolenceVictim
+		section5?.isViolenceVictim,
 	)
 
 	// Map address fields
@@ -476,10 +475,10 @@ export function mapFormDataToDto(
 		isInformalVendor: boolToSiNo(section4?.isInformalVendor),
 		isFamilyOfInformalVendor: boolToSiNo(section4?.isFamilyOfInformalVendor),
 		isDisabilityCaregiver: boolToSiNo(
-			section4?.isFamilyCaregiver || section5?.isFamilyCaregiver
+			section4?.isFamilyCaregiver || section5?.isFamilyCaregiver,
 		),
 		isDistrictYouthCounselor: boolToSiNo(
-			section4?.isYouthCouncilor || section5?.isYouthCouncilor
+			section4?.isYouthCouncilor || section5?.isYouthCouncilor,
 		),
 		isConflictDisplaced: boolToSiNo(section5?.isInternallyDisplaced),
 		isYouthInPenalSystem: 'NO', // No hay campo específico en el formulario
@@ -489,7 +488,7 @@ export function mapFormDataToDto(
 		isGenderViolenceVictim: 'NO', // Movido de section4 a section5, pero no existe en el tipo
 		isNotInPoblation: boolToSiNo(!section4?.belongsToSpecialPopulations),
 		isBarrister: boolToSiNo(
-			section4?.isCertifiedBarrista || section5?.isCertifiedBarrista
+			section4?.isCertifiedBarrista || section5?.isCertifiedBarrista,
 		),
 		isExcombatant: boolToSiNo(section5?.isExcombatant),
 		isFamilyOfExcombatant: boolToSiNo(section5?.isFamilyOfExcombatant),
@@ -530,7 +529,6 @@ export function mapFormDataToDto(
 
 		// Contacto
 		cellphone: section2?.phone || '',
-		worksInMedellin: section2?.worksInMedellin,
 		secondaryCellphone: section2?.representativePhone,
 		email: section1?.email || '',
 		confirmEmail: section1?.emailVerification,

@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import {
 	Form,
 	FormControl,
@@ -17,15 +18,18 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
+import { useAutofillForm } from '@/hooks/use-autofill-form'
 import type { Section1Form } from '@/schemas/section1'
 import { section1Schema } from '@/schemas/section1'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, Search } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section1Form() {
 	const { data, setSectionData } = useFormStore()
+	const { isSearching, searchByDocument } = useAutofillForm()
 	const form = useForm<Section1Form>({
 		resolver: zodResolver(section1Schema),
 		defaultValues: data.section1 || {
@@ -55,6 +59,20 @@ export function Section1Form() {
 
 	const onSubmit = (values: Section1Form) => {
 		setSectionData('section1', values)
+	}
+
+	const handleSearch = async () => {
+		const documentNumber = form.getValues('documentNumber')
+		if (documentNumber) {
+			const found = await searchByDocument(documentNumber)
+			if (found) {
+				const freshData = useFormStore.getState().data.section1
+				if (freshData) {
+					// Actualizar el formulario con los datos del store
+					form.reset(freshData)
+				}
+			}
+		}
 	}
 
 	return (
@@ -106,7 +124,7 @@ export function Section1Form() {
 								<FormLabel>Tipo de documento</FormLabel>
 								<Select
 									onValueChange={field.onChange}
-									defaultValue={field.value}
+									value={field.value}
 								>
 									<FormControl>
 										<SelectTrigger>
@@ -152,13 +170,39 @@ export function Section1Form() {
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Número de documento</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa número'
-										{...field}
-									/>
-								</FormControl>
+								<div className='flex gap-2'>
+									<FormControl>
+										<Input
+											placeholder='Ingresa número'
+											{...field}
+											onKeyDown={e => {
+												if (e.key === 'Enter') {
+													e.preventDefault()
+													handleSearch()
+												}
+											}}
+										/>
+									</FormControl>
+									<Button
+										type='button'
+										variant='outline'
+										size='icon'
+										onClick={handleSearch}
+										disabled={isSearching || !field.value}
+										title='Buscar inscripción previa'
+									>
+										{isSearching ? (
+											<Loader2 className='h-4 w-4 animate-spin' />
+										) : (
+											<Search className='h-4 w-4' />
+										)}
+									</Button>
+								</div>
 								<FormMessage />
+								<p className='text-xs text-muted-foreground mt-1'>
+									Si ya te inscribiste antes, haz clic en buscar para
+									autocompletar el formulario
+								</p>
 							</FormItem>
 						)}
 					/>

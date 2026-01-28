@@ -64,17 +64,16 @@ export function RegistrationForm() {
 							age--
 						}
 						return age
-				  })()
-				: null,
+					})()
+				: undefined,
 			cityOfResidence: data.section2?.cityOfResidence,
 			bornCity: data.section2?.bornCity,
-			worksInMedellin: data.section2?.worksInMedellin,
 		})
 
 		// Resetear contador si el usuario ahora es elegible
 		if (eligible && ineligibilityAttempts > 0) {
 			console.log(
-				'✅ Usuario ahora es elegible - reseteando contador de intentos'
+				'✅ Usuario ahora es elegible - reseteando contador de intentos',
 			)
 			setIneligibilityAttempts(0)
 		}
@@ -145,7 +144,22 @@ export function RegistrationForm() {
 		return baseSteps
 	}, [])
 
+	// Función mejorada para navegar - valida elegibilidad antes de permitir avanzar más allá de la sección 2
 	const goto = (target: number) => {
+		// Si está intentando ir a la sección 3 o superior, debe ser elegible
+		if (target > 2 && !isEligible) {
+			console.log('❌ No puede avanzar a sección', target, '- No es elegible')
+			// Incrementar contador de intentos
+			const newAttempts = ineligibilityAttempts + 1
+			setIneligibilityAttempts(newAttempts)
+
+			if (newAttempts >= 2) {
+				setShowMaxAttemptsDialog(true)
+			} else {
+				setShowIneligibleDialog(true)
+			}
+			return
+		}
 		setCurrentSection(target)
 	}
 
@@ -244,12 +258,12 @@ export function RegistrationForm() {
 			})
 
 			toast.success(
-				'Tu información básica ha sido enviada. Gracias por tu interés en nuestros programas.'
+				'Tu información básica ha sido enviada. Gracias por tu interés en nuestros programas.',
 			)
 		} catch (error) {
 			console.error('❌ Error submitting partial data:', error)
 			toast.error(
-				'Hubo un error al enviar la información. Por favor intenta nuevamente.'
+				'Hubo un error al enviar la información. Por favor intenta nuevamente.',
 			)
 		}
 	}
@@ -290,10 +304,9 @@ export function RegistrationForm() {
 						<AlertDialogDescription className='text-black'>
 							<span className='mb-3 block'>
 								Gracias por tu interés en hacer parte de @Medellín. En este
-								momento, los cursos están dirigidos a personas mayores de 18
-								años que hayan nacido en Medellín, residan en la ciudad o
-								trabajen en alguna de sus empresas, según los criterios
-								definidos para esta convocatoria.
+								momento, los cursos están dirigidos a personas de 15 años o más
+								que hayan nacido en Medellín o residan en la ciudad, según los
+								criterios definidos para esta convocatoria.
 							</span>
 						</AlertDialogDescription>
 					</AlertDialogHeader>
@@ -318,15 +331,22 @@ export function RegistrationForm() {
 									i < stepIndex
 										? 'completed'
 										: i === stepIndex
-										? 'current'
-										: 'pending'
+											? 'current'
+											: 'pending'
 								}
 								title={`Paso ${i + 1}: ${s.title}`}
 								description={s.description}
 								tooltip={s.tooltip}
-								disabled={i > stepIndex || !hasAcceptedTerms}
+								disabled={
+									i > stepIndex ||
+									!hasAcceptedTerms ||
+									(s.key > 2 && !isEligible)
+								}
 								onClick={() =>
-									hasAcceptedTerms && i <= stepIndex && goto(s.key)
+									hasAcceptedTerms &&
+									i <= stepIndex &&
+									(s.key <= 2 || isEligible) &&
+									goto(s.key)
 								}
 							/>
 						))}

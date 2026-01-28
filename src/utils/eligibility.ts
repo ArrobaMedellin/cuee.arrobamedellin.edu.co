@@ -4,14 +4,14 @@ import { calculateAge } from './age'
 /**
  * Verifica si el aplicante es elegible para continuar con el proceso completo
  * Requisitos:
- * - Mayor de 18 años
- * - Vive en Medellín O nació en Medellín O trabaja en Medellín
+ * - Igual o mayor a 15 años
+ * - Vive en Medellín O nació en Medellín
  *
  * @param data - Datos del formulario (section1 y section2)
  * @returns true si cumple los requisitos, false en caso contrario
  */
 export function isEligibleForFullProcess(
-	data: Partial<RegistrationFormData>
+	data: Partial<RegistrationFormData>,
 ): boolean {
 	const section2 = data.section2
 
@@ -20,15 +20,15 @@ export function isEligibleForFullProcess(
 		return false
 	}
 
-	// Verificar edad (mayor de 18 años)
+	// Verificar edad (igual o mayor a 15 años)
 	const age = calculateAge(section2.birthDate)
 	console.log('🎂 Edad calculada:', age)
-	if (age === null || age < 18) {
-		console.log('❌ No cumple requisito de edad (menor de 18 años)')
+	if (age === null || age < 15) {
+		console.log('❌ No cumple requisito de edad (menor de 15 años)')
 		return false
 	}
 
-	// Verificar que vive en Medellín O nació en Medellín O trabaja en Medellín
+	// Verificar que vive en Medellín O nació en Medellín
 	const livesInMedellin =
 		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
 		section2.cityOfResidence?.toLowerCase().includes('medellin')
@@ -37,23 +37,19 @@ export function isEligibleForFullProcess(
 		section2.bornCity?.toLowerCase().includes('medellín') ||
 		section2.bornCity?.toLowerCase().includes('medellin')
 
-	const worksInMedellin = section2.worksInMedellin === true
-
 	console.log('🏙️ Verificación de Medellín:', {
 		livesInMedellin,
 		cityOfResidence: section2.cityOfResidence,
 		bornInMedellin,
 		bornCity: section2.bornCity,
-		worksInMedellin,
 	})
 
-	const hasMedellinConnection =
-		livesInMedellin || bornInMedellin || worksInMedellin
+	const hasMedellinConnection = livesInMedellin || bornInMedellin
 
 	console.log(
 		hasMedellinConnection
 			? '✅ Cumple requisito de conexión con Medellín'
-			: '❌ NO cumple requisito de conexión con Medellín'
+			: '❌ NO cumple requisito de conexión con Medellín',
 	)
 
 	return hasMedellinConnection
@@ -63,14 +59,14 @@ export function isEligibleForFullProcess(
  * Obtiene el mensaje de inelegibilidad basado en los datos del aplicante
  */
 export function getIneligibilityMessage(
-	data: Partial<RegistrationFormData>
+	data: Partial<RegistrationFormData>,
 ): string {
 	const section2 = data.section2
 
 	if (!section2) return 'Faltan datos para verificar elegibilidad'
 
 	const age = calculateAge(section2.birthDate)
-	const isMinor = age !== null && age < 18
+	const isTooYoung = age !== null && age < 15
 
 	const livesInMedellin =
 		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
@@ -80,15 +76,13 @@ export function getIneligibilityMessage(
 		section2.bornCity?.toLowerCase().includes('medellín') ||
 		section2.bornCity?.toLowerCase().includes('medellin')
 
-	const worksInMedellin = section2.worksInMedellin === true
-
-	if (isMinor && !livesInMedellin && !bornInMedellin && !worksInMedellin) {
-		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
-	} else if (isMinor) {
-		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
-	} else if (!livesInMedellin && !bornInMedellin && !worksInMedellin) {
-		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
+	if (isTooYoung && !livesInMedellin && !bornInMedellin) {
+		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'
+	} else if (isTooYoung) {
+		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'
+	} else if (!livesInMedellin && !bornInMedellin) {
+		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'
 	}
 
-			return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas mayores de 18 años que hayan nacido en Medellín, residan en la ciudad o trabajen en alguna de sus empresas, según los criterios definidos para esta convocatoria.'
+	return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'
 }

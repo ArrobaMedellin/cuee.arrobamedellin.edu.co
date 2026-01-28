@@ -30,13 +30,13 @@ export function calculateAge(birthDate: string): number | null {
 }
 
 /**
- * Verifica si una persona es menor de edad (menor de 18 años)
+ * Verifica si una persona es menor de edad (menor de 15 años)
  * @param birthDate - Fecha de nacimiento en formato string (YYYY-MM-DD)
  * @returns true si es menor de edad, false en caso contrario
  */
 export function isMinor(birthDate: string): boolean {
 	const age = calculateAge(birthDate)
-	return age !== null && age < 18
+	return age !== null && age < 15
 }
 
 /**

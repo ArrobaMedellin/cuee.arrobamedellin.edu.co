@@ -8,7 +8,7 @@ export const section2Schema = z
 			.min(1, 'Fecha de nacimiento es requerida')
 			.refine(
 				date => isValidBirthDate(date),
-				'Fecha de nacimiento inválida o futura'
+				'Fecha de nacimiento inválida o futura',
 			),
 		age: z.number().optional(), // Calculada automáticamente
 		bornCity: z.string().min(1, 'Ciudad de nacimiento es requerida'),
@@ -23,7 +23,6 @@ export const section2Schema = z
 			.string()
 			.min(1, 'Teléfono es requerido')
 			.regex(/^\d+$/, 'Solo números'),
-		worksInMedellin: z.boolean().optional(), // ¿Trabaja para alguna empresa de Medellín?
 		gender: z.string().min(1, 'Sexo es requerido'),
 		isPregnant: z.string().optional(), // Campo condicional para embarazo
 		sexualOrientation: z.string().min(1, 'Orientación sexual es requerida'),

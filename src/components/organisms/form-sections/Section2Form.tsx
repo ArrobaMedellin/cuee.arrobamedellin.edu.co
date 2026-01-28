@@ -17,7 +17,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
 import { DOCUMENT_TYPE_OPTIONS, GENDER_IDENTITY_OPTIONS } from '@/constants'
 import { useCommunes } from '@/hooks/use-communes'
 import { useConditionalFields } from '@/hooks/use-conditional-fields'
@@ -68,7 +67,6 @@ export function Section2Form() {
 			neighborhood: '',
 			commune: '',
 			phone: '',
-			worksInMedellin: false,
 			gender: '',
 			isPregnant: '',
 			sexualOrientation: '',
@@ -87,7 +85,7 @@ export function Section2Form() {
 			// Restaurar país
 			if (data.section2.countryOfResidence && !selectedCountryId) {
 				const savedCountry = countries.countries.find(
-					c => c.name === data.section2?.countryOfResidence
+					c => c.name === data.section2?.countryOfResidence,
 				)
 				if (savedCountry) {
 					setSelectedCountryId(savedCountry.id)
@@ -111,7 +109,7 @@ export function Section2Form() {
 				!selectedCommuneId
 			) {
 				const savedCommune = communes.communes.find(
-					c => c.name === data.section2?.commune
+					c => c.name === data.section2?.commune,
 				)
 				if (savedCommune) {
 					setSelectedCommuneId(savedCommune.id)
@@ -209,7 +207,7 @@ export function Section2Form() {
 	const isCorregimiento = () => {
 		if (!selectedCommuneId) return false
 		const selectedCommune = communes.communes.find(
-			c => c.id === selectedCommuneId
+			c => c.id === selectedCommuneId,
 		)
 		return selectedCommune?.name.includes('(Corregimiento)') || false
 	}
@@ -260,7 +258,7 @@ export function Section2Form() {
 															// Buscar la ciudad en el array para determinar si está duplicada
 															const matchingCities =
 																departmentsCities.citiesWithDepartment.filter(
-																	c => c.city === field.value
+																	c => c.city === field.value,
 																)
 															// Si hay múltiples ciudades con el mismo nombre, necesitamos el formato completo
 															if (matchingCities.length > 1) {
@@ -268,7 +266,7 @@ export function Section2Form() {
 																return `${matchingCities[0].city}|${matchingCities[0].department}`
 															}
 															return field.value
-													  })()
+														})()
 													: ''
 											}
 										>
@@ -283,7 +281,7 @@ export function Section2Form() {
 														// Contar cuántas ciudades tienen el mismo nombre
 														const citiesWithSameName =
 															departmentsCities.citiesWithDepartment.filter(
-																c => c.city === city
+																c => c.city === city,
 															).length
 
 														const displayName =
@@ -308,7 +306,7 @@ export function Section2Form() {
 																{displayName}
 															</SelectItem>
 														)
-													}
+													},
 												)}
 											</SelectContent>
 										</Select>
@@ -569,7 +567,7 @@ export function Section2Form() {
 													onValueChange={value => {
 														// El valor ahora es el nombre completo (ej: "1 - Popular")
 														const commune = communes.communes.find(
-															c => c.name === value
+															c => c.name === value,
 														)
 														if (commune) {
 															setSelectedCommuneId(commune.id)
@@ -618,7 +616,7 @@ export function Section2Form() {
 													// El value ahora es el nombre del barrio
 													const neighborhood =
 														neighborhoods.filteredNeighborhoods.find(
-															n => n.name === value
+															n => n.name === value,
 														)
 													if (neighborhood) {
 														form.setValue('neighborhood', value)
@@ -640,7 +638,7 @@ export function Section2Form() {
 															>
 																{neighborhood.name}
 															</SelectItem>
-														)
+														),
 													)}
 												</SelectContent>
 											</Select>
@@ -651,25 +649,6 @@ export function Section2Form() {
 							)}
 					</CardContent>
 				</Card>
-				<FormField
-					control={form.control}
-					name='worksInMedellin'
-					render={({ field }) => (
-						<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-							<div className='space-y-0.5'>
-								<FormLabel className='text-base'>
-									¿Trabajas para alguna empresa de Medellín?
-								</FormLabel>
-							</div>
-							<FormControl>
-								<Switch
-									checked={field.value}
-									onCheckedChange={field.onChange}
-								/>
-							</FormControl>
-						</FormItem>
-					)}
-				/>
 				{showRepresentativeFields && (
 					<Card>
 						<CardHeader>

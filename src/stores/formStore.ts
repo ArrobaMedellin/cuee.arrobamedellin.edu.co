@@ -13,11 +13,12 @@ interface FormStore {
 	currentSection: number
 	setSectionData: <K extends keyof RegistrationFormData>(
 		section: K,
-		data: RegistrationFormData[K]
+		data: RegistrationFormData[K],
 	) => void
 	setCurrentSection: (section: number) => void
 	resetForm: () => void
 	isSectionValid: (section: keyof RegistrationFormData) => boolean
+	setMultipleSections: (data: Partial<RegistrationFormData>) => void
 }
 
 const initialData: Partial<RegistrationFormData> = {
@@ -42,7 +43,6 @@ const initialData: Partial<RegistrationFormData> = {
 		neighborhood: '',
 		commune: '',
 		phone: '',
-		worksInMedellin: false,
 		gender: '',
 		isPregnant: '',
 		sexualOrientation: '',
@@ -162,6 +162,10 @@ export const useFormStore = create<FormStore>()(
 				set(state => ({
 					data: { ...state.data, [section]: data },
 				})),
+			setMultipleSections: newData =>
+				set(state => ({
+					data: { ...state.data, ...newData },
+				})),
 			setCurrentSection: section => set({ currentSection: section }),
 			resetForm: () => set({ data: initialData, currentSection: 1 }),
 			isSectionValid: section => {
@@ -208,6 +212,6 @@ export const useFormStore = create<FormStore>()(
 				data: state.data,
 				currentSection: state.currentSection,
 			}),
-		}
-	)
+		},
+	),
 )

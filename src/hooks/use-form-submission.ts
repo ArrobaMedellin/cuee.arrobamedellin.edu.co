@@ -77,10 +77,18 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 
 			let result
 			if (existingApplicant) {
+				// Eliminar campos vacíos o nulos para evitar errores de validación en actualización parcial
+				const plainDto = JSON.parse(JSON.stringify(applicantDto))
+				const cleanDto = Object.fromEntries(
+					Object.entries(plainDto).filter(
+						([_, v]) => v !== '' && v !== null && v !== undefined,
+					),
+				)
+
 				// Actualizar aplicante existente
 				result = await apiService.updateApplicant(
 					existingApplicant.id,
-					applicantDto,
+					cleanDto,
 				)
 				toast.success('Información actualizada correctamente')
 			} else {

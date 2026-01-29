@@ -69,8 +69,6 @@ export function Section2Form() {
 			phone: '',
 			gender: '',
 			isPregnant: '',
-			sexualOrientation: '',
-			genderIdentity: '',
 			representativeFirstName: '',
 			representativeDocumentType: '',
 			representativeDocumentNumber: '',

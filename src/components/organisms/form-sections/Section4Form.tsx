@@ -72,7 +72,6 @@ export function Section4Form() {
 
 	const hasChildren = form.watch('hasChildren')
 	const occupation = form.watch('occupation')
-	const belongsToSpecialPopulations = form.watch('belongsToSpecialPopulations')
 
 	const onSubmit = (values: Section4Form) => {
 		setSectionData('section4', values)
@@ -464,7 +463,7 @@ export function Section4Form() {
 													{...field}
 													onChange={e =>
 														field.onChange(
-															parseInt(e.target.value) || undefined
+															parseInt(e.target.value) || undefined,
 														)
 													}
 												/>
@@ -487,7 +486,7 @@ export function Section4Form() {
 													{...field}
 													onChange={e =>
 														field.onChange(
-															parseInt(e.target.value) || undefined
+															parseInt(e.target.value) || undefined,
 														)
 													}
 												/>

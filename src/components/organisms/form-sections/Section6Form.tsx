@@ -69,7 +69,6 @@ export function Section6Form() {
 		{ value: 'otro', label: 'Otro' },
 	]
 
-	const selectedCourses = form.watch('selectedCourses')
 	const howDidYouHear = form.watch('howDidYouHear')
 
 	return (

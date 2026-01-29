@@ -57,7 +57,8 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 				const applicantCourseIds = (
 					existingApplicant.courseIds ||
 					existingApplicant.courses?.map(
-						(c: any) => c.apiId || c.id || c.code,
+						(c: { apiId?: string; id?: string; code?: string }) =>
+							c.apiId || c.id || c.code,
 					) ||
 					[]
 				).map(String)

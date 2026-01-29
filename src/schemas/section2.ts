@@ -25,9 +25,6 @@ export const section2Schema = z
 			.regex(/^\d+$/, 'Solo números'),
 		gender: z.string().min(1, 'Sexo es requerido'),
 		isPregnant: z.string().optional(), // Campo condicional para embarazo
-		sexualOrientation: z.string().min(1, 'Orientación sexual es requerida'),
-		otherSexualOrientation: z.string().optional(),
-		genderIdentity: z.string().min(1, 'Identidad de género es requerida'),
 		// Campos del representante legal (condicionales para menores de edad)
 		representativeFirstName: z.string().optional(),
 		representativeDocumentType: z.string().optional(),
@@ -72,15 +69,6 @@ export const section2Schema = z
 					})
 				}
 			}
-		}
-
-		// Si selecciona "Otro" en orientación sexual, debe especificar
-		if (data.sexualOrientation === 'Otro' && !data.otherSexualOrientation) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: 'Especifica la otra orientación sexual',
-				path: ['otherSexualOrientation'],
-			})
 		}
 
 		// Si es menor de edad, validar campos del representante

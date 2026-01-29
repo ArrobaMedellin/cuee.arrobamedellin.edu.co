@@ -17,7 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { DOCUMENT_TYPE_OPTIONS, GENDER_IDENTITY_OPTIONS } from '@/constants'
+import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
 import { useCommunes } from '@/hooks/use-communes'
 import { useConditionalFields } from '@/hooks/use-conditional-fields'
 import { useCountries } from '@/hooks/use-countries'
@@ -349,86 +349,6 @@ export function Section2Form() {
 												<SelectItem value='Masculino'>Masculino</SelectItem>
 												<SelectItem value='Femenino'>Femenino</SelectItem>
 												<SelectItem value='Intersexual'>Intersexual</SelectItem>
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-							<FormField
-								control={form.control}
-								name='sexualOrientation'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Orientación sexual</FormLabel>
-										<Select
-											onValueChange={field.onChange}
-											value={field.value}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder='Seleccione' />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												<SelectItem value='Heterosexual'>
-													Heterosexual
-												</SelectItem>
-												<SelectItem value='Homosexual'>Homosexual</SelectItem>
-												<SelectItem value='Bisexual'>Bisexual</SelectItem>
-												<SelectItem value='Pansexual'>Pansexual</SelectItem>
-												<SelectItem value='Asexual'>Asexual</SelectItem>
-												<SelectItem value='Otro'>Otro</SelectItem>
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							{form.watch('sexualOrientation') === 'Otro' && (
-								<FormField
-									control={form.control}
-									name='otherSexualOrientation'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Especificar orientación sexual</FormLabel>
-											<FormControl>
-												<Input {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							)}
-
-							<FormField
-								control={form.control}
-								name='genderIdentity'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Identidad de género</FormLabel>
-										<Select
-											onValueChange={field.onChange}
-											value={field.value}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder='Seleccione' />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{GENDER_IDENTITY_OPTIONS.map(option => (
-													<SelectItem
-														key={option.value}
-														value={option.value}
-													>
-														{option.label}
-													</SelectItem>
-												))}
 											</SelectContent>
 										</Select>
 										<FormMessage />

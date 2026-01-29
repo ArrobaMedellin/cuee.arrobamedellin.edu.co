@@ -94,14 +94,6 @@ export function Summary() {
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 						<Kv
-							label='Nombres'
-							value={s1?.firstName}
-						/>
-						<Kv
-							label='Apellidos'
-							value={s1?.lastName}
-						/>
-						<Kv
 							label='Tipo de documento'
 							value={
 								s1?.documentType === 'Otro'
@@ -112,6 +104,14 @@ export function Summary() {
 						<Kv
 							label='Número de documento'
 							value={s1?.documentNumber}
+						/>
+						<Kv
+							label='Nombres'
+							value={s1?.firstName}
+						/>
+						<Kv
+							label='Apellidos'
+							value={s1?.lastName}
 						/>
 						<Kv
 							label='Correo electrónico'
@@ -165,18 +165,6 @@ export function Summary() {
 								value={s2?.isPregnant}
 							/>
 						)}
-						<Kv
-							label='Orientación sexual'
-							value={
-								s2?.sexualOrientation === 'Otro'
-									? s2?.otherSexualOrientation
-									: s2?.sexualOrientation
-							}
-						/>
-						<Kv
-							label='Identidad de género'
-							value={s2?.genderIdentity}
-						/>
 
 						{/* Campos del representante legal si es menor de edad */}
 						{(s2?.representativeFirstName ||

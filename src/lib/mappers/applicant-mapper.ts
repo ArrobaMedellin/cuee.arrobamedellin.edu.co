@@ -24,9 +24,6 @@ export interface CreateApplicantDto {
 
 	// Género e identidad
 	gender: string
-	sexualOrientation?: string
-	otherOrientation?: string
-	genderIdentity: string
 
 	// Hijos y familia
 	hasChildren?: string // 'SI' | 'NO'
@@ -437,15 +434,6 @@ export function mapFormDataToDto(
 
 		// Género e identidad
 		gender: section2?.gender || '',
-		sexualOrientation:
-			section2?.sexualOrientation === 'Otro'
-				? undefined
-				: section2?.sexualOrientation,
-		otherOrientation:
-			section2?.sexualOrientation === 'Otro'
-				? section2?.otherSexualOrientation
-				: undefined,
-		genderIdentity: section2?.genderIdentity || '',
 
 		// Hijos y familia
 		hasChildren: boolToSiNo(section4?.hasChildren),

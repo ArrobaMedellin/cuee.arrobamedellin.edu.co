@@ -120,17 +120,7 @@ export function useAutofillForm(): UseAutofillFormReturn {
 			gender: toStr(applicant.gender) || data.section2?.gender || '',
 			isPregnant:
 				toStr(applicant.isExpectingMother) || data.section2?.isPregnant || '',
-			sexualOrientation:
-				toStr(applicant.sexualOrientation) ||
-				data.section2?.sexualOrientation ||
-				'',
-			genderIdentity:
-				toStr(applicant.genderIdentity) || data.section2?.genderIdentity || '',
 			age: toNum(applicant.age) || data.section2?.age || 0,
-			otherSexualOrientation:
-				toStr(applicant.otherOrientation) ||
-				data.section2?.otherSexualOrientation ||
-				'',
 			representativeFirstName:
 				toStr(applicant.legalGuardianName) ||
 				data.section2?.representativeFirstName ||

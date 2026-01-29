@@ -81,40 +81,10 @@ export function Section1Form() {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className='space-y-6'
 			>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-					<FormField
-						control={form.control}
-						name='firstName'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Nombres</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa tus nombres'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='lastName'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Apellidos</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingresa tus apellidos'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
+				<p className='text-xs text-muted-foreground mt-1'>
+					Si ya te inscribiste antes, haz clic en buscar para autocompletar el
+					formulario
+				</p>
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 					<FormField
 						control={form.control}
@@ -199,10 +169,40 @@ export function Section1Form() {
 									</Button>
 								</div>
 								<FormMessage />
-								<p className='text-xs text-muted-foreground mt-1'>
-									Si ya te inscribiste antes, haz clic en buscar para
-									autocompletar el formulario
-								</p>
+							</FormItem>
+						)}
+					/>
+				</div>
+				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+					<FormField
+						control={form.control}
+						name='firstName'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Nombres</FormLabel>
+								<FormControl>
+									<Input
+										placeholder='Ingresa tus nombres'
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name='lastName'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Apellidos</FormLabel>
+								<FormControl>
+									<Input
+										placeholder='Ingresa tus apellidos'
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
 							</FormItem>
 						)}
 					/>

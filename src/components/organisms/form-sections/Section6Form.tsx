@@ -1,6 +1,5 @@
 'use client'
 
-import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Form,
 	FormControl,
@@ -10,6 +9,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
 	Select,
 	SelectContent,
@@ -50,59 +50,6 @@ export function Section6Form() {
 		setSectionData('section6', values)
 	}
 
-	const courseOptions = [
-		{
-			value: 'big-data-none-little',
-			label: 'Big data; None data y Little data',
-		},
-		{
-			value: 'captura-analisis-big-data',
-			label: 'Captura y análisis de datos en Big Data',
-		},
-		{
-			value: 'ciencia-ingenieria-datos',
-			label: 'Ciencia e Ingeniería de Datos',
-		},
-		{ value: 'inteligencia-negocios-bi', label: 'Inteligencia de Negocios BI' },
-		{
-			value: 'excel-avanzado',
-			label: 'Excel Avanzado para la gestión y optimización de datos',
-		},
-		{ value: 'que-es-ia', label: 'Que es la inteligencia artificial' },
-		{
-			value: 'marketing-digital',
-			label: 'Preparando los negocios hacia el marketing digital',
-		},
-		{
-			value: 'excel-intermedio',
-			label: 'Excel intermedio: fundamentos para la formulación y análisis',
-		},
-		{ value: 'crea-tu-ia', label: 'Crea tu propia IA' },
-		{ value: 'ingles-basico', label: 'Inglés Básico' },
-		{ value: 'ingles-intermedio', label: 'Inglés intermedio' },
-		{
-			value: 'ingles-turismo',
-			label: 'Inglés básico para el sector turístico',
-		},
-		{
-			value: 'primeros-auxilios-psicologicos',
-			label: 'Primeros auxilios psicológicos',
-		},
-		{
-			value: 'vida-independiente',
-			label: 'Vida independiente y toma de decisiones con apoyo',
-		},
-		{
-			value: 'buenas-practicas-ambientales',
-			label: 'Buenas prácticas ambientales en el hogar',
-		},
-		{
-			value: 'economia-circular',
-			label: 'Herramientas prácticas de economía circular',
-		},
-		{ value: 'conmemorando-etnico', label: 'Conmemorando lo étnico' },
-	]
-
 	const howDidYouHearOptions = [
 		{ value: 'facebook', label: 'Redes sociales - Facebook' },
 		{ value: 'x-twitter', label: 'Redes sociales - X' },
@@ -141,47 +88,27 @@ export function Section6Form() {
 								Seleccione una de las siguientes rutas en la que quieras
 								participar
 							</FormLabel>
-							<div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-								{COURSE_MAPPINGS.map(option => (
-									<FormItem
-										key={option.value}
-										className='flex flex-row items-start space-x-3 space-y-0'
-									>
-										<FormControl>
-											<Checkbox
-												checked={field.value?.includes(option.value)}
-												onCheckedChange={checked => {
-													if (checked) {
-														// Verificar que no exceda el límite de 1
-														if ((field.value || []).length < 1) {
-															field.onChange([
-																...(field.value || []),
-																option.value,
-															])
-														}
-													} else {
-														field.onChange(
-															field.value?.filter(
-																value => value !== option.value
-															) || []
-														)
-													}
-												}}
-												disabled={
-													!field.value?.includes(option.value) &&
-													field.value?.length >= 3
-												}
-											/>
-										</FormControl>
-										<FormLabel className='text-sm font-normal leading-5'>
-											{option.label}
-										</FormLabel>
-									</FormItem>
-								))}
-							</div>
-							<div className='text-sm text-muted-foreground mt-2'>
-								Cursos seleccionados: {selectedCourses?.length || 0}/1
-							</div>
+							<FormControl>
+								<RadioGroup
+									onValueChange={value => field.onChange([value])}
+									defaultValue={field.value?.[0]}
+									className='grid grid-cols-1 md:grid-cols-2 gap-3'
+								>
+									{COURSE_MAPPINGS.map(option => (
+										<FormItem
+											key={option.value}
+											className='flex items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm hover:bg-accent cursor-pointer'
+										>
+											<FormControl>
+												<RadioGroupItem value={option.value} />
+											</FormControl>
+											<FormLabel className='font-normal cursor-pointer w-full'>
+												{option.label}
+											</FormLabel>
+										</FormItem>
+									))}
+								</RadioGroup>
+							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}

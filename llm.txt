@@ -1,0 +1,1298 @@
+# Inscripciones Sapiencia - Contexto para Modelos de IA
+
+> Formulario público de inscripción para cursos de Sapiencia
+> Versión: 0.1.0 | Última actualización: 30 de enero de 2026
+
+## INFORMACIÓN GENERAL
+
+**Nombre del Proyecto**: Inscripciones Sapiencia
+**Stack Tecnológico**: Next.js 15.5.3, React 19.1.0, TypeScript 5, Tailwind CSS 4
+**Propósito**: Aplicación web pública de formulario multi-paso para inscripción a cursos de capacitación de Sapiencia. Permite a ciudadanos de Medellín registrarse para acceder a programas educativos gratuitos.
+**Backend**: Se conecta a `gestor-api` (NestJS - ver ../gestor-api/llm.txt)
+**Estado**: ✅ Producción
+**Organización**: Sapiencia - Medellín, Colombia
+
+## CARACTERÍSTICAS PRINCIPALES
+
+### Funcionalidades Clave
+
+1. **Formulario Multi-Paso (7 secciones + 1 opcional)**:
+- Sección 1: Información Personal
+- Sección 2: Datos de Contacto y Ubicación
+- Sección 2.1: Representante Legal (si es menor de 18 años)
+- Sección 3: Dirección Completa
+- Sección 4: Información de Dispositivos y Poblaciones Especiales
+- Sección 5: Información de Discapacidad y Condición de Víctima
+- Sección 6: Selección de Cursos
+- Sección 7: Información Académica
+- Summary: Resumen antes del envío
+
+2. **Validación de Elegibilidad**:
+- Edad mínima: 18 años
+- Conexión con Medellín (al menos una): vivir, nacer o trabajar en Medellín
+- Usuarios no elegibles: solo se guardan secciones 1-2
+
+3. **Autocompletado Inteligente**:
+- Búsqueda por número de documento
+- Autocompleta secciones 1 y 2 si ya se registró antes
+- Evita duplicados de inscripción
+
+4. **Persistencia de Datos**:
+- Guardado automático en localStorage vía Zustand
+- Los datos persisten al recargar la página
+- Sincronización en tiempo real
+
+5. **Integración con API**:
+- Envío de datos a gestor-api
+- Verificación de duplicados por documento + período
+- Creación o actualización según exista registro previo
+
+6. **UX Mejorada**:
+- Validación en tiempo real
+- Mensajes de error descriptivos
+- Indicadores de progreso
+- Notificaciones (toasts) con Sonner
+- Responsive design completo
+
+## ARQUITECTURA DEL PROYECTO
+
+### Stack Completo
+
+**Core Framework**:
+- Next.js 15.5.3 (App Router)
+- React 19.1.0
+- TypeScript 5
+- Turbopack (desarrollo y build)
+
+**Estilos**:
+- Tailwind CSS 4
+- PostCSS
+- tw-animate-css
+
+**UI Components**:
+- Radix UI (componentes accesibles)
+- shadcn/ui pattern
+- Lucide React (iconos)
+- Sonner (toasts)
+
+**Gestión de Estado**:
+- Zustand 5.0.8 (estado global + persistencia)
+- React Hook Form 7.62.0 (formularios)
+
+**Validación**:
+- Zod 4.1.9 (schemas)
+- @hookform/resolvers (integración con RHF)
+
+**Utilidades**:
+- date-fns 4.1.0 (manejo de fechas)
+- class-variance-authority (variantes CSS)
+- clsx + tailwind-merge (clases condicionales)
+
+### Estructura de Directorios
+
+```
+inscripciones-sapiencia/
+├── public/                                    # Archivos estáticos
+│ └── images/                                # Imágenes del proyecto
+│
+├── src/
+│ ├── app/                                   # Next.js App Router
+│ │ ├── layout.tsx                         # Layout raíz
+│ │ ├── page.tsx                           # Landing page (redirect a /registration)
+│ │ ├── globals.css                        # Estilos globales + Tailwind
+│ │ │
+│ │ ├── registration/                      # Formulario de inscripción
+│ │ │ └── page.tsx                       # Vista del formulario multi-paso
+│ │ │
+│ │ ├── confirmation/                      # Confirmación de envío
+│ │ │ └── page.tsx
+│ │ │
+│ │ └── thanks/                            # Página de agradecimiento
+│ │ └── page.tsx
+│ │
+│ ├── components/                            # Componentes reutilizables
+│ │ ├── atoms/                             # Componentes básicos
+│ │ │ └── ... (inputs, buttons básicos)
+│ │ │
+│ │ ├── molecules/                         # Componentes compuestos
+│ │ │ └── ... (cards, selectors, etc)
+│ │ │
+│ │ ├── organisms/                         # Secciones complejas
+│ │ │ ├── RegistrationForm.tsx           # Orquestador del formulario
+│ │ │ ├── Summary.tsx                    # Resumen final
+│ │ │ └── form-sections/                 # Secciones del formulario
+│ │ │ ├── Section1Form.tsx               # Información personal
+│ │ │ ├── Section2Form.tsx               # Datos de contacto
+│ │ │ ├── Section21Form.tsx              # Representante legal
+│ │ │ ├── Section3Form.tsx               # Dirección
+│ │ │ ├── Section4Form.tsx               # Dispositivos y poblaciones
+│ │ │ ├── Section5Form.tsx               # Discapacidad y victimización
+│ │ │ ├── Section6Form.tsx               # Selección de cursos
+│ │ │ └── Section7Form.tsx               # Información académica
+│ │ │
+│ │ └── ui/                                # Componentes UI base (shadcn/ui)
+│ │ ├── button.tsx
+│ │ ├── form.tsx
+│ │ ├── input.tsx
+│ │ ├── select.tsx
+│ │ ├── checkbox.tsx
+│ │ ├── card.tsx
+│ │ ├── dialog.tsx
+│ │ ├── toast.tsx
+│ │ └── ... (50+ componentes)
+│ │
+│ ├── hooks/                                 # Custom React Hooks
+│ │ ├── use-autofill-form.ts               # Autocompletado por documento
+│ │ ├── use-form-submission.ts             # Lógica de envío de formulario
+│ │ ├── use-validate-section.ts            # Validación de secciones
+│ │ ├── use-countries.ts                   # Carga de países
+│ │ ├── use-departments.ts                 # Departamentos de Colombia
+│ │ ├── use-departments-cities.ts          # Dep + ciudades
+│ │ ├── use-cities.ts                      # Ciudades
+│ │ ├── use-communes.ts                    # Comunas de Medellín
+│ │ ├── use-neighborhoods.ts               # Barrios de Medellín
+│ │ ├── use-conditional-fields.ts          # Campos condicionales
+│ │ └── use-mobile.ts                      # Detectar mobile
+│ │
+│ ├── schemas/                               # Schemas de validación Zod
+│ │ ├── index.ts                           # Schema completo del formulario
+│ │ ├── section1.ts                        # Validación sección 1
+│ │ ├── section2.ts                        # Validación sección 2
+│ │ ├── section21.ts                       # Validación representante legal
+│ │ ├── section3.ts                        # Validación dirección
+│ │ ├── section4.ts                        # Validación dispositivos/poblaciones
+│ │ ├── section5.ts                        # Validación discapacidad/víctima
+│ │ ├── section6.ts                        # Validación cursos
+│ │ └── section7.ts                        # Validación académica
+│ │
+│ ├── stores/                                # Zustand Stores
+│ │ ├── formStore.ts                       # Estado del formulario (con persist)
+│ │ └── modalStore.ts                      # Estado de modales
+│ │
+│ ├── lib/                                   # Lógica central y utilidades
+│ │ ├── api.ts                             # Cliente API (ApiService)
+│ │ ├── utils.ts                           # Utilidades generales (cn, etc)
+│ │ └── mappers/                           # Transformación de datos
+│ │ └── applicant-mapper.ts                # Mapeo form → DTO API
+│ │
+│ ├── data/                                  # Datos estáticos JSON
+│ │ ├── countries.json                     # Lista de países
+│ │ ├── colombia.json                      # Datos de Colombia
+│ │ ├── departments.json                   # Departamentos
+│ │ ├── departments-cities.json            # Dep + Ciudades
+│ │ ├── cities.json                        # Ciudades
+│ │ ├── communes.json                      # Comunas de Medellín
+│ │ ├── neighborhoods.json                 # Barrios
+│ │ └── medellin-neighborhoods.json        # Barrios de Medellín
+│ │
+│ ├── constants/                             # Constantes de la app
+│ │ ├── index.ts                           # Constantes generales
+│ │ └── courses.ts                         # Mapeo de cursos (form → API)
+│ │
+│ ├── types/                                 # Definiciones TypeScript
+│ │ └── ... (tipos del formulario)
+│ │
+│ └── utils/                                 # Funciones de utilidad
+│ └── ... (helpers, formatters)
+│
+├── .github/
+│ ├── pull_request_template.md
+│ └── instructions/
+│ └── copilot.instructions.md
+│
+├── Documentación/
+│ ├── README.md                              # Documentación principal
+│ ├── INTEGRACION-API.md                     # Guía de integración con API (190 líneas)
+│ ├── AUTOFILL_FEATURE_DOCUMENTATION.md      # Autocompletado (166 líneas)
+│ ├── FORM_STORAGE_FIX.md                    # Fix de storage (197 líneas)
+│ ├── ELEGIBILIDAD_FIX.md                    # Fix de elegibilidad (389 líneas)
+│ └── CHANGES.md                             # Historial de cambios
+│
+├── package.json
+├── tsconfig.json
+├── next.config.ts
+├── postcss.config.mjs
+├── components.json                            # Configuración shadcn/ui
+├── eslint.config.mjs
+├── Dockerfile
+└── .env                                       # Variables de entorno (vacío por defecto)
+
+```
+
+## FLUJO DEL FORMULARIO
+
+### Navegación Multi-Paso
+
+El formulario está dividido en secciones con navegación secuencial:
+
+```
+Landing (/)
+→ Redirect a /registration
+→ Sección 1: Información Personal
+↓ (si < 18 años)
+→ Sección 2.1: Representante Legal
+↓
+→ Sección 2: Datos de Contacto
+↓ VALIDACIÓN DE ELEGIBILIDAD
+→ Si NO elegible:
+→ Diálogo informativo
+→ Envío parcial (solo secciones 1-2)
+→ Redirect a /thanks
+→ Si elegible:
+→ Sección 3: Dirección
+→ Sección 4: Dispositivos y Poblaciones
+→ Sección 5: Discapacidad y Víctima
+→ Sección 6: Selección de Cursos
+→ Sección 7: Información Académica
+→ Summary: Resumen completo
+→ Envío completo
+→ Redirect a /confirmation
+```
+
+### Secciones del Formulario
+
+**Sección 1: Información Personal**
+- Nombres y apellidos
+- Tipo y número de documento
+- País, departamento y ciudad de nacimiento
+- Email
+- **Búsqueda de inscripción previa** (ícono de lupa)
+
+**Sección 2: Datos de Contacto y Ubicación**
+- Fecha de nacimiento (cálculo automático de edad)
+- País, departamento, ciudad de residencia
+- Barrio, comuna (si es Medellín)
+- Teléfono
+- Género, orientación sexual, identidad de género
+- **¿Trabaja en Medellín?** (para elegibilidad)
+
+**Sección 2.1: Representante Legal** (condicional si < 18 años)
+- Nombres y apellidos del representante
+- Tipo y número de documento
+- Parentesco
+- Email y teléfono
+
+**Sección 3: Dirección Completa**
+- Tipo de vía (Calle, Carrera, Diagonal, etc.)
+- Números y letras (9 campos para componer dirección)
+- Dirección completa generada automáticamente
+
+**Sección 4: Dispositivos y Poblaciones Especiales**
+- Dispositivos disponibles (Laptop, Smartphone, Desktop, Tablet)
+- Acceso a internet
+- Pertenencia a población especial (LGBTIQ+, Desmovilizados, etc.)
+
+**Sección 5: Discapacidad y Condición de Víctima**
+- ¿Tiene discapacidad? (tipos: Visual, Auditiva, Física, Psicosocial, etc.)
+- ¿Pertenece a grupo étnico? (Negro, Afrocolombiano, Indígena, etc.)
+- ¿Es víctima del conflicto armado? (actos victimizantes)
+
+**Sección 6: Selección de Cursos**
+- Selección múltiple de cursos de interés
+- ¿Cómo se enteró del programa?
+
+**Sección 7: Información Académica**
+- Nivel educativo alcanzado
+- Institución educativa
+- Año de graduación
+- ¿Tiene pruebas ICFES Pro?
+
+**Summary: Resumen**
+- Visualización completa de todas las secciones
+- Edición de cualquier sección
+- Botón de envío final
+
+## VALIDACIÓN DE ELEGIBILIDAD
+
+### Requisitos para Proceso Completo
+
+**Archivo**: `src/utils/eligibility.ts`
+
+Para que un aplicante sea elegible para el proceso completo (secciones 3-7), debe cumplir:
+
+1. **Edad mínima**: >= 18 años
+2. **Conexión con Medellín** (AL MENOS UNA):
+- Vive en Medellín (cityOfResidence = "Medellín")
+- Nació en Medellín (bornCity = "Medellín")
+- Trabaja en Medellín (worksInMedellin = true)
+
+**Función de validación**:
+```typescript
+export function isEligibleForFullProcess(formData: RegistrationFormData): boolean {
+const section2 = formData.section2
+if (!section2) return false
+
+// Verificar edad
+const age = calculateAge(section2.birthDate)
+if (age < 18) return false
+
+// Verificar conexión con Medellín
+const livesInMedellin = section2.cityOfResidence === 'Medellín'
+const bornInMedellin = section2.bornCity === 'Medellín'
+const worksInMedellin = section2.worksInMedellin === true
+
+return livesInMedellin || bornInMedellin || worksInMedellin
+}
+```
+
+### Flujo de No Elegibilidad
+
+Si el usuario NO cumple los requisitos:
+
+1. Al finalizar Sección 2, se muestra un diálogo informativo
+2. Se explica por qué no es elegible
+3. Se ofrece opción de guardar datos parciales
+4. Se envían SOLO secciones 1 y 2 a la API
+5. Redirect a página de agradecimiento `/thanks`
+
+**Campos guardados en modo no elegible**:
+- Toda la Sección 1 (información personal)
+- Toda la Sección 2 (contacto y ubicación)
+- Sección 2.1 si aplica (representante legal)
+
+## AUTOCOMPLETADO POR DOCUMENTO
+
+### Funcionalidad de Búsqueda
+
+**Archivo**: `src/hooks/use-autofill-form.ts`
+
+Permite buscar inscripciones previas por número de documento para evitar reescribir datos.
+
+**Cómo funciona**:
+
+1. Usuario ingresa número de documento en Sección 1
+2. Click en ícono de lupa (o presiona Enter)
+3. Hook ejecuta: `GET /applicants/document/:document`
+4. Si encuentra registro:
+- Toast de éxito
+- **Autocompleta SOLO secciones 1 y 2**
+- Usuario puede editar y continuar
+5. Si no encuentra:
+- Toast informativo
+- Usuario continúa llenando manualmente
+
+**Secciones autocompletadas**:
+- ✅ Sección 1: Información personal completa
+- ✅ Sección 2: Datos de contacto y ubicación
+- ❌ Secciones 3-7: NO se autocompletan (usuario debe llenar)
+
+**Razón**: Las secciones 3-7 pueden cambiar entre inscripciones (nueva dirección, nuevos cursos, etc.)
+
+### Hook useAutofillForm
+
+```typescript
+export function useAutofillForm() {
+const { setMultipleSections } = useFormStore()
+const [isSearching, setIsSearching] = useState(false)
+
+async function searchByDocument(documentNumber: string) {
+if (!documentNumber) return
+
+setIsSearching(true)
+try {
+const applicant = await apiService.findApplicantByDocument(documentNumber)
+
+if (applicant) {
+autofillFormData(applicant)
+toast.success('¡Datos encontrados! El formulario se ha rellenado automáticamente')
+} else {
+toast.info('No se encontró ninguna inscripción previa con este documento')
+}
+} catch (error) {
+toast.error('Error al buscar en la base de datos')
+} finally {
+setIsSearching(false)
+}
+}
+
+return { searchByDocument, isSearching }
+}
+```
+
+## PERSISTENCIA DE DATOS
+
+### Guardado Automático con Zustand
+
+**Archivo**: `src/stores/formStore.ts`
+
+Todos los datos del formulario se guardan automáticamente en localStorage usando Zustand persist middleware.
+
+**Configuración**:
+```typescript
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+export const useFormStore = create<FormStore>()(
+persist(
+(set) => ({
+data: initialFormData,
+
+setSectionData: (section, data) =>
+set((state) => ({
+data: {
+...state.data,
+[section]: data
+}
+})),
+
+setMultipleSections: (data) =>
+set((state) => ({
+data: {
+...state.data,
+...data
+}
+})),
+
+resetForm: () => set({ data: initialFormData })
+}),
+{
+name: 'registration-form',
+version: 1
+}
+)
+)
+```
+
+**Guardado en tiempo real**:
+
+Cada sección del formulario implementa un `useEffect` que observa cambios:
+
+```typescript
+// Ejemplo en Section1Form.tsx
+useEffect(() => {
+const subscription = form.watch((values) => {
+if (values && Object.keys(values).length > 0) {
+setSectionData('section1', values as Section1Form)
+}
+})
+return () => subscription.unsubscribe()
+}, [form, setSectionData])
+```
+
+**Ventajas**:
+- Los datos persisten al recargar la página
+- No se pierden datos si el usuario cierra accidentalmente
+- Sincronización automática sin necesidad de botón "Guardar"
+
+## INTEGRACIÓN CON BACKEND (gestor-api)
+
+### Cliente API
+
+**Archivo**: `src/lib/api.ts`
+
+```typescript
+export class ApiService {
+private baseUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'
+
+// Crear nuevo aplicante
+async createApplicant(data: CreateApplicantDto): Promise<Applicant>
+
+// Buscar por documento
+async findApplicantByDocument(document: string): Promise<Applicant | null>
+
+// Actualizar aplicante existente
+async updateApplicant(id: string, data: UpdateApplicantDto): Promise<Applicant>
+}
+```
+
+### Mapeo de Datos Form → API
+
+**Archivo**: `src/lib/mappers/applicant-mapper.ts`
+
+Transforma datos del formulario al formato esperado por el backend (tabla `applicants`).
+
+**Principales transformaciones**:
+
+1. **Dispositivos** (array → campos individuales):
+```typescript
+// Form: devices: ['Laptop', 'Smartphone']
+// API:
+{
+hasLaptop: 'SI',
+hasSmartphone: 'SI',
+hasDesktopComputer: 'NO',
+hasTablet: 'NO',
+hasNoDevice: 'NO'
+}
+```
+
+2. **Discapacidad** (array → campos individuales):
+```typescript
+// Form: disabilityTypes: ['Visual', 'Auditiva']
+// API:
+{
+hasVisualDisability: 'SI',
+hasAuditoryDisability: 'SI',
+hasPhysicalDisability: 'NO',
+// ... resto en 'NO'
+}
+```
+
+3. **Etnia** (selección → campos específicos):
+```typescript
+// Form: ethnicGroup = 'Negro o de ascendencia afrocolombiana'
+// API:
+{
+isBlackPopulation: 'SI',
+isAfrodescendant: 'NO',
+isNotInAnyGroup: 'NO'
+}
+```
+
+4. **Dirección** (componentes → campos):
+```typescript
+// Form: addressType, addressNumber1, addressLetter1, etc.
+// API:
+{
+addressField1: 'Calle',
+addressField2: '50',
+addressField3: 'B',
+// ... hasta addressField9
+showAddress: 'Calle 50B #30-45' // Generado automáticamente
+}
+```
+
+5. **Cursos** (nombres → IDs):
+```typescript
+// Form: selectedCourses: ['ingles-basico', 'excel-avanzado']
+// API: courseIds: ['30504000', '30504005']
+```
+
+6. **Edad** (calculada automáticamente):
+```typescript
+// Form: birthDate: '2000-01-15'
+// API: age: 26 (calculado)
+```
+
+### Endpoints Utilizados
+
+**Create Applicant**:
+```
+POST /api/applicants
+Body: CreateApplicantDto
+Response: Applicant
+```
+
+**Find by Document**:
+```
+GET /api/applicants/document/:document
+Response: Applicant | 404
+```
+
+**Update Applicant**:
+```
+PATCH /api/applicants/:id
+Body: UpdateApplicantDto
+Response: Applicant
+```
+
+### Flujo de Envío
+
+**Archivo**: `src/hooks/use-form-submission.ts`
+
+1. **Validación**: Verifica que `documentNumber` esté presente
+2. **Verificación de duplicados**:
+- `findApplicantByDocument(document)`
+- Busca si ya existe registro para ese documento en el período actual
+3. **Transformación**:
+- `mapFormDataToDto(formData)`
+- Convierte datos del formulario a formato API
+4. **Envío**:
+- Si existe: `updateApplicant(id, data)` (PATCH)
+- Si no existe: `createApplicant(data)` (POST)
+5. **Notificación**:
+- Toast de éxito o error
+- Redirect a página de confirmación
+
+**Hook useFormSubmission**:
+```typescript
+export function useFormSubmission() {
+const [isSubmitting, setIsSubmitting] = useState(false)
+
+async function submitForm(formData: RegistrationFormData) {
+setIsSubmitting(true)
+
+try {
+const document = formData.section1?.documentNumber
+if (!document) throw new Error('Número de documento requerido')
+
+// Verificar si existe
+const existing = await apiService.findApplicantByDocument(document)
+
+// Mapear datos
+const dto = mapFormDataToDto(formData)
+
+// Crear o actualizar
+if (existing) {
+await apiService.updateApplicant(existing.id, dto)
+toast.success('Tu inscripción ha sido actualizada correctamente')
+} else {
+await apiService.createApplicant(dto)
+toast.success('¡Inscripción enviada exitosamente!')
+}
+
+router.push('/confirmation')
+} catch (error) {
+toast.error('Error al enviar la inscripción')
+console.error(error)
+} finally {
+setIsSubmitting(false)
+}
+}
+
+return { submitForm, isSubmitting }
+}
+```
+
+## MAPEO DE CURSOS
+
+### Configuración
+
+**Archivo**: `src/constants/courses.ts`
+
+Define el mapeo entre los valores del formulario y los IDs de la API:
+
+```typescript
+export interface CourseMapping {
+value: string // Valor interno del formulario
+label: string // Nombre mostrado al usuario
+apiId: string // ID real en la API/BD
+}
+
+export const COURSE_MAPPINGS: CourseMapping[] = [
+{
+value: 'ingles-basico',
+label: 'Inglés Básico',
+apiId: '30504000'
+},
+{
+value: 'ingles-intermedio',
+label: 'Inglés intermedio',
+apiId: '30504001'
+},
+{
+value: 'ciencia-ingenieria-datos',
+label: 'Ciencia e Ingeniería de Datos',
+apiId: '30504004'
+},
+// ... más de 40 cursos mapeados
+]
+```
+
+### Funciones de Mapeo
+
+```typescript
+// Obtener ID de API por valor de formulario
+export function getCourseApiId(formValue: string): string | undefined {
+return COURSE_MAPPINGS.find(c => c.value === formValue)?.apiId
+}
+
+// Obtener múltiples IDs
+export function mapCourseValues(formValues: string[]): string[] {
+return formValues
+.map(getCourseApiId)
+.filter(Boolean) as string[]
+}
+```
+
+### Actualización de Cursos
+
+Para añadir o modificar cursos:
+
+1. Editar `src/constants/courses.ts`
+2. Añadir nuevo objeto al array `COURSE_MAPPINGS`
+3. Asegurar que `apiId` coincida con el ID en la base de datos
+4. El formulario automáticamente mostrará el nuevo curso
+
+## VALIDACIÓN CON ZOD
+
+### Schemas por Sección
+
+Cada sección tiene su schema de validación en `src/schemas/`:
+
+**Section1** (Información Personal):
+```typescript
+export const section1Schema = z.object({
+firstName: z.string().min(1, 'Nombres es requerido'),
+lastName: z.string().min(1, 'Apellidos es requerido'),
+documentType: z.string().min(1, 'Tipo de documento es requerido'),
+documentNumber: z.string().min(1, 'Número de documento es requerido'),
+email: z.string().email('Email inválido'),
+birthCountry: z.string().optional(),
+birthDepartment: z.string().optional(),
+birthMunicipality: z.string().optional(),
+otherDocumentType: z.string().optional(),
+})
+```
+
+**Section2** (Datos de Contacto):
+```typescript
+export const section2Schema = z.object({
+birthDate: z.string().min(1, 'Fecha de nacimiento es requerida'),
+bornCity: z.string().optional(),
+age: z.number().min(0).optional(),
+country: z.string().min(1, 'País es requerido'),
+department: z.string().min(1, 'Departamento es requerido'),
+city: z.string().min(1, 'Ciudad es requerida'),
+cityOfResidence: z.string().optional(),
+neighborhood: z.string().optional(),
+commune: z.string().optional(),
+phone: z.string().min(1, 'Teléfono es requerido'),
+worksInMedellin: z.boolean(),
+gender: z.string().min(1, 'Género es requerido'),
+sexualOrientation: z.string().optional(),
+genderIdentity: z.string().optional(),
+// ... más campos
+})
+```
+
+**Section6** (Cursos):
+```typescript
+export const section6Schema = z.object({
+selectedCourses: z
+.array(z.string())
+.min(1, 'Debes seleccionar al menos un curso'),
+howDidYouHear: z.string().min(1, 'Este campo es requerido'),
+})
+```
+
+### Schema Completo
+
+**Archivo**: `src/schemas/index.ts`
+
+```typescript
+export const registrationFormSchema = z.object({
+section1: section1Schema,
+section2: section2Schema,
+section21: section21Schema.optional(), // Solo si < 18 años
+section3: section3Schema,
+section4: section4Schema,
+section5: section5Schema,
+section6: section6Schema,
+section7: section7Schema,
+})
+
+export type RegistrationFormData = z.infer<typeof registrationFormSchema>
+```
+
+## COMPONENTES UI (shadcn/ui)
+
+### Componentes Disponibles
+
+**50+ componentes en** `src/components/ui/`:
+
+**Forms & Inputs**:
+- Button, Input, Label, Textarea
+- Checkbox, Radio Group, Switch
+- Select, Command (combobox)
+- Form (integrado con React Hook Form)
+
+**Feedback**:
+- Toast (Sonner)
+- Alert, Alert Dialog
+- Progress
+- Badge
+
+**Layout**:
+- Card, Separator
+- Accordion, Collapsible, Tabs
+- Scroll Area
+- Dialog, Drawer
+
+**Navigation**:
+- Navigation Menu
+- Dropdown Menu
+- Context Menu
+
+**Otros**:
+- Avatar, Tooltip, Popover
+- Skeleton, Carousel
+- Toggle, Toggle Group
+
+### Uso con React Hook Form
+
+```typescript
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+
+function MyForm() {
+const form = useForm<FormData>({
+resolver: zodResolver(schema),
+defaultValues: {}
+})
+
+return (
+<Form {...form}>
+<form onSubmit={form.handleSubmit(onSubmit)}>
+<FormField
+control={form.control}
+name="firstName"
+render={({ field }) => (
+<FormItem>
+<FormLabel>Nombres</FormLabel>
+<FormControl>
+<Input placeholder="Juan" {...field} />
+</FormControl>
+<FormMessage />
+</FormItem>
+)}
+/>
+<Button type="submit">Enviar</Button>
+</form>
+</Form>
+)
+}
+```
+
+## HOOKS PERSONALIZADOS
+
+### Hooks de Datos Geográficos
+
+**useCountries** (`src/hooks/use-countries.ts`):
+- Carga lista de países desde `data/countries.json`
+- Retorna array de países con id y nombre
+
+**useDepartments** (`src/hooks/use-departments.ts`):
+- Carga departamentos de Colombia desde `data/departments.json`
+- Retorna lista de departamentos
+
+**useDepartmentsCities** (`src/hooks/use-departments-cities.ts`):
+- Carga relación departamento → ciudades
+- Filtro de ciudades por departamento seleccionado
+
+**useCities** (`src/hooks/use-cities.ts`):
+- Carga todas las ciudades de Colombia
+- Permite filtrado por departamento
+
+**useCommunes** (`src/hooks/use-communes.ts`):
+- Carga comunas de Medellín
+- Solo se usa si ciudad = Medellín
+
+**useNeighborhoods** (`src/hooks/use-neighborhoods.ts`):
+- Carga barrios de Medellín
+- Filtrado por comuna si está disponible
+
+### Hooks de Lógica de Negocio
+
+**useAutofillForm** (`src/hooks/use-autofill-form.ts`):
+- Búsqueda de inscripción previa por documento
+- Autocompletado de secciones 1 y 2
+- Manejo de estados de carga
+
+**useFormSubmission** (`src/hooks/use-form-submission.ts`):
+- Lógica completa de envío de formulario
+- Verificación de duplicados
+- Creación o actualización
+- Manejo de errores
+
+**useValidateSection** (`src/hooks/use-validate-section.ts`):
+- Validación individual de secciones
+- Previene avance si hay errores
+- Integrado con React Hook Form
+
+**useConditionalFields** (`src/hooks/use-conditional-fields.ts`):
+- Manejo de campos condicionales
+- Ejemplo: mostrar Sección 2.1 si edad < 18
+- Limpieza de campos cuando se ocultan
+
+## DATOS ESTÁTICOS
+
+### Archivos JSON
+
+La aplicación usa datos estáticos para listas desplegables:
+
+**Ubicación**: `src/data/`
+
+- `countries.json`: Lista de países
+- `colombia.json`: Datos completos de Colombia
+- `departments.json`: Departamentos de Colombia
+- `departments-cities.json`: Relación departamentos → ciudades
+- `cities.json`: Todas las ciudades de Colombia
+- `communes.json`: Comunas de Medellín (1-16)
+- `neighborhoods.json`: Barrios de todas las ciudades
+- `medellin-neighborhoods.json`: Barrios específicos de Medellín
+
+**Estructura ejemplo**:
+```json
+// countries.json
+[
+{ "id": 1, "name": "Colombia" },
+{ "id": 2, "name": "Venezuela" },
+// ...
+]
+
+// departments-cities.json
+{
+"Antioquia": ["Medellín", "Envigado", "Bello", ...],
+"Cundinamarca": ["Bogotá", "Soacha", ...],
+// ...
+}
+
+// communes.json
+[
+{ "id": 1, "name": "Comuna 1 - Popular" },
+{ "id": 2, "name": "Comuna 2 - Santa Cruz" },
+// ...
+]
+```
+
+## VARIABLES DE ENTORNO
+
+### Configuración
+
+Crear archivo `.env.local` (no commiteado):
+
+```env
+# Backend API URL
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+
+# O en producción:
+# NEXT_PUBLIC_API_URL=https://api.sapiencia.gov.co/api
+```
+
+**Variables del Sistema**:
+- `NEXT_PUBLIC_API_URL`: URL base del backend gestor-api
+- Desarrollo: `http://localhost:4000/api`
+- Producción: URL del servidor de producción
+
+**Uso en código**:
+```typescript
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'
+```
+
+## ESTILOS Y THEMING
+
+### Tailwind CSS 4
+
+**Configuración**: `postcss.config.mjs` + Tailwind directives en `globals.css`
+
+**Uso básico**:
+```typescript
+<div className="flex flex-col gap-4 p-6 bg-white rounded-lg shadow-md">
+<h2 className="text-2xl font-bold text-gray-900">Título</h2>
+<p className="text-gray-600">Descripción</p>
+</div>
+```
+
+### Utility: cn() Function
+
+**Archivo**: `src/lib/utils.ts`
+
+```typescript
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+return twMerge(clsx(inputs))
+}
+```
+
+**Uso**:
+```typescript
+<div className={cn(
+"base-classes p-4 rounded",
+isActive && "bg-blue-500 text-white",
+isDisabled && "opacity-50 pointer-events-none"
+)}>
+Content
+</div>
+```
+
+## RUTAS Y PÁGINAS
+
+### Estructura de Rutas
+
+**App Router (Next.js 15)**:
+
+```
+app/
+├── page.tsx      # Landing (redirect a /registration)
+├── layout.tsx    # Layout raíz
+├── globals.css   # Estilos globales
+│
+├── registration/
+│ └── page.tsx  # Formulario multi-paso principal
+│
+├── confirmation/
+│ └── page.tsx  # Confirmación de envío exitoso
+│
+└── thanks/
+└── page.tsx      # Agradecimiento (usuarios no elegibles)
+```
+
+**Flujos de navegación**:
+
+1. **Proceso completo** (usuario elegible):
+```
+/ → /registration → (completa todas secciones) → /confirmation
+```
+
+2. **Proceso parcial** (usuario no elegible):
+```
+/ → /registration → (completa secciones 1-2) → /thanks
+```
+
+### Navegación Programática
+
+```typescript
+import { useRouter } from 'next/navigation'
+
+function MyComponent() {
+const router = useRouter()
+
+function handleSubmit() {
+// Después del envío
+router.push('/confirmation')
+}
+}
+```
+
+## SCRIPTS NPM
+
+```bash
+# Desarrollo con Turbopack
+npm run dev
+
+# Build para producción (con Turbopack)
+npm run build
+
+# Start producción
+npm run start
+
+# Linting
+npm run lint
+```
+
+## DOCUMENTACIÓN ADICIONAL
+
+**Archivos de documentación incluidos**:
+
+1. **README.md**: Documentación principal del proyecto
+2. **INTEGRACION-API.md** (190 líneas): Guía completa de integración con backend
+3. **AUTOFILL_FEATURE_DOCUMENTATION.md** (166 líneas): Funcionalidad de autocompletado
+4. **FORM_STORAGE_FIX.md** (197 líneas): Solución al problema de persistencia de datos
+5. **ELEGIBILIDAD_FIX.md** (389 líneas): Corrección del flujo de elegibilidad
+6. **CHANGES.md**: Historial de cambios del proyecto
+
+## FIXES Y MEJORAS DOCUMENTADAS
+
+### 1. Fix de Storage del Formulario
+
+**Problema**: Los datos no se guardaban, el resumen estaba vacío.
+
+**Solución**: Implementación de guardado automático con `form.watch()` en todas las secciones.
+
+**Archivo**: `FORM_STORAGE_FIX.md`
+
+**Cambios**:
+- Guardado automático en tiempo real
+- Persistencia en localStorage vía Zustand
+- Sincronización reactiva entre secciones
+
+### 2. Fix de Elegibilidad
+
+**Problema**: No se validaba correctamente la elegibilidad en paso 2.
+
+**Solución**: Validación estricta de edad y conexión con Medellín.
+
+**Archivo**: `ELEGIBILIDAD_FIX.md`
+
+**Cambios**:
+- Campo `worksInMedellin` agregado al estado
+- Validación en función `isEligibleForFullProcess()`
+- Diálogo informativo para usuarios no elegibles
+- Envío parcial (solo secciones 1-2) implementado
+
+### 3. Autocompletado de Formulario
+
+**Funcionalidad**: Búsqueda de inscripción previa por documento.
+
+**Archivo**: `AUTOFILL_FEATURE_DOCUMENTATION.md`
+
+**Implementación**:
+- Hook `useAutofillForm()`
+- Búsqueda por API: `GET /applicants/document/:document`
+- Autocompleta solo secciones 1 y 2
+- UX mejorada con ícono de lupa y feedback
+
+## DEPLOYMENT
+
+### Docker
+
+**Dockerfile** incluido para containerización:
+
+```bash
+# Build image
+docker build -t inscripciones-sapiencia .
+
+# Run container
+docker run -p 3000:3000 inscripciones-sapiencia
+```
+
+**Variables de entorno en Docker**:
+```bash
+docker run -p 3000:3000 \
+-e NEXT_PUBLIC_API_URL=https://api.produccion.com/api \
+inscripciones-sapiencia
+```
+
+### Vercel (Recomendado)
+
+```bash
+# Deploy a Vercel
+vercel
+
+# Production
+vercel --prod
+```
+
+**Variables de entorno en Vercel**:
+- `NEXT_PUBLIC_API_URL`: URL del backend en producción
+
+### Build Manual
+
+```bash
+# Build con Turbopack
+npm run build
+
+# Start producción
+npm run start
+```
+
+## INTEGRACIÓN CON OTROS PROYECTOS
+
+### Relación con gestor-api
+
+Este proyecto (inscripciones-sapiencia) es el frontend público que alimenta datos a gestor-api:
+
+**Flujo de datos**:
+```
+Usuario → inscripciones-sapiencia (formulario)
+→ POST/PATCH /applicants
+→ gestor-api (NestJS backend)
+→ MySQL (tabla applicants)
+→ gestor-app (admin dashboard)
+```
+
+**Endpoints consumidos de gestor-api**:
+- `POST /api/applicants`: Crear aplicante
+- `GET /api/applicants/document/:document`: Buscar por documento
+- `PATCH /api/applicants/:id`: Actualizar aplicante
+
+### Relación con gestor-app
+
+- **inscripciones-sapiencia**: Formulario público (usuarios finales)
+- **gestor-app**: Dashboard administrativo (staff de Sapiencia)
+
+**Separación de responsabilidades**:
+- Inscripciones: Captura de datos, validación, envío
+- Gestor App: Visualización, gestión, reportes, sincronización con Moodle
+
+## TROUBLESHOOTING COMÚN
+
+### Datos no se guardan
+
+**Solución**: Verificar que `form.watch()` está implementado en la sección.
+
+Ver `FORM_STORAGE_FIX.md` para detalles.
+
+### Usuario no puede continuar después de Sección 2
+
+**Causa**: No cumple requisitos de elegibilidad.
+
+**Solución**: Verificar edad (>= 18) y conexión con Medellín.
+
+Ver `ELEGIBILIDAD_FIX.md` para detalles.
+
+### Error al enviar formulario
+
+**Posibles causas**:
+- `NEXT_PUBLIC_API_URL` no configurada
+- Backend no está corriendo
+- Datos inválidos según schema
+
+**Debug**:
+```typescript
+// Verificar en consola del navegador
+console.log('API URL:', process.env.NEXT_PUBLIC_API_URL)
+console.log('Form data:', formData)
+```
+
+### Autocompletado no funciona
+
+**Verificar**:
+- Número de documento es válido
+- Endpoint `/applicants/document/:document` responde
+- No hay errores de CORS
+
+### Cursos no aparecen o IDs incorrectos
+
+**Solución**: Actualizar `src/constants/courses.ts` con IDs reales de la API.
+
+## DEPENDENCIAS CLAVE
+
+**Runtime**:
+- Next.js 15.5.3, React 19.1.0
+- Zustand 5.0.8 (estado + persistencia)
+- React Hook Form 7.62.0
+- Zod 4.1.9 (validación)
+- Radix UI (componentes accesibles)
+- Lucide React (iconos)
+- Sonner 2.0.7 (toasts)
+- date-fns 4.1.0
+- Tailwind CSS 4
+
+**DevDependencies**:
+- TypeScript 5
+- ESLint 9, Next ESLint Config
+- tw-animate-css
+
+## ESTRUCTURA DE DATOS
+
+### Tipo Principal: RegistrationFormData
+
+```typescript
+interface RegistrationFormData {
+section1?: Section1Form // Información personal
+section2?: Section2Form // Datos de contacto
+section21?: Section21Form // Representante legal (condicional)
+section3?: Section3Form // Dirección
+section4?: Section4Form // Dispositivos y poblaciones
+section5?: Section5Form // Discapacidad y víctima
+section6?: Section6Form // Cursos
+section7?: Section7Form // Información académica
+}
+```
+
+### DTOs de API
+
+```typescript
+interface CreateApplicantDto {
+// Campos de Section 1
+firstName: string
+lastName: string
+document: string
+documentType: string
+email: string
+// ... más de 100 campos mapeados
+
+// Campos transformados
+hasLaptop: 'SI' | 'NO'
+hasSmartphone: 'SI' | 'NO'
+hasVisualDisability: 'SI' | 'NO'
+// ... etc
+
+// Cursos
+courseIds: string[]
+
+// Período
+period: string // Ej: "2024-1"
+}
+```
+
+---
+
+**Este archivo llm.txt debe servir como contexto inicial para cualquier modelo de IA trabajando con este proyecto de inscripciones públicas. Para información sobre el backend, consultar `../gestor-api/llm.txt`. Para el dashboard administrativo, consultar `../gestor-app/llm.txt`.**

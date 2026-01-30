@@ -1,4 +1,3 @@
-import { COURSE_MAPPINGS } from '@/constants/courses'
 import { apiService } from '@/lib/api'
 import { mapFormDataToDto } from '@/lib/mappers/applicant-mapper'
 import { RegistrationFormData } from '@/types/form'
@@ -45,32 +44,26 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 				throw new Error('Número de documento es requerido')
 			}
 
+			// Verificar si el usuario ya tiene matrículas activas
+			const enrollmentCheck = await apiService.checkActiveEnrollment(
+				formData.section1.documentNumber,
+			)
+
+			if (enrollmentCheck.hasActiveEnrollment) {
+				// Construir mensaje con información de las matrículas activas
+				const courseNames = enrollmentCheck.enrollments
+					.map(e => e.courseName || e.courseCode)
+					.join(', ')
+
+				throw new Error(
+					`Ya se encuentra cursando un curso${enrollmentCheck.enrollments.length > 1 ? 's' : ''}: ${courseNames}`,
+				)
+			}
+
 			// Verificar si el aplicante ya existe por número de documento
 			const existingApplicant = await apiService.findApplicantByDocument(
 				formData.section1.documentNumber,
 			)
-
-			// Verificar si ya se encuentra cursando alguno de los cursos ofertados
-			if (existingApplicant) {
-				const offeredCourseIds = COURSE_MAPPINGS.map(c => c.apiId)
-				// Normalizar cursos del aplicante (soportar diferentes estructuras posibles de respuesta)
-				const applicantCourseIds = (
-					existingApplicant.courseIds ||
-					existingApplicant.courses?.map(
-						(c: { apiId?: string; id?: string; code?: string }) =>
-							c.apiId || c.id || c.code,
-					) ||
-					[]
-				).map(String)
-
-				const hasExistingEnrollment = applicantCourseIds.some((id: string) =>
-					offeredCourseIds.includes(id),
-				)
-
-				if (hasExistingEnrollment) {
-					throw new Error('Ya se encuentra cursando un curso')
-				}
-			}
 
 			// Transformar datos del formulario al formato esperado por la API
 			const applicantDto = mapFormDataToDto(formData)
@@ -81,7 +74,7 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 				const plainDto = JSON.parse(JSON.stringify(applicantDto))
 				const cleanDto = Object.fromEntries(
 					Object.entries(plainDto).filter(
-						([_, v]) => v !== '' && v !== null && v !== undefined,
+						([, v]) => v !== '' && v !== null && v !== undefined,
 					),
 				)
 

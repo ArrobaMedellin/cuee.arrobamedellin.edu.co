@@ -9,7 +9,7 @@ export class ApiService {
 
 	constructor(
 		baseUrl: string = process.env.NEXT_PUBLIC_API_URL ||
-			'http://localhost:4000/api'
+			'http://localhost:4000/api',
 	) {
 		this.baseUrl = baseUrl
 	}
@@ -18,7 +18,7 @@ export class ApiService {
 		try {
 			console.log(
 				'Sending applicant data:',
-				JSON.stringify(applicantData, null, 2)
+				JSON.stringify(applicantData, null, 2),
 			)
 
 			const response = await fetch(`${this.baseUrl}/applicants`, {
@@ -35,7 +35,7 @@ export class ApiService {
 				const errorData = await response.json()
 				console.error('Error response:', errorData)
 				throw new Error(
-					errorData.message || `HTTP error! status: ${response.status}`
+					errorData.message || `HTTP error! status: ${response.status}`,
 				)
 			}
 
@@ -51,7 +51,7 @@ export class ApiService {
 	async findApplicantByDocument(document: string) {
 		try {
 			const response = await fetch(
-				`${this.baseUrl}/applicants/document/${document}`
+				`${this.baseUrl}/applicants/document/${document}`,
 			)
 
 			if (!response.ok) {
@@ -87,13 +87,39 @@ export class ApiService {
 			if (!response.ok) {
 				const errorData = await response.json()
 				throw new Error(
-					errorData.message || `HTTP error! status: ${response.status}`
+					errorData.message || `HTTP error! status: ${response.status}`,
 				)
 			}
 
 			return await response.json()
 		} catch (error) {
 			console.error('Error updating applicant:', error)
+			throw error
+		}
+	}
+
+	async checkActiveEnrollment(document: string): Promise<{
+		hasActiveEnrollment: boolean
+		enrollments: Array<{
+			id: string
+			courseCode: string
+			courseName: string
+			status: string
+			enrollmentDate: Date
+		}>
+	}> {
+		try {
+			const response = await fetch(
+				`${this.baseUrl}/enrollment/check-active/${document}`,
+			)
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`)
+			}
+
+			return await response.json()
+		} catch (error) {
+			console.error('Error checking active enrollment:', error)
 			throw error
 		}
 	}

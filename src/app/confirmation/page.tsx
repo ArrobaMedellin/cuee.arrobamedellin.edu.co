@@ -29,15 +29,15 @@ export default function ConfirmationPage() {
 
 						<div className='space-y-4'>
 							<h2 className='text-2xl font-bold text-foreground'>
-								Tu inscripción en @Medellín ha finalizado con éxito.
+								Tu inscripción en @Medellín fue exitosa
 							</h2>
 
 							<div className='text-lg text-muted-foreground space-y-4'>
 								<p>
-									En las próximas horas recibirás un correo con las indicaciones para activar tu cuenta de acceso a Oracle, donde se desarrollarán los cursos.
+									En las próximas horas recibirás un correo con las indicaciones para comenzar tu curso en la Ciudadela Digital.
 								</p>
 								<p>
-									Te recomendamos estar pendiente del correo electrónico que registraste y revisar también tu bandeja de correo no deseado o spam.
+									Te recomendamos estar pendiente del correo electrónico que registraste y revisar también tu bandeja de spam o correo no deseado.
 								</p>
 								<p>Cada paso hace parte de tu ruta de aprendizaje. ¡Gracias por avanzar con nosotros!</p>
 							</div>

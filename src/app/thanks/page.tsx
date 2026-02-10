@@ -24,15 +24,19 @@ export default function ConfirmationPage() {
 					<div className='flex flex-col items-center text-center space-y-6'>
 						<div className='space-y-4'>
 							<h2 className='text-3xl font-bold text-foreground'>
-								Requisitos no cumplidos
+								Por ahora no cumples con los requisitos de esta convocatoria
 							</h2>
 
 							<div className='text-lg text-black space-y-4'>
 								<p>
-									Gracias por tu interés en hacer parte de @Medellín. En este
-									momento, los cursos están dirigidos a personas de 15 años o
-									más que hayan nacido en Medellín o residan en la ciudad, según
-									los criterios definidos para esta convocatoria.
+									Gracias por tu interés en ser parte de @Medellín. Actualmente,
+									los cursos están dirigidos a personas desde los 15 años que
+									hayan nacido en Medellín o que residan en la ciudad, según los
+									criterios definidos para esta convocatoria.
+								</p>
+								<p>
+									Valoramos tu interés y te invitamos a estar pendiente de
+									nuestras próximas oportunidades.
 								</p>
 							</div>
 						</div>

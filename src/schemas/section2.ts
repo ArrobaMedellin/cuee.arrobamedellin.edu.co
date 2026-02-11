@@ -71,6 +71,16 @@ export const section2Schema = z
 			}
 		}
 
+		// VALIDACIÓN COMENTADA - Campo oculto
+		// Si selecciona "Otro" en orientación sexual, debe especificar
+		// if (data.sexualOrientation === 'Otro' && !data.otherSexualOrientation) {
+		// 	ctx.addIssue({
+		// 		code: z.ZodIssueCode.custom,
+		// 		message: 'Especifica la otra orientación sexual',
+		// 		path: ['otherSexualOrientation'],
+		// 	})
+		// }
+
 		// Si es menor de edad, validar campos del representante
 		if (isMinor(data.birthDate)) {
 			if (!data.representativeFirstName) {

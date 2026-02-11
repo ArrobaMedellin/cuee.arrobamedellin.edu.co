@@ -496,10 +496,18 @@ export function mapFormDataToDto(
 		residenceDepartment:
 			section2?.departmentOfResidence ||
 			section3?.departmentOfResidence ||
+			(section2?.countryOfResidence &&
+			section2.countryOfResidence !== 'Colombia'
+				? 'N/A'
+				: '') ||
 			(isPartialSubmit ? 'N/A' : ''),
 		residenceMunicipality:
 			section2?.cityOfResidence ||
 			section3?.cityOfResidence ||
+			(section2?.countryOfResidence &&
+			section2.countryOfResidence !== 'Colombia'
+				? 'N/A'
+				: '') ||
 			(isPartialSubmit ? 'N/A' : ''),
 		neighborhood:
 			section2?.neighborhood ||

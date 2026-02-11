@@ -16,7 +16,11 @@ export function isEligibleForFullProcess(
 	const section2 = data.section2
 
 	if (!section2) {
-		console.log('⚠️ No hay datos de section2')
+		return false
+	}
+
+	// Validar que haya datos mínimos antes de evaluar
+	if (!section2.birthDate || !section2.cityOfResidence) {
 		return false
 	}
 
@@ -27,15 +31,27 @@ export function isEligibleForFullProcess(
 		console.log('❌ No cumple requisito de edad (menor de 15 años)')
 		return false
 	}
+	console.log('✅ Edad válida:', age)
 
 	// Verificar que vive en Medellín O nació en Medellín
 	const livesInMedellin =
 		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
 		section2.cityOfResidence?.toLowerCase().includes('medellin')
 
-	const bornInMedellin =
-		section2.bornCity?.toLowerCase().includes('medellín') ||
-		section2.bornCity?.toLowerCase().includes('medellin')
+		// La ciudad debe contener "medellin" pero no debe ser otro municipio
+		// Rechazamos explícitamente municipios del área metropolitana
+		const metropolitanMunicipalities = [
+			'la estrella',
+			'itagui',
+			'itagüí',
+			'envigado',
+			'sabaneta',
+			'bello',
+			'copacabana',
+			'caldas',
+			'girardota',
+			'barbosa',
+		]
 
 	console.log('🏙️ Verificación de Medellín:', {
 		livesInMedellin,
@@ -68,13 +84,24 @@ export function getIneligibilityMessage(
 	const age = calculateAge(section2.birthDate)
 	const isTooYoung = age !== null && age < 15
 
-	const livesInMedellin =
-		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
-		section2.cityOfResidence?.toLowerCase().includes('medellin')
+	// Reutilizar la misma lógica de checkIsMedellin
+	const checkIsMedellin = (city: string | undefined): boolean => {
+		if (!city) return false
+		const normalized = city.toLowerCase().trim()
+		const medellinVariations = ['medellin', 'medellín']
 
-	const bornInMedellin =
-		section2.bornCity?.toLowerCase().includes('medellín') ||
-		section2.bornCity?.toLowerCase().includes('medellin')
+		const metropolitanMunicipalities = [
+			'la estrella',
+			'itagui',
+			'itagüí',
+			'envigado',
+			'sabaneta',
+			'bello',
+			'copacabana',
+			'caldas',
+			'girardota',
+			'barbosa',
+		]
 
 	if (isTooYoung && !livesInMedellin && !bornInMedellin) {
 		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'

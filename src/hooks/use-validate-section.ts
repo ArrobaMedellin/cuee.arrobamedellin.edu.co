@@ -56,11 +56,24 @@ export function useValidateSection() {
 					return false
 			}
 		} catch (error) {
-			// Log para debugging
-			console.log(
-				`Validación sección ${currentSection} falló:`,
-				error instanceof Error ? error.message : error
-			)
+			// Solo loggear si hay datos (evitar logs en formulario vacío)
+			const sectionData = (data as Record<string, unknown>)[
+				`section${currentSection}`
+			] as Record<string, unknown> | undefined
+			const hasData =
+				sectionData &&
+				typeof sectionData === 'object' &&
+				Object.keys(sectionData).some(key => {
+					const value = sectionData[key]
+					return value !== '' && value !== undefined && value !== null
+				})
+
+			if (hasData) {
+				console.log(
+					`Validación sección ${currentSection} falló:`,
+					error instanceof Error ? error.message : error
+				)
+			}
 			return false
 		}
 	}, [data, currentSection])
@@ -112,7 +125,22 @@ export function useValidateSection() {
 					const field = issue.path.join('.')
 					return field ? `${field}: ${issue.message}` : issue.message
 				})
-				console.log(`Errores en sección ${currentSection}:`, errorMessages)
+
+				// Solo loggear si hay datos (evitar logs en formulario vacío)
+				const sectionData = (data as Record<string, unknown>)[
+					`section${currentSection}`
+				] as Record<string, unknown> | undefined
+				const hasData =
+					sectionData &&
+					typeof sectionData === 'object' &&
+					Object.keys(sectionData).some(key => {
+						const value = sectionData[key]
+						return value !== '' && value !== undefined && value !== null
+					})
+
+				if (hasData) {
+					console.log(`Errores en sección ${currentSection}:`, errorMessages)
+				}
 				return errorMessages
 			}
 			return ['Error de validación']

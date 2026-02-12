@@ -18,7 +18,7 @@ export const section1Schema = z
 			.regex(/^\d+$/, 'Solo números'),
 		email: z.string().email('Correo electrónico inválido'),
 		emailVerification: z.string().email('Correo electrónico inválido'),
-		countryOfBirth: z.string().optional(),
+		countryOfBirth: z.string().min(1, 'País de nacimiento es requerido'),
 		departmentOfBirth: z.string().optional(),
 		municipalityOfBirth: z.string().optional(),
 		communeOfBirth: z.string().optional(),
@@ -34,11 +34,35 @@ export const section1Schema = z
 		{
 			message: 'Especifica el otro tipo de documento',
 			path: ['otherDocumentType'],
-		}
+		},
 	)
 	.refine(data => data.email === data.emailVerification, {
 		message: 'Los correos electrónicos no coinciden',
 		path: ['emailVerification'],
 	})
+	.refine(
+		data => {
+			if (data.countryOfBirth === 'Colombia' && !data.departmentOfBirth) {
+				return false
+			}
+			return true
+		},
+		{
+			message: 'Departamento de nacimiento es requerido para Colombia',
+			path: ['departmentOfBirth'],
+		},
+	)
+	.refine(
+		data => {
+			if (data.countryOfBirth === 'Colombia' && !data.municipalityOfBirth) {
+				return false
+			}
+			return true
+		},
+		{
+			message: 'Municipio de nacimiento es requerido para Colombia',
+			path: ['municipalityOfBirth'],
+		},
+	)
 
 export type Section1Form = z.infer<typeof section1Schema>

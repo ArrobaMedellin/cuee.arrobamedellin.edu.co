@@ -84,7 +84,7 @@ export function Section6Form() {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className='text-base font-semibold'>
-								Seleccione una de las siguientes rutas en la que quieras
+								Solo puedes seleccionar uno de los siguientes cursos en el que quieres
 								participar
 							</FormLabel>
 							<FormControl>

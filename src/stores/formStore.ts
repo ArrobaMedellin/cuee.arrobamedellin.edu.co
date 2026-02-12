@@ -11,6 +11,8 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 interface FormStore {
 	data: Partial<RegistrationFormData>
 	currentSection: number
+	activeEnrollmentCourse: string | null
+	enrollmentModalVisible: boolean
 	setSectionData: <K extends keyof RegistrationFormData>(
 		section: K,
 		data: RegistrationFormData[K],
@@ -19,6 +21,8 @@ interface FormStore {
 	resetForm: () => void
 	isSectionValid: (section: keyof RegistrationFormData) => boolean
 	setMultipleSections: (data: Partial<RegistrationFormData>) => void
+	setActiveEnrollmentCourse: (course: string | null) => void
+	setEnrollmentModalVisible: (visible: boolean) => void
 }
 
 const initialData: Partial<RegistrationFormData> = {
@@ -36,7 +40,6 @@ const initialData: Partial<RegistrationFormData> = {
 	},
 	section2: {
 		birthDate: '',
-		bornCity: '',
 		countryOfResidence: '',
 		departmentOfResidence: '',
 		cityOfResidence: '',
@@ -155,6 +158,8 @@ export const useFormStore = create<FormStore>()(
 		(set, get) => ({
 			data: initialData,
 			currentSection: 1,
+			activeEnrollmentCourse: null,
+			enrollmentModalVisible: false,
 			setSectionData: (section, data) =>
 				set(state => ({
 					data: { ...state.data, [section]: data },
@@ -164,7 +169,16 @@ export const useFormStore = create<FormStore>()(
 					data: { ...state.data, ...newData },
 				})),
 			setCurrentSection: section => set({ currentSection: section }),
-			resetForm: () => set({ data: initialData, currentSection: 1 }),
+			resetForm: () =>
+				set({
+					data: initialData,
+					currentSection: 1,
+					activeEnrollmentCourse: null,
+				}),
+			setActiveEnrollmentCourse: course =>
+				set({ activeEnrollmentCourse: course }),
+			setEnrollmentModalVisible: visible =>
+				set({ enrollmentModalVisible: visible }),
 			isSectionValid: section => {
 				const sectionData = get().data[section]
 				if (!sectionData) return false
@@ -208,6 +222,7 @@ export const useFormStore = create<FormStore>()(
 			partialize: state => ({
 				data: state.data,
 				currentSection: state.currentSection,
+				activeEnrollmentCourse: state.activeEnrollmentCourse,
 			}),
 		},
 	),

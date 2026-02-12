@@ -424,11 +424,7 @@ export function mapFormDataToDto(
 			'N/A',
 		birthMunicipality:
 			section2?.cityOfResidence || section3?.cityOfResidence || 'N/A',
-		bornCity:
-			section2?.bornCity ||
-			section2?.cityOfResidence ||
-			section3?.cityOfResidence ||
-			'N/A',
+		bornCity: section2?.cityOfResidence || section3?.cityOfResidence || 'N/A',
 		birthDate: section2?.birthDate || '',
 		age,
 

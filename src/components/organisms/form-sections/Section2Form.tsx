@@ -60,7 +60,6 @@ export function Section2Form() {
 		resolver: zodResolver(section2Schema),
 		defaultValues: data.section2 || {
 			birthDate: '',
-			bornCity: '',
 			countryOfResidence: '',
 			departmentOfResidence: '',
 			cityOfResidence: '',
@@ -235,86 +234,6 @@ export function Section2Form() {
 									</FormItem>
 								)}
 							/>
-
-							<FormField
-								control={form.control}
-								name='bornCity'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Ciudad de nacimiento</FormLabel>
-										<Select
-											onValueChange={value => {
-												// Extraer solo el nombre de la ciudad si viene en formato "ciudad|departamento"
-												const cityName = value.includes('|')
-													? value.split('|')[0]
-													: value
-												field.onChange(cityName)
-											}}
-											value={
-												field.value
-													? (() => {
-															// Buscar la ciudad en el array para determinar si está duplicada
-															const matchingCities =
-																departmentsCities.citiesWithDepartment.filter(
-																	c => c.city === field.value,
-																)
-															// Si hay múltiples ciudades con el mismo nombre, necesitamos el formato completo
-															if (matchingCities.length > 1) {
-																// Usar la primera coincidencia (podríamos mejorar esto guardando el departamento también)
-																return `${matchingCities[0].city}|${matchingCities[0].department}`
-															}
-															return field.value
-														})()
-													: ''
-											}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder='Seleccione ciudad de nacimiento' />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{departmentsCities.citiesWithDepartment.map(
-													({ city, department, departmentId }, index) => {
-														// Contar cuántas ciudades tienen el mismo nombre
-														const citiesWithSameName =
-															departmentsCities.citiesWithDepartment.filter(
-																c => c.city === city,
-															).length
-
-														const displayName =
-															citiesWithSameName > 1
-																? `${city} (${department})`
-																: city
-
-														// Usar ciudad + departamento como value para hacerlo único
-														const uniqueValue =
-															citiesWithSameName > 1
-																? `${city}|${department}`
-																: city
-
-														// Usar ciudad + departmentId + index como key única
-														const uniqueKey = `${city}-${departmentId}-${index}`
-
-														return (
-															<SelectItem
-																key={uniqueKey}
-																value={uniqueValue}
-															>
-																{displayName}
-															</SelectItem>
-														)
-													},
-												)}
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 							<FormField
 								control={form.control}
 								name='phone'
@@ -328,6 +247,9 @@ export function Section2Form() {
 									</FormItem>
 								)}
 							/>
+						</div>
+
+						<div className='flex md:grid-cols-2 gap-4'>
 							<FormField
 								control={form.control}
 								name='gender'

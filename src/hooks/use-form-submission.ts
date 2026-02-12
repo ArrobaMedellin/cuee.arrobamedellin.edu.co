@@ -11,6 +11,7 @@ interface UseFormSubmissionReturn {
 	submitForm: (
 		formData: Partial<RegistrationFormData>,
 		onSuccess?: () => void,
+		options?: { skipEnrollmentCheck?: boolean },
 	) => Promise<void>
 	reset: () => void
 }
@@ -34,6 +35,7 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 	const submitForm = async (
 		formData: Partial<RegistrationFormData>,
 		onSuccess?: () => void,
+		options?: { skipEnrollmentCheck?: boolean },
 	) => {
 		try {
 			setIsSubmitting(true)
@@ -44,20 +46,21 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 				throw new Error('Número de documento es requerido')
 			}
 
-			// Verificar si el usuario ya tiene matrículas activas
-			const enrollmentCheck = await apiService.checkActiveEnrollment(
-				formData.section1.documentNumber,
-			)
-
-			if (enrollmentCheck.hasActiveEnrollment) {
-				// Construir mensaje con información de las matrículas activas
-				const courseNames = enrollmentCheck.enrollments
-					.map(e => e.courseName || e.courseCode)
-					.join(', ')
-
-				throw new Error(
-					`Ya se encuentra cursando un curso${enrollmentCheck.enrollments.length > 1 ? 's' : ''}: ${courseNames}`,
+			// Verificar si el usuario ya tiene matrículas activas (salvo que se omita)
+			if (!options?.skipEnrollmentCheck) {
+				const enrollmentCheck = await apiService.checkActiveEnrollment(
+					formData.section1.documentNumber,
 				)
+
+				if (enrollmentCheck.hasActiveEnrollment) {
+					const courseNames = enrollmentCheck.enrollments
+						.map(e => e.courseName || e.courseCode)
+						.join(', ')
+
+					throw new Error(
+						`Ya se encuentra cursando un curso${enrollmentCheck.enrollments.length > 1 ? 's' : ''}: ${courseNames}`,
+					)
+				}
 			}
 
 			// Verificar si el aplicante ya existe por número de documento

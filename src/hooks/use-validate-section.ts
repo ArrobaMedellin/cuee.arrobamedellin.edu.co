@@ -19,6 +19,10 @@ export function useValidateSection() {
 			switch (currentSection) {
 				case 1:
 					if (!data.section1) return false
+					console.log(
+						'📋 Section1 data para validar:',
+						JSON.stringify(data.section1),
+					)
 					section1Schema.parse(data.section1)
 					return true
 
@@ -56,24 +60,11 @@ export function useValidateSection() {
 					return false
 			}
 		} catch (error) {
-			// Solo loggear si hay datos (evitar logs en formulario vacío)
-			const sectionData = (data as Record<string, unknown>)[
-				`section${currentSection}`
-			] as Record<string, unknown> | undefined
-			const hasData =
-				sectionData &&
-				typeof sectionData === 'object' &&
-				Object.keys(sectionData).some(key => {
-					const value = sectionData[key]
-					return value !== '' && value !== undefined && value !== null
-				})
-
-			if (hasData) {
-				console.log(
-					`Validación sección ${currentSection} falló:`,
-					error instanceof Error ? error.message : error
-				)
-			}
+			// Log para debugging
+			console.log(
+				`Validación sección ${currentSection} falló:`,
+				error instanceof Error ? error.message : error,
+			)
 			return false
 		}
 	}, [data, currentSection])

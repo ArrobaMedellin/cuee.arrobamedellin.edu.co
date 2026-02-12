@@ -72,15 +72,15 @@ export function getIneligibilityMessage(
 	const age = calculateAge(section2.birthDate)
 	const isTooYoung = age !== null && age < 15
 
-	// Reutilizar la misma lógica de checkIsMedellin
 	const checkIsMedellin = (city: string | undefined): boolean => {
 		if (!city) return false
 		const normalized = city.toLowerCase().trim()
 		const medellinVariations = ['medellin', 'medellín']
+		return medellinVariations.some(v => normalized.includes(v))
+	}
 
-	const bornInMedellin =
-		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
-		section2.cityOfResidence?.toLowerCase().includes('medellin')
+	const livesInMedellin = checkIsMedellin(section2.cityOfResidence)
+	const bornInMedellin = checkIsMedellin(section2.cityOfResidence)
 
 	if (isTooYoung && !livesInMedellin && !bornInMedellin) {
 		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'

@@ -19,6 +19,10 @@ export function useValidateSection() {
 			switch (currentSection) {
 				case 1:
 					if (!data.section1) return false
+					console.log(
+						'📋 Section1 data para validar:',
+						JSON.stringify(data.section1),
+					)
 					section1Schema.parse(data.section1)
 					return true
 
@@ -59,7 +63,7 @@ export function useValidateSection() {
 			// Log para debugging
 			console.log(
 				`Validación sección ${currentSection} falló:`,
-				error instanceof Error ? error.message : error
+				error instanceof Error ? error.message : error,
 			)
 			return false
 		}

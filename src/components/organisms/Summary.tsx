@@ -136,10 +136,6 @@ export function Summary() {
 							value={calculatedAge !== null ? calculatedAge : '—'}
 						/>
 						<Kv
-							label='Ciudad de nacimiento'
-							value={s2?.bornCity}
-						/>
-						<Kv
 							label='Ciudad de residencia'
 							value={s2?.cityOfResidence}
 						/>

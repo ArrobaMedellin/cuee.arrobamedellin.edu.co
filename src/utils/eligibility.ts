@@ -34,14 +34,13 @@ export function isEligibleForFullProcess(
 		section2.cityOfResidence?.toLowerCase().includes('medellin')
 
 	const bornInMedellin =
-		section2.bornCity?.toLowerCase().includes('medellín') ||
-		section2.bornCity?.toLowerCase().includes('medellin')
+		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
+		section2.cityOfResidence?.toLowerCase().includes('medellin')
 
 	console.log('🏙️ Verificación de Medellín:', {
 		livesInMedellin,
 		cityOfResidence: section2.cityOfResidence,
 		bornInMedellin,
-		bornCity: section2.bornCity,
 	})
 
 	const hasMedellinConnection = livesInMedellin || bornInMedellin
@@ -73,8 +72,8 @@ export function getIneligibilityMessage(
 		section2.cityOfResidence?.toLowerCase().includes('medellin')
 
 	const bornInMedellin =
-		section2.bornCity?.toLowerCase().includes('medellín') ||
-		section2.bornCity?.toLowerCase().includes('medellin')
+		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
+		section2.cityOfResidence?.toLowerCase().includes('medellin')
 
 	if (isTooYoung && !livesInMedellin && !bornInMedellin) {
 		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'

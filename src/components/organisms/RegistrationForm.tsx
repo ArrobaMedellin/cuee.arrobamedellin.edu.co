@@ -1,6 +1,7 @@
 'use client'
 
 import { Step, Stepper } from '@/components/atoms/stepper'
+import { ActiveEnrollmentModal } from '@/components/molecules/ActiveEnrollmentModal'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -35,7 +36,14 @@ import { Section6Form } from './form-sections/Section6Form'
 import { Summary } from './Summary'
 
 export function RegistrationForm() {
-	const { currentSection, setCurrentSection, data } = useFormStore()
+	const {
+		currentSection,
+		setCurrentSection,
+		data,
+		activeEnrollmentCourse,
+		enrollmentModalVisible,
+		setEnrollmentModalVisible,
+	} = useFormStore()
 	const { hasAcceptedTerms } = useModalStore()
 	const { isSubmitting, submitForm } = useFormSubmission()
 	const { isSectionValid } = useValidateSection()
@@ -44,6 +52,8 @@ export function RegistrationForm() {
 	const [showMaxAttemptsDialog, setShowMaxAttemptsDialog] = useState(false)
 	const [ineligibilityAttempts, setIneligibilityAttempts] = useState(0)
 	const router = useRouter()
+
+	const hasActiveEnrollment = !!activeEnrollmentCourse
 
 	// Verificar elegibilidad después de completar section2
 	const isEligible = useMemo(() => {
@@ -67,7 +77,6 @@ export function RegistrationForm() {
 					})()
 				: undefined,
 			cityOfResidence: data.section2?.cityOfResidence,
-			bornCity: data.section2?.bornCity,
 		})
 
 		// Resetear contador si el usuario ahora es elegible
@@ -146,6 +155,10 @@ export function RegistrationForm() {
 
 	// Función mejorada para navegar - valida elegibilidad antes de permitir avanzar más allá de la sección 2
 	const goto = (target: number) => {
+		// Si tiene matrícula activa, no puede avanzar más allá de la sección 1
+		if (target > 1 && hasActiveEnrollment) {
+			return
+		}
 		// Si está intentando ir a la sección 3 o superior, debe ser elegible
 		if (target > 2 && !isEligible) {
 			console.log('❌ No puede avanzar a sección', target, '- No es elegible')
@@ -321,6 +334,12 @@ export function RegistrationForm() {
 				</AlertDialogContent>
 			</AlertDialog>
 
+			<ActiveEnrollmentModal
+				open={enrollmentModalVisible}
+				courseName={activeEnrollmentCourse || ''}
+				onClose={() => setEnrollmentModalVisible(false)}
+			/>
+
 			<div className='grid gap-6 md:grid-cols-[280px_1fr]'>
 				<aside className='rounded-xl border bg-card p-2'>
 					<Stepper>
@@ -340,12 +359,14 @@ export function RegistrationForm() {
 								disabled={
 									i > stepIndex ||
 									!hasAcceptedTerms ||
-									(s.key > 2 && !isEligible)
+									(s.key > 2 && !isEligible) ||
+									(s.key > 1 && hasActiveEnrollment)
 								}
 								onClick={() =>
 									hasAcceptedTerms &&
 									i <= stepIndex &&
 									(s.key <= 2 || isEligible) &&
+									(!hasActiveEnrollment || s.key <= 1) &&
 									goto(s.key)
 								}
 							/>
@@ -386,7 +407,11 @@ export function RegistrationForm() {
 							{canGoNext ? (
 								<div className='flex flex-col items-end gap-2'>
 									<Button
-										disabled={!hasAcceptedTerms || !isSectionValid}
+										disabled={
+											!hasAcceptedTerms ||
+											!isSectionValid ||
+											hasActiveEnrollment
+										}
 										onClick={handleNext}
 										className='w-full sm:w-auto'
 									>

@@ -3,9 +3,15 @@ import { useFormStore } from '@/stores/formStore'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+export interface ActiveEnrollmentInfo {
+	courseName: string
+}
+
 interface UseAutofillFormReturn {
 	isSearching: boolean
 	searchByDocument: (documentNumber: string) => Promise<boolean>
+	activeEnrollment: ActiveEnrollmentInfo | null
+	clearActiveEnrollment: () => void
 }
 
 /**
@@ -13,7 +19,16 @@ interface UseAutofillFormReturn {
  */
 export function useAutofillForm(): UseAutofillFormReturn {
 	const [isSearching, setIsSearching] = useState(false)
-	const { setSectionData, data } = useFormStore()
+	const [activeEnrollment, setActiveEnrollment] =
+		useState<ActiveEnrollmentInfo | null>(null)
+	const {
+		setSectionData,
+		data,
+		setActiveEnrollmentCourse,
+		setEnrollmentModalVisible,
+	} = useFormStore()
+
+	const clearActiveEnrollment = () => setActiveEnrollment(null)
 
 	// Helper para convertir valores unknown a string de forma segura
 	const toStr = (value: unknown): string => {
@@ -40,6 +55,24 @@ export function useAutofillForm(): UseAutofillFormReturn {
 		const apiService = new ApiService()
 
 		try {
+			// Primero verificar si tiene matrícula activa
+			const enrollmentCheck = await apiService.checkActiveEnrollment(
+				documentNumber.trim(),
+			)
+
+			if (
+				enrollmentCheck?.hasActiveEnrollment &&
+				enrollmentCheck.enrollments?.length > 0
+			) {
+				const courseName =
+					enrollmentCheck.enrollments[0].courseName || 'un curso'
+				setActiveEnrollment({ courseName })
+				setActiveEnrollmentCourse(courseName)
+				setEnrollmentModalVisible(true)
+				setIsSearching(false)
+				return false
+			}
+
 			const applicant = await apiService.findApplicantByDocument(
 				documentNumber.trim(),
 			)
@@ -104,7 +137,6 @@ export function useAutofillForm(): UseAutofillFormReturn {
 			birthDate: applicant.birthDate
 				? new Date(toStr(applicant.birthDate)).toISOString().split('T')[0]
 				: data.section2?.birthDate || '',
-			bornCity: toStr(applicant.birthCity) || data.section2?.bornCity || '',
 			countryOfResidence:
 				toStr(applicant.country) || data.section2?.countryOfResidence || '',
 			departmentOfResidence:
@@ -147,5 +179,7 @@ export function useAutofillForm(): UseAutofillFormReturn {
 	return {
 		isSearching,
 		searchByDocument,
+		activeEnrollment,
+		clearActiveEnrollment,
 	}
 }

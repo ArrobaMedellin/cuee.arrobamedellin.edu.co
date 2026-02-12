@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
 	Form,
 	FormControl,
@@ -19,17 +20,39 @@ import {
 } from '@/components/ui/select'
 import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
 import { useAutofillForm } from '@/hooks/use-autofill-form'
+import { useCountries } from '@/hooks/use-countries'
+import { useDepartmentsCities } from '@/hooks/use-departments-cities'
 import type { Section1Form } from '@/schemas/section1'
 import { section1Schema } from '@/schemas/section1'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Search } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section1Form() {
 	const { data, setSectionData } = useFormStore()
 	const { isSearching, searchByDocument } = useAutofillForm()
+
+	// Estados para lugar de nacimiento
+	const [selectedBirthCountryId, setSelectedBirthCountryId] = useState<
+		number | undefined
+	>()
+	const [selectedBirthDepartmentName, setSelectedBirthDepartmentName] =
+		useState<string>('')
+
+	// Hooks geográficos
+	const countries = useCountries()
+	const departmentsCities = useDepartmentsCities()
+
+	// Ciudades del departamento de nacimiento seleccionado
+	const birthCities = useMemo(() => {
+		if (!selectedBirthDepartmentName) return []
+		return departmentsCities.getCitiesByDepartmentName(
+			selectedBirthDepartmentName,
+		)
+	}, [selectedBirthDepartmentName, departmentsCities])
+
 	const form = useForm<Section1Form>({
 		resolver: zodResolver(section1Schema),
 		defaultValues: data.section1 || {
@@ -46,12 +69,56 @@ export function Section1Form() {
 		},
 	})
 
+	// Restaurar selecciones geográficas desde datos guardados
+	useEffect(() => {
+		if (data.section1) {
+			if (data.section1.countryOfBirth && !selectedBirthCountryId) {
+				const savedCountry = countries.countries.find(
+					c => c.name === data.section1?.countryOfBirth,
+				)
+				if (savedCountry) {
+					setSelectedBirthCountryId(savedCountry.id)
+				}
+			}
+			if (data.section1.departmentOfBirth && !selectedBirthDepartmentName) {
+				setSelectedBirthDepartmentName(data.section1.departmentOfBirth)
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data.section1, countries.countries])
+
+	// Sincronizar nombre del país con el ID seleccionado
+	useEffect(() => {
+		if (selectedBirthCountryId) {
+			const country = countries.countries.find(
+				c => c.id === selectedBirthCountryId,
+			)
+			const currentValue = form.getValues('countryOfBirth')
+			if (country && currentValue !== country.name) {
+				form.setValue('countryOfBirth', country.name, {
+					shouldValidate: false,
+					shouldDirty: false,
+					shouldTouch: false,
+				})
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedBirthCountryId, countries.countries])
+
 	// Guardar datos automáticamente cuando cambian los valores del formulario
 	useEffect(() => {
 		const subscription = form.watch(values => {
 			// Solo guardar si hay datos válidos (no vacíos)
 			if (values && Object.keys(values).length > 0) {
-				setSectionData('section1', values as Section1Form)
+				// Asegurar que los campos opcionales siempre sean string (no undefined)
+				const cleanValues = {
+					...values,
+					countryOfBirth: values.countryOfBirth ?? '',
+					departmentOfBirth: values.departmentOfBirth ?? '',
+					municipalityOfBirth: values.municipalityOfBirth ?? '',
+					otherDocumentType: values.otherDocumentType ?? '',
+				}
+				setSectionData('section1', cleanValues as Section1Form)
 			}
 		})
 		return () => subscription.unsubscribe()
@@ -68,11 +135,39 @@ export function Section1Form() {
 			if (found) {
 				const freshData = useFormStore.getState().data.section1
 				if (freshData) {
-					// Actualizar el formulario con los datos del store
 					form.reset(freshData)
+					// Re-restaurar selecciones geográficas
+					if (freshData.countryOfBirth) {
+						const country = countries.countries.find(
+							c => c.name === freshData.countryOfBirth,
+						)
+						if (country) setSelectedBirthCountryId(country.id)
+					}
+					if (freshData.departmentOfBirth) {
+						setSelectedBirthDepartmentName(freshData.departmentOfBirth)
+					}
 				}
 			}
 		}
+	}
+
+	const handleBirthCountryChange = (countryId: number) => {
+		setSelectedBirthCountryId(countryId)
+		setSelectedBirthDepartmentName('')
+		form.setValue('departmentOfBirth', '', { shouldValidate: true })
+		form.setValue('municipalityOfBirth', '', { shouldValidate: true })
+	}
+
+	const handleBirthDepartmentChange = (departmentName: string) => {
+		setSelectedBirthDepartmentName(departmentName)
+		form.setValue('departmentOfBirth', departmentName, {
+			shouldValidate: true,
+		})
+		form.setValue('municipalityOfBirth', '', { shouldValidate: true })
+	}
+
+	const handleBirthMunicipalityChange = (cityName: string) => {
+		form.setValue('municipalityOfBirth', cityName, { shouldValidate: true })
 	}
 
 	return (
@@ -243,6 +338,123 @@ export function Section1Form() {
 						)}
 					/>
 				</div>
+
+				{/* Lugar de Nacimiento */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Lugar de Nacimiento</CardTitle>
+					</CardHeader>
+					<CardContent className='space-y-4'>
+						<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+							<FormField
+								control={form.control}
+								name='countryOfBirth'
+								render={() => (
+									<FormItem>
+										<FormLabel>País de nacimiento</FormLabel>
+										<Select
+											value={selectedBirthCountryId?.toString()}
+											onValueChange={value => {
+												handleBirthCountryChange(Number(value))
+											}}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder='Seleccione país' />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{countries.countries.map(country => (
+													<SelectItem
+														key={country.id}
+														value={country.id.toString()}
+													>
+														{country.name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							{/* Departamento solo si es Colombia (ID: 1) */}
+							{selectedBirthCountryId === 1 && (
+								<FormField
+									control={form.control}
+									name='departmentOfBirth'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Departamento de nacimiento</FormLabel>
+											<Select
+												value={field.value}
+												onValueChange={value => {
+													handleBirthDepartmentChange(value)
+												}}
+											>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder='Seleccione departamento' />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{departmentsCities.departments.map(department => (
+														<SelectItem
+															key={department.id}
+															value={department.departamento}
+														>
+															{department.departamento}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							)}
+						</div>
+
+						{/* Municipio solo si hay departamento seleccionado */}
+						{selectedBirthCountryId === 1 && selectedBirthDepartmentName && (
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+								<FormField
+									control={form.control}
+									name='municipalityOfBirth'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Municipio de nacimiento</FormLabel>
+											<Select
+												value={field.value}
+												onValueChange={value => {
+													handleBirthMunicipalityChange(value)
+												}}
+											>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder='Seleccione municipio' />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{birthCities.map((city, index) => (
+														<SelectItem
+															key={`${city}-${index}`}
+															value={city}
+														>
+															{city}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						)}
+					</CardContent>
+				</Card>
 			</form>
 		</Form>
 	)

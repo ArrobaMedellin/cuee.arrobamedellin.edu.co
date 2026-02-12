@@ -400,7 +400,7 @@ export function mapFormDataToDto(
 
 	return {
 		// Metadata
-		period: '32', // Default period, you might want to make this configurable
+		period: process.env.NEXT_PUBLIC_PERIOD || '32',
 		date: new Date().toISOString(),
 
 		// Información personal básica

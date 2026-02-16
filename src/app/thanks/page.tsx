@@ -24,29 +24,56 @@ export default function ConfirmationPage() {
 					<div className='flex flex-col items-center text-center space-y-6'>
 						<div className='space-y-4'>
 							<h2 className='text-3xl font-bold text-foreground'>
-								Por ahora no cumples con los requisitos de esta convocatoria
+								Tu inscripción en @Medellín fue exitosa
 							</h2>
 
 							<div className='text-lg text-black space-y-4'>
 								<p>
-									Gracias por tu interés en ser parte de @Medellín. Actualmente,
-									los cursos están dirigidos a personas desde los 15 años que
-									hayan nacido en Medellín o que residan en la ciudad, según los
-									criterios definidos para esta convocatoria.
+									Desde este momento puedes ingresar a la Ciudadela Digital.
 								</p>
 								<p>
-									Valoramos tu interés y te invitamos a estar pendiente de
-									nuestras próximas oportunidades.
+									Tu usuario y contraseña inicial son tu número de documento de
+									identidad. Al ingresar por primera vez, el sistema te pedirá
+									actualizar la contraseña para mayor seguridad.
+								</p>
+								<p>
+									Igualmente, a tu correo electrónico llegará toda la
+									información detallada para el ingreso y el inicio de tu curso.
+									Te recomendamos estar pendiente del correo que registraste y
+									revisar también tu bandeja de spam o correo no deseado.
+								</p>
+								<p>
+									<a
+										href='https://ciudadeladigital.arrobamedellin.edu.co/'
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-primary underline font-semibold'
+									>
+										Haciendo clic aquí
+									</a>
+									, podrás observar un video tutorial con el paso a paso para
+									ingresar a la Ciudadela Digital de @Medellín.
+								</p>
+								<p className='font-semibold'>
+									Este es el momento de comenzar. Ingresa, activa tu cuenta y
+									avanza en tu proceso de aprendizaje.
 								</p>
 							</div>
 						</div>
 
 						<div className='pt-6 space-y-3 w-full max-w-md'>
-							{/* <p className='text-sm text-muted-foreground'>
-								Por favor, revisa tu correo electrónico en los próximos días
-								para conocer el resultado de tu inscripción.
-							</p> */}
-
+							<Button
+								asChild
+								className='w-full'
+							>
+								<a
+									href='https://ciudadeladigital.arrobamedellin.edu.co/'
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									Ir a la Ciudadela
+								</a>
+							</Button>
 							<Button
 								variant='outline'
 								className='w-full'

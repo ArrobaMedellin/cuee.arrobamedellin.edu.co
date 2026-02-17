@@ -44,7 +44,7 @@ export default function ConfirmationPage() {
 								</p>
 								<p>
 									<a
-										href='https://ciudadeladigital.arrobamedellin.edu.co/'
+										href='https://youtu.be/-CfWHc-yOsc'
 										target='_blank'
 										rel='noopener noreferrer'
 										className='text-primary underline font-semibold'
@@ -54,9 +54,44 @@ export default function ConfirmationPage() {
 									, podrás observar un video tutorial con el paso a paso para
 									ingresar a la Ciudadela Digital de @Medellín.
 								</p>
-								<p className='font-semibold'>
-									Este es el momento de comenzar. Ingresa, activa tu cuenta y
-									avanza en tu proceso de aprendizaje.
+								<p>
+									También puedes{' '}
+									<a
+										href='https://storage.googleapis.com/arroba-downloads/recursos/Manual%20de%20Ingreso%20a%20la%20Plataforma%20de%20Cursos%20%20Ciudadela%20Digital%20%E2%80%93%20Arroba%20Medelli%CC%81n%20.pdf'
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-primary underline font-semibold'
+									>
+										hacer clic aquí
+									</a>{' '}
+									para acceder al paso a paso en versión PDF.
+								</p>
+								<p className='font-semibold text-center'>
+									¡Este es el momento de comenzar!
+								</p>
+								<p>
+									Ingresa, activa tu cuenta y avanza en tu proceso de aprendizaje.
+								</p>
+								<p>
+									Si tienes alguna novedad para el ingreso a la ciudadela puedes
+									escribirnos al correo{' '}
+									<a
+										href='mailto:info@sapiencia.gov.co'
+										className='text-primary underline font-semibold'
+									>
+										info@sapiencia.gov.co
+									</a>{' '}
+									o generar una solicitud en nuestro sistema de tickets,
+									haciendo clic en el siguiente{' '}
+									<a
+										href='https://soporte.arrobamedellin.edu.co/support/upload/'
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-primary underline font-semibold'
+									>
+										enlace
+									</a>
+									.
 								</p>
 							</div>
 						</div>

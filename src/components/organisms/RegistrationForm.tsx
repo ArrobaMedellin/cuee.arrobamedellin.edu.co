@@ -162,6 +162,7 @@ export function RegistrationForm() {
 	const goto = (target: number) => {
 		// Si tiene matrícula activa, no puede avanzar más allá de la sección 1
 		if (target > 1 && hasActiveEnrollment) {
+			setEnrollmentModalVisible(true)
 			return
 		}
 		// Si está intentando ir a la sección 3 o superior, debe ser elegible
@@ -226,7 +227,14 @@ export function RegistrationForm() {
 			currentSection,
 			isEligible,
 			nextKey,
+			hasActiveEnrollment,
 		})
+
+		// Si tiene matrícula activa, mostrar modal informativo
+		if (hasActiveEnrollment) {
+			setEnrollmentModalVisible(true)
+			return
+		}
 
 		if (currentSection === 2) {
 			// Check if user is eligible to continue
@@ -412,11 +420,7 @@ export function RegistrationForm() {
 							{canGoNext ? (
 								<div className='flex flex-col items-end gap-2'>
 									<Button
-										disabled={
-											!hasAcceptedTerms ||
-											!isSectionValid ||
-											hasActiveEnrollment
-										}
+										disabled={!hasAcceptedTerms || !isSectionValid}
 										onClick={handleNext}
 										className='w-full sm:w-auto'
 									>

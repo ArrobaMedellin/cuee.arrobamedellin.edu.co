@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { CheckCircle } from 'lucide-react'
 
 export default function ConfirmationPage() {
 	const handleClose = () => {
@@ -23,32 +22,94 @@ export default function ConfirmationPage() {
 			<div className='mx-auto max-w-3xl p-6'>
 				<div className='rounded-xl border bg-card p-8 shadow-lg'>
 					<div className='flex flex-col items-center text-center space-y-6'>
-						<div className='rounded-full bg-green-100 p-4'>
-							<CheckCircle className='h-16 w-16 text-green-600' />
-						</div>
-
 						<div className='space-y-4'>
-							<h2 className='text-2xl font-bold text-foreground'>
+							<h2 className='text-3xl font-bold text-foreground'>
 								Tu inscripción en @Medellín fue exitosa
 							</h2>
 
-							<div className='text-lg text-muted-foreground space-y-4'>
+							<div className='text-lg text-black space-y-4'>
 								<p>
-									En las próximas horas recibirás un correo con las indicaciones para comenzar tu curso en la Ciudadela Digital.
+									Desde este momento puedes ingresar a la Ciudadela Digital.
 								</p>
 								<p>
-									Te recomendamos estar pendiente del correo electrónico que registraste y revisar también tu bandeja de spam o correo no deseado.
+									Tu usuario y contraseña inicial son tu número de documento de
+									identidad. Al ingresar por primera vez, el sistema te pedirá
+									actualizar la contraseña para mayor seguridad.
 								</p>
-								<p>Cada paso hace parte de tu ruta de aprendizaje. ¡Gracias por avanzar con nosotros!</p>
+								<p>
+									Igualmente, a tu correo electrónico llegará toda la
+									información detallada para el ingreso y el inicio de tu curso.
+									Te recomendamos estar pendiente del correo que registraste y
+									revisar también tu bandeja de spam o correo no deseado.
+								</p>
+								<p>
+									<a
+										href='https://youtu.be/-CfWHc-yOsc'
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-primary underline font-semibold'
+									>
+										Haciendo clic aquí
+									</a>
+									, podrás observar un video tutorial con el paso a paso para
+									ingresar a la Ciudadela Digital de @Medellín.
+								</p>
+								<p>
+									También puedes{' '}
+									<a
+										href='https://storage.googleapis.com/arroba-downloads/recursos/Manual%20de%20Ingreso%20a%20la%20Plataforma%20de%20Cursos%20%20Ciudadela%20Digital%20%E2%80%93%20Arroba%20Medelli%CC%81n%20.pdf'
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-primary underline font-semibold'
+									>
+										hacer clic aquí
+									</a>{' '}
+									para acceder al paso a paso en versión PDF.
+								</p>
+								<p className='font-semibold text-center'>
+									¡Este es el momento de comenzar!
+								</p>
+								<p>
+									Ingresa, activa tu cuenta y avanza en tu proceso de
+									aprendizaje.
+								</p>
+								<p>
+									Si tienes alguna novedad para el ingreso a la ciudadela puedes
+									escribirnos al correo{' '}
+									<a
+										href='mailto:info@sapiencia.gov.co'
+										className='text-primary underline font-semibold'
+									>
+										info@sapiencia.gov.co
+									</a>{' '}
+									o generar una solicitud en nuestro sistema de tickets,
+									haciendo clic en el siguiente{' '}
+									<a
+										href='https://soporte.arrobamedellin.edu.co/support/upload/'
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-primary underline font-semibold'
+									>
+										enlace
+									</a>
+									.
+								</p>
 							</div>
 						</div>
 
 						<div className='pt-6 space-y-3 w-full max-w-md'>
-							{/* <p className='text-sm text-muted-foreground'>
-								Por favor, revisa tu correo electrónico en los próximos días
-								para conocer el resultado de tu inscripción.
-							</p> */}
-
+							<Button
+								asChild
+								className='w-full'
+							>
+								<a
+									href='https://ciudadeladigital.arrobamedellin.edu.co/'
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									Ir a la Ciudadela
+								</a>
+							</Button>
 							<Button
 								variant='outline'
 								className='w-full'

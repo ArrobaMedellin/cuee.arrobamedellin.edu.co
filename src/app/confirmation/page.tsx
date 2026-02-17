@@ -90,9 +90,8 @@ export default function ConfirmationPage() {
 										rel='noopener noreferrer'
 										className='text-primary underline font-semibold'
 									>
-										enlace
+										enlace.
 									</a>
-									.
 								</p>
 							</div>
 						</div>

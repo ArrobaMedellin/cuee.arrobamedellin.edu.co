@@ -41,6 +41,7 @@ export function RegistrationForm() {
 		setCurrentSection,
 		data,
 		activeEnrollmentCourse,
+		setActiveEnrollmentCourse,
 		enrollmentModalVisible,
 		setEnrollmentModalVisible,
 	} = useFormStore()
@@ -350,7 +351,10 @@ export function RegistrationForm() {
 			<ActiveEnrollmentModal
 				open={enrollmentModalVisible}
 				courseName={activeEnrollmentCourse || ''}
-				onClose={() => setEnrollmentModalVisible(false)}
+				onClose={() => {
+					setEnrollmentModalVisible(false)
+					setActiveEnrollmentCourse(null)
+				}}
 			/>
 
 			<div className='grid gap-6 md:grid-cols-[280px_1fr]'>

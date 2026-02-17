@@ -222,7 +222,6 @@ export const useFormStore = create<FormStore>()(
 			partialize: state => ({
 				data: state.data,
 				currentSection: state.currentSection,
-				activeEnrollmentCourse: state.activeEnrollmentCourse,
 			}),
 		},
 	),

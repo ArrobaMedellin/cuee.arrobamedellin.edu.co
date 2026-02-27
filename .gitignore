@@ -45,6 +45,6 @@ next-env.d.ts
 /package-lock.json
 /pnpm-lock.yaml
 
-# Enviroments
-.env
-.env.*
+# # Enviroments
+# .env
+# .env.*

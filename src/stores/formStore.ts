@@ -62,6 +62,7 @@ const initialData: Partial<RegistrationFormData> = {
 		neighborhood: '',
 		commune: '',
 		stratum: '',
+		isRuralZone: false,
 		addressType: '',
 		addressNumber1: '',
 		addressLetter1: '',

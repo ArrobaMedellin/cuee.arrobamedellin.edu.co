@@ -13,7 +13,9 @@ import { calculateAge } from './age'
 export function isEligibleForFullProcess(
 	data: Partial<RegistrationFormData>,
 ): boolean {
+	const section1 = data.section1
 	const section2 = data.section2
+	const section3 = data.section3
 
 	if (!section2) {
 		return false
@@ -38,9 +40,13 @@ export function isEligibleForFullProcess(
 		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
 		section2.cityOfResidence?.toLowerCase().includes('medellin')
 
+	const bornCity =
+		section1?.municipalityOfBirth ||
+		section3?.birthCity ||
+		section2.cityOfResidence
 	const bornInMedellin =
-		section2.cityOfResidence?.toLowerCase().includes('medellín') ||
-		section2.cityOfResidence?.toLowerCase().includes('medellin')
+		bornCity?.toLowerCase().includes('medellín') ||
+		bornCity?.toLowerCase().includes('medellin')
 
 	console.log('🏙️ Verificación de Medellín:', {
 		livesInMedellin,
@@ -65,7 +71,9 @@ export function isEligibleForFullProcess(
 export function getIneligibilityMessage(
 	data: Partial<RegistrationFormData>,
 ): string {
+	const section1 = data.section1
 	const section2 = data.section2
+	const section3 = data.section3
 
 	if (!section2) return 'Faltan datos para verificar elegibilidad'
 
@@ -80,7 +88,11 @@ export function getIneligibilityMessage(
 	}
 
 	const livesInMedellin = checkIsMedellin(section2.cityOfResidence)
-	const bornInMedellin = checkIsMedellin(section2.cityOfResidence)
+	const bornInMedellin = checkIsMedellin(
+		section1?.municipalityOfBirth ||
+			section3?.birthCity ||
+			section2.cityOfResidence,
+	)
 
 	if (isTooYoung && !livesInMedellin && !bornInMedellin) {
 		return 'Gracias por tu interés en hacer parte de @Medellín. En este momento, los cursos están dirigidos a personas de 15 años o más que hayan nacido en Medellín o residan en la ciudad, según los criterios definidos para esta convocatoria.'

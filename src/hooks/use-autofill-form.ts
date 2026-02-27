@@ -26,6 +26,7 @@ export function useAutofillForm(): UseAutofillFormReturn {
 		data,
 		setActiveEnrollmentCourse,
 		setEnrollmentModalVisible,
+		setCurrentSection,
 	} = useFormStore()
 
 	const clearActiveEnrollment = () => setActiveEnrollment(null)
@@ -60,6 +61,17 @@ export function useAutofillForm(): UseAutofillFormReturn {
 				documentNumber.trim(),
 			)
 
+			const hasFinishedEnrollment = enrollmentCheck?.enrollments?.some(
+				enrollment =>
+					[
+						'finished',
+						'finalizado',
+						'finalizada',
+						'cancelled',
+						'cancelada',
+					].includes(toStr(enrollment.status).toLowerCase()),
+			)
+
 			if (
 				enrollmentCheck?.hasActiveEnrollment &&
 				enrollmentCheck.enrollments?.length > 0
@@ -86,6 +98,15 @@ export function useAutofillForm(): UseAutofillFormReturn {
 
 			// Autocompletar el formulario con los datos encontrados
 			await autofillFormData(applicant)
+
+			// Si tuvo matrículas finalizadas/canceladas, saltar directo a selección de curso
+			if (hasFinishedEnrollment) {
+				setCurrentSection(6)
+				toast.success(
+					'Información cargada. Puedes ir directamente a seleccionar un nuevo curso.',
+				)
+				return true
+			}
 
 			toast.success(
 				'¡Datos encontrados! El formulario se ha rellenado automáticamente',

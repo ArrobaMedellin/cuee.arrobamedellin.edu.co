@@ -81,6 +81,7 @@ export interface CreateApplicantDto {
 	commune?: string
 
 	// Campos de dirección
+	isRuralZone?: boolean
 	addressType: string
 	addressNumber1: string
 	addressNumber2: string

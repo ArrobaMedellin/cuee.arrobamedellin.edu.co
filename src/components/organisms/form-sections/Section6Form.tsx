@@ -26,7 +26,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section6Form() {
-	const { data, setSectionData } = useFormStore()
+	const { data, setSectionData, disabledCourses } = useFormStore()
 	const form = useForm<Section6Form>({
 		resolver: zodResolver(section6Schema),
 		defaultValues: data.section6 || {
@@ -84,8 +84,8 @@ export function Section6Form() {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className='text-base font-semibold'>
-								Solo puedes seleccionar uno de los siguientes cursos en el que quieres
-								participar
+								Solo puedes seleccionar uno de los siguientes cursos en el que
+								quieres participar
 							</FormLabel>
 							<FormControl>
 								<RadioGroup
@@ -93,19 +93,30 @@ export function Section6Form() {
 									defaultValue={field.value?.[0]}
 									className='grid grid-cols-1 md:grid-cols-2 gap-3'
 								>
-									{COURSE_MAPPINGS.map(option => (
-										<FormItem
-											key={option.value}
-											className='flex items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm hover:bg-accent cursor-pointer'
-										>
-											<FormControl>
-												<RadioGroupItem value={option.value} />
-											</FormControl>
-											<FormLabel className='font-normal cursor-pointer w-full'>
-												{option.label}
-											</FormLabel>
-										</FormItem>
-									))}
+									{COURSE_MAPPINGS.map(option => {
+										const isDisabled = disabledCourses.includes(option.value)
+										return (
+											<FormItem
+												key={option.value}
+												className={`flex items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm ${isDisabled ? 'opacity-60 cursor-not-allowed bg-muted' : 'hover:bg-accent cursor-pointer'}`}
+											>
+												<FormControl>
+													<RadioGroupItem
+														value={option.value}
+														disabled={isDisabled}
+													/>
+												</FormControl>
+												<FormLabel className='font-normal cursor-pointer w-full'>
+													{option.label}
+													{isDisabled && (
+														<span className='ml-2 text-xs text-muted-foreground'>
+															(Curso finalizado)
+														</span>
+													)}
+												</FormLabel>
+											</FormItem>
+										)
+									})}
 								</RadioGroup>
 							</FormControl>
 							<FormMessage />

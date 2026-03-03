@@ -9,7 +9,7 @@ export const section3Schema = z
 		neighborhood: z.string().optional(),
 		commune: z.string().optional(),
 		stratum: z.string().min(1, 'Estrato socioeconómico es requerido'),
-		isRuralZone: z.boolean().optional().default(false),
+		isRuralZone: z.boolean(),
 
 		// Constructor de dirección detallado - Condicional
 		addressType: z.string().optional(),

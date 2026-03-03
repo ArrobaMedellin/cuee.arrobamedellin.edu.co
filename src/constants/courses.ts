@@ -106,7 +106,8 @@ export const COURSE_MAPPINGS: CourseMapping[] = [
 	},
 	{
 		value: 'ia-asistente-administrativo',
-		label: 'Inteligencia Artificial Como Asistente Administrativo en el Sector Público',
+		label:
+			'Inteligencia Artificial Como Asistente Administrativo en el Sector Público',
 		apiId: '30504019',
 	},
 ]
@@ -118,4 +119,19 @@ export const getCourseApiIds = (courseValues: string[]): string[] => {
 			return course ? course.apiId : null
 		})
 		.filter((id): id is string => id !== null)
+}
+
+/**
+ * Convierte una lista de API IDs (códigos de curso del backend) a valores del formulario.
+ * Útil para convertir los disabledCourseIds del backend a valores que el frontend pueda usar.
+ * @param apiIds - Lista de API IDs (ej: ['30504000', '30504001'])
+ * @returns Lista de valores del formulario (ej: ['ingles-basico', 'ingles-intermedio'])
+ */
+export const getCourseValuesFromApiIds = (apiIds: string[]): string[] => {
+	return apiIds
+		.map(apiId => {
+			const course = COURSE_MAPPINGS.find(c => c.apiId === apiId)
+			return course ? course.value : null
+		})
+		.filter((value): value is string => value !== null)
 }

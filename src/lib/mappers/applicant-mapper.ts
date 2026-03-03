@@ -505,6 +505,7 @@ export function mapFormDataToDto(
 				? 'N/A'
 				: '') ||
 			(isPartialSubmit ? 'N/A' : ''),
+		isRuralZone: section3?.isRuralZone ?? false,
 		neighborhood:
 			section2?.neighborhood ||
 			section3?.neighborhood ||

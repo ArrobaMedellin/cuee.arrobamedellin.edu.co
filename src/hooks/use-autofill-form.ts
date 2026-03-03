@@ -1,4 +1,4 @@
-import { COURSE_MAPPINGS, getCourseValuesFromApiIds } from '@/constants/courses'
+import { getCourseValuesFromApiIds } from '@/constants/courses'
 import { ApiService } from '@/lib/api'
 import { useFormStore } from '@/stores/formStore'
 import { RegistrationFormData } from '@/types/form'
@@ -54,22 +54,6 @@ export function useAutofillForm(): UseAutofillFormReturn {
 	const toOptionalNumber = (value: unknown): number | undefined => {
 		const num = Number(value)
 		return Number.isFinite(num) ? num : undefined
-	}
-
-	const mapCourseValue = (course: any): string | null => {
-		if (!course) return null
-		const code = toStr(course.code || course.courseCode || course.apiId)
-		const name = toStr(course.name || course.courseName)
-
-		const byCode = COURSE_MAPPINGS.find(
-			c => c.apiId === code || c.value === code,
-		)
-		if (byCode) return byCode.value
-
-		const byName = COURSE_MAPPINGS.find(
-			c => c.label.toLowerCase() === name.toLowerCase(),
-		)
-		return byName?.value || null
 	}
 
 	const mapDevices = (applicant: Record<string, unknown>): string[] => {

@@ -13,6 +13,7 @@ interface FormStore {
 	currentSection: number
 	activeEnrollmentCourse: string | null
 	enrollmentModalVisible: boolean
+	disabledCourses: string[]
 	setSectionData: <K extends keyof RegistrationFormData>(
 		section: K,
 		data: RegistrationFormData[K],
@@ -23,6 +24,7 @@ interface FormStore {
 	setMultipleSections: (data: Partial<RegistrationFormData>) => void
 	setActiveEnrollmentCourse: (course: string | null) => void
 	setEnrollmentModalVisible: (visible: boolean) => void
+	setDisabledCourses: (courses: string[]) => void
 }
 
 const initialData: Partial<RegistrationFormData> = {
@@ -161,6 +163,7 @@ export const useFormStore = create<FormStore>()(
 			currentSection: 1,
 			activeEnrollmentCourse: null,
 			enrollmentModalVisible: false,
+			disabledCourses: [],
 			setSectionData: (section, data) =>
 				set(state => ({
 					data: { ...state.data, [section]: data },
@@ -175,11 +178,14 @@ export const useFormStore = create<FormStore>()(
 					data: initialData,
 					currentSection: 1,
 					activeEnrollmentCourse: null,
+					enrollmentModalVisible: false,
+					disabledCourses: [],
 				}),
 			setActiveEnrollmentCourse: course =>
 				set({ activeEnrollmentCourse: course }),
 			setEnrollmentModalVisible: visible =>
 				set({ enrollmentModalVisible: visible }),
+			setDisabledCourses: courses => set({ disabledCourses: courses }),
 			isSectionValid: section => {
 				const sectionData = get().data[section]
 				if (!sectionData) return false
@@ -223,6 +229,7 @@ export const useFormStore = create<FormStore>()(
 			partialize: state => ({
 				data: state.data,
 				currentSection: state.currentSection,
+				disabledCourses: state.disabledCourses,
 			}),
 		},
 	),

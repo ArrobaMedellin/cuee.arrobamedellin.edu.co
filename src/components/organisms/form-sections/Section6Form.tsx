@@ -22,11 +22,29 @@ import type { Section6Form } from '@/schemas/section6'
 import { section6Schema } from '@/schemas/section6'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section6Form() {
 	const { data, setSectionData, disabledCourses } = useFormStore()
+
+	const isFromSantaElena = useMemo(() => {
+		const residenceCommune = data.section2?.commune ?? ''
+		const birthCommune = data.section1?.communeOfBirth ?? ''
+		return (
+			residenceCommune.includes('Santa Elena') ||
+			birthCommune.includes('Santa Elena')
+		)
+	}, [data.section2?.commune, data.section1?.communeOfBirth])
+
+	const availableCourses = useMemo(
+		() =>
+			COURSE_MAPPINGS.filter(
+				course => !course.onlyForSantaElena || isFromSantaElena,
+			),
+		[isFromSantaElena],
+	)
+
 	const form = useForm<Section6Form>({
 		resolver: zodResolver(section6Schema),
 		defaultValues: data.section6 || {
@@ -93,7 +111,7 @@ export function Section6Form() {
 									defaultValue={field.value?.[0]}
 									className='grid grid-cols-1 md:grid-cols-2 gap-3'
 								>
-									{COURSE_MAPPINGS.map(option => {
+									{availableCourses.map(option => {
 										const isDisabled = disabledCourses.includes(option.value)
 										return (
 											<FormItem

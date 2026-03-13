@@ -5,6 +5,7 @@ export interface CourseMapping {
 	value: string
 	label: string
 	apiId: string // This should match the course IDs from your API
+	onlyForSantaElena?: boolean
 }
 
 // Course mappings - Sapiencia courses
@@ -109,6 +110,12 @@ export const COURSE_MAPPINGS: CourseMapping[] = [
 		label:
 			'Inteligencia Artificial Como Asistente Administrativo en el Sector Público',
 		apiId: '30504019',
+	},
+	{
+		value: 'primeros-auxilios-psicologicos',
+		label: 'Primeros auxilios psicológicos',
+		apiId: '30504032',
+		onlyForSantaElena: true,
 	},
 ]
 

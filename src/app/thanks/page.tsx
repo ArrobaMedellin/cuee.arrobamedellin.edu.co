@@ -37,12 +37,6 @@ export default function ConfirmationPage() {
 									actualizar la contraseña para mayor seguridad.
 								</p>
 								<p>
-									Igualmente, a tu correo electrónico llegará toda la
-									información detallada para el ingreso y el inicio de tu curso.
-									Te recomendamos estar pendiente del correo que registraste y
-									revisar también tu bandeja de spam o correo no deseado.
-								</p>
-								<p>
 									<a
 										href='https://youtu.be/-CfWHc-yOsc'
 										target='_blank'

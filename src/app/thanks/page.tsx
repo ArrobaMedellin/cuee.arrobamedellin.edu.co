@@ -53,7 +53,7 @@ export default function ConfirmationPage() {
 								</div>
 								<p>
 									<a
-										href='https://youtu.be/-CfWHc-yOsc'
+										href='https://youtu.be/Kpw-4QbyrNg'
 										target='_blank'
 										rel='noopener noreferrer'
 										className='text-primary underline font-semibold'

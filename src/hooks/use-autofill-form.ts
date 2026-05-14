@@ -113,9 +113,7 @@ export function useAutofillForm(): UseAutofillFormReturn {
 
 		try {
 			// Usar el endpoint unificado para obtener el estado completo del aplicante
-			const statusResponse = await apiService.getApplicantStatus(
-				documentNumber.trim(),
-			)
+			const statusResponse = await apiService.getFormStatus(documentNumber.trim())
 
 			// Si tiene matrículas activas, bloquear el flujo
 			if (statusResponse.flowType === 'BLOCKED') {

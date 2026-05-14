@@ -16,17 +16,6 @@ interface UseFormSubmissionReturn {
 	reset: () => void
 }
 
-/**
- * Hook personalizado para manejar el envío del formulario de inscripción
- *
- * Funcionalidades:
- * - Verifica si ya existe un aplicante con el mismo documento
- * - Crea o actualiza el registro según corresponda
- * - Maneja estados de carga y errores
- * - Muestra notificaciones al usuario
- *
- * @returns Objeto con estado y funciones para el envío del formulario
- */
 export function useFormSubmission(): UseFormSubmissionReturn {
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [isSuccess, setIsSuccess] = useState(false)
@@ -41,62 +30,30 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 			setIsSubmitting(true)
 			setError(null)
 
-			// Validación básica de datos requeridos
 			if (!formData.section1?.documentNumber) {
 				throw new Error('Número de documento es requerido')
 			}
 
-			// Verificar si el usuario ya tiene matrículas activas (salvo que se omita)
 			if (!options?.skipEnrollmentCheck) {
-				const enrollmentCheck = await apiService.checkActiveEnrollment(
-					formData.section1.documentNumber,
-				)
+				const status = await apiService.getFormStatus(formData.section1.documentNumber)
 
-				if (enrollmentCheck.hasActiveEnrollment) {
-					const courseNames = enrollmentCheck.enrollments
+				if (status.flowType === 'BLOCKED') {
+					const courseNames = status.activeEnrollments
 						.map(e => e.courseName || e.courseCode)
 						.join(', ')
-
 					throw new Error(
-						`Ya se encuentra cursando un curso${enrollmentCheck.enrollments.length > 1 ? 's' : ''}: ${courseNames}`,
+						`Ya se encuentra cursando un curso${status.activeEnrollments.length > 1 ? 's' : ''}: ${courseNames}`,
 					)
 				}
 			}
 
-			// Verificar si el aplicante ya existe por número de documento
-			const existingApplicant = await apiService.findApplicantByDocument(
-				formData.section1.documentNumber,
-			)
-
-			// Transformar datos del formulario al formato esperado por la API
 			const applicantDto = mapFormDataToDto(formData)
-
-			let result
-			if (existingApplicant) {
-				// Eliminar campos vacíos o nulos para evitar errores de validación en actualización parcial
-				const plainDto = JSON.parse(JSON.stringify(applicantDto))
-				const cleanDto = Object.fromEntries(
-					Object.entries(plainDto).filter(
-						([, v]) => v !== '' && v !== null && v !== undefined,
-					),
-				)
-
-				// Actualizar aplicante existente
-				result = await apiService.updateApplicant(
-					existingApplicant.id,
-					cleanDto,
-				)
-				toast.success('Información actualizada correctamente')
-			} else {
-				// Crear nuevo aplicante
-				result = await apiService.createApplicant(applicantDto)
-				toast.success('Inscripción enviada correctamente')
-			}
+			const result = await apiService.submitForm(applicantDto)
 
 			setIsSuccess(true)
-			console.log('Applicant saved:', result)
+			console.log('Form submitted:', result)
+			toast.success(result.isNew ? 'Inscripción enviada correctamente' : 'Información actualizada correctamente')
 
-			// Ejecutar callback de éxito si se proporciona
 			if (onSuccess) {
 				onSuccess()
 			}

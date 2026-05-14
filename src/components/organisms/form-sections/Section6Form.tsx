@@ -54,6 +54,16 @@ export function Section6Form() {
 		},
 	})
 
+	// Auto-seleccionar cuando hay un único curso disponible y no está deshabilitado
+	useEffect(() => {
+		const selectable = availableCourses.filter(c => !disabledCourses.includes(c.value))
+		const current = form.getValues('selectedCourses') ?? []
+		if (selectable.length === 1 && current.length === 0) {
+			form.setValue('selectedCourses', [selectable[0].value], { shouldDirty: true })
+			setSectionData('section6', { ...form.getValues(), selectedCourses: [selectable[0].value] })
+		}
+	}, [availableCourses, disabledCourses]) // eslint-disable-line react-hooks/exhaustive-deps
+
 	// Guardar datos automáticamente cuando cambian los valores del formulario
 	useEffect(() => {
 		const subscription = form.watch(values => {

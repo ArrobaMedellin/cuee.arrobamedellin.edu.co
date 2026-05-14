@@ -3,6 +3,43 @@ import {
 	UpdateApplicantDto,
 } from './mappers/applicant-mapper'
 
+const DEFAULT_TIMEOUT_MS = 30_000
+
+async function fetchWithTimeout(
+	url: string,
+	options: Omit<RequestInit, 'signal'> = {},
+	timeoutMs = DEFAULT_TIMEOUT_MS,
+): Promise<Response> {
+	const controller = new AbortController()
+	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+	try {
+		return await fetch(url, { ...options, signal: controller.signal })
+	} finally {
+		clearTimeout(timeoutId)
+	}
+}
+
+async function readErrorMessage(response: Response): Promise<string> {
+	const text = await response.text()
+	if (!text?.trim()) return `HTTP error! status: ${response.status}`
+	try {
+		const data = JSON.parse(text) as { message?: string }
+		return data.message || `HTTP error! status: ${response.status}`
+	} catch {
+		return text.length > 300 ? `${text.slice(0, 300)}…` : text
+	}
+}
+
+async function parseJsonFromResponse<T>(response: Response): Promise<T> {
+	const text = await response.text()
+	if (!text?.trim()) return {} as T
+	try {
+		return JSON.parse(text) as T
+	} catch {
+		throw new Error('La respuesta del servidor no es JSON válido')
+	}
+}
+
 // API service for handling applicant submissions
 export class ApiService {
 	private baseUrl: string
@@ -16,89 +53,81 @@ export class ApiService {
 
 	async createApplicant(applicantData: CreateApplicantDto) {
 		try {
-			console.log(
-				'Sending applicant data:',
-				JSON.stringify(applicantData, null, 2),
-			)
-
-			const response = await fetch(`${this.baseUrl}/applicants`, {
+			const response = await fetchWithTimeout(`${this.baseUrl}/applicants`, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(applicantData),
 			})
 
-			console.log('Response status:', response.status)
-
 			if (!response.ok) {
-				const errorData = await response.json()
-				console.error('Error response:', errorData)
-				throw new Error(
-					errorData.message || `HTTP error! status: ${response.status}`,
-				)
+				throw new Error(await readErrorMessage(response))
 			}
 
-			const result = await response.json()
-			console.log('Applicant created:', result)
-			return result
+			return await parseJsonFromResponse<unknown>(response)
 		} catch (error) {
-			console.error('Error creating applicant:', error)
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
 			throw error
 		}
 	}
 
-	async findApplicantByDocument(document: string) {
+	async findApplicantByDocument(document: string, period?: string) {
 		try {
-			const response = await fetch(
-				`${this.baseUrl}/applicants/document/${document}`,
-			)
+			const url = period
+				? `${this.baseUrl}/applicants/document/${encodeURIComponent(document)}?period=${encodeURIComponent(period)}`
+				: `${this.baseUrl}/applicants/document/${encodeURIComponent(document)}`
+			const response = await fetchWithTimeout(url)
 
 			if (!response.ok) {
-				if (response.status === 404) {
-					return null
-				}
-				throw new Error(`HTTP error! status: ${response.status}`)
+				if (response.status === 404) return null
+				throw new Error(await readErrorMessage(response))
 			}
 
-			// Verificar si hay contenido en la respuesta
 			const text = await response.text()
-			if (!text || text.trim() === '') {
-				return null
-			}
+			if (!text || text.trim() === '') return null
 
-			return JSON.parse(text)
+			try {
+				return JSON.parse(text) as unknown
+			} catch {
+				throw new Error('Respuesta de aplicante no válida')
+			}
 		} catch (error) {
-			console.error('Error finding applicant by document:', error)
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
 			throw error
 		}
 	}
 
 	async updateApplicant(id: string, applicantData: UpdateApplicantDto) {
 		try {
-			const response = await fetch(`${this.baseUrl}/applicants/${id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
+			const response = await fetchWithTimeout(
+				`${this.baseUrl}/applicants/${id}`,
+				{
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(applicantData),
 				},
-				body: JSON.stringify(applicantData),
-			})
+			)
 
 			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(
-					errorData.message || `HTTP error! status: ${response.status}`,
-				)
+				throw new Error(await readErrorMessage(response))
 			}
 
-			return await response.json()
+			return await parseJsonFromResponse<unknown>(response)
 		} catch (error) {
-			console.error('Error updating applicant:', error)
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
 			throw error
 		}
 	}
 
-	async checkActiveEnrollment(document: string): Promise<{
+	async checkActiveEnrollment(
+		document: string,
+		period?: string,
+	): Promise<{
 		hasActiveEnrollment: boolean
 		enrollments: Array<{
 			id: string
@@ -109,52 +138,48 @@ export class ApiService {
 		}>
 	}> {
 		try {
-			const response = await fetch(
-				`${this.baseUrl}/enrollment/check-active/${document}`,
-			)
+			const url = period
+				? `${this.baseUrl}/enrollment/check-active/${encodeURIComponent(document)}?period=${encodeURIComponent(period)}`
+				: `${this.baseUrl}/enrollment/check-active/${encodeURIComponent(document)}`
+			const response = await fetchWithTimeout(url)
 
 			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`)
+				throw new Error(await readErrorMessage(response))
 			}
 
-			return await response.json()
+			return await parseJsonFromResponse(response)
 		} catch (error) {
-			console.error('Error checking active enrollment:', error)
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
 			throw error
 		}
 	}
 
 	async getEnrollmentsByApplicant(applicantId: string) {
 		try {
-			const response = await fetch(
+			const response = await fetchWithTimeout(
 				`${this.baseUrl}/enrollment/applicant/${applicantId}`,
 			)
 
 			if (!response.ok) {
-				// Si la ruta requiere autenticación y no la tenemos, devolver vacío para no romper el flujo
-				if (response.status === 401 || response.status === 403) {
-					return []
-				}
-				throw new Error(`HTTP error! status: ${response.status}`)
+				if (response.status === 401 || response.status === 403) return []
+				throw new Error(await readErrorMessage(response))
 			}
 
-			return await response.json()
+			return await parseJsonFromResponse<unknown[]>(response)
 		} catch (error) {
-			console.error('Error fetching enrollments by applicant:', error)
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
 			throw error
 		}
 	}
 
-	/**
-	 * Obtiene el estado completo de un aplicante para determinar el flujo de inscripción.
-	 * Este endpoint unificado retorna:
-	 * - flowType: 'NEW' | 'REENROLLMENT' | 'BLOCKED'
-	 * - activeEnrollments: Matrículas activas (bloquean inscripción)
-	 * - finishedEnrollments: Matrículas finalizadas (cursos a deshabilitar)
-	 * - disabledCourseIds: IDs de cursos finalizados
-	 * - applicantData: Datos del aplicante para autocompletar
-	 */
-	async getApplicantStatus(document: string): Promise<{
+	async getApplicantStatus(
+		document: string,
+		period?: string,
+	): Promise<{
 		flowType: 'NEW' | 'REENROLLMENT' | 'BLOCKED'
 		message: string
 		activeEnrollments: Array<{
@@ -197,17 +222,108 @@ export class ApiService {
 		}
 	}> {
 		try {
-			const response = await fetch(
-				`${this.baseUrl}/enrollment/applicant-status/${document}`,
-			)
+			const url = period
+				? `${this.baseUrl}/enrollment/applicant-status/${encodeURIComponent(document)}?period=${encodeURIComponent(period)}`
+				: `${this.baseUrl}/enrollment/applicant-status/${encodeURIComponent(document)}`
+			const response = await fetchWithTimeout(url)
 
 			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`)
+				throw new Error(await readErrorMessage(response))
 			}
 
-			return await response.json()
+			return await parseJsonFromResponse(response)
 		} catch (error) {
-			console.error('Error fetching applicant status:', error)
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
+			throw error
+		}
+	}
+
+	// ─── Endpoints unificados por tipo de formulario (/form/:type/*) ──────────
+
+	private get formType(): string {
+		return process.env.NEXT_PUBLIC_FORM_TYPE || 'inscripciones'
+	}
+
+	async getFormStatus(document: string): Promise<{
+		flowType: 'NEW' | 'REENROLLMENT' | 'BLOCKED'
+		message: string
+		period: string
+		activeEnrollments: Array<{
+			id: string
+			courseCode: string
+			courseName: string
+			status: string
+			period: string
+			enrollmentDate?: Date
+		}>
+		finishedEnrollments: Array<{
+			id: string
+			courseCode: string
+			courseName: string
+			status: string
+			period: string
+			enrollmentDate?: Date
+		}>
+		disabledCourseIds: string[]
+		applicantData?: {
+			id: string
+			documentType?: string
+			document: string
+			firstName?: string
+			lastName?: string
+			email?: string
+			cellphone?: string
+			gender?: string
+			birthCountry?: string
+			birthDepartment?: string
+			birthMunicipality?: string
+			birthDate?: Date
+			residenceCountry?: string
+			residenceDepartment?: string
+			residenceMunicipality?: string
+			neighborhood?: string
+			commune?: string
+			stratum?: string
+		}
+	}> {
+		try {
+			const url = `${this.baseUrl}/form/${this.formType}/status/${encodeURIComponent(document)}`
+			const response = await fetchWithTimeout(url)
+			if (!response.ok) {
+				throw new Error(await readErrorMessage(response))
+			}
+			return await parseJsonFromResponse(response)
+		} catch (error) {
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
+			throw error
+		}
+	}
+
+	async submitForm(dto: CreateApplicantDto): Promise<{
+		success: boolean
+		applicantId: string
+		isNew: boolean
+		enrollmentsCreated: number
+	}> {
+		try {
+			const url = `${this.baseUrl}/form/${this.formType}/submit`
+			const response = await fetchWithTimeout(url, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(dto),
+			})
+			if (!response.ok) {
+				throw new Error(await readErrorMessage(response))
+			}
+			return await parseJsonFromResponse(response)
+		} catch (error) {
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
 			throw error
 		}
 	}

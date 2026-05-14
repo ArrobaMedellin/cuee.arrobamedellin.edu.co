@@ -163,8 +163,8 @@ export interface CreateApplicantDto {
 	// Timestamp
 	date?: string
 
-	// Cursos seleccionados (para la relación many-to-many)
-	courseIds: string[]
+	// Cursos seleccionados (para la relación many-to-many). undefined en envío parcial.
+	courseIds?: string[]
 }
 
 // Helper function to convert boolean to 'SI'/'NO' string
@@ -375,8 +375,8 @@ export function mapFormDataToDto(
 		hasSection3: !!section3,
 	})
 
-	// Map course names to IDs using the configuration
-	const courseIds = getCourseApiIds(section6?.selectedCourses || [])
+	// Partial submit → undefined (sin matrícula). Full submit → IDs de cursos seleccionados.
+	const courseIds = isPartialSubmit ? undefined : getCourseApiIds(section6?.selectedCourses || [])
 
 	// Map devices to individual fields
 	const deviceFields = mapDevices(section4?.devices)

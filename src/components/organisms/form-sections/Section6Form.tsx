@@ -94,6 +94,7 @@ export function Section6Form() {
 			value: 'stand-informativo',
 			label: 'Stand informativo en algún lugar de la ciudad',
 		},
+		{ value: 'conglomerado-publico', label: 'Conglomerado Público' },
 		{ value: 'otro', label: 'Otro' },
 	]
 

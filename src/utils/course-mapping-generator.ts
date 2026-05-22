@@ -62,8 +62,8 @@ export async function generateCourseMapping(apiUrl: string): Promise<string> {
 				label: 'Inglés básico para el sector turístico'
 			},
 			{
-				value: 'primeros-auxilios-psicologicos',
-				label: 'Primeros auxilios psicológicos'
+				value: 'primeros-auxilios',
+				label: 'Primeros auxilios'
 			},
 			{
 				value: 'vida-independiente',

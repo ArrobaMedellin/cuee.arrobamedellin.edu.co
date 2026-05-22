@@ -112,8 +112,8 @@ export const COURSE_MAPPINGS: CourseMapping[] = [
 		apiId: '30504019',
 	},
 	{
-		value: 'primeros-auxilios-psicologicos',
-		label: 'Primeros auxilios psicológicos',
+		value: 'primeros-auxilios',
+		label: 'Primeros auxilios',
 		apiId: '30504032',
 		onlyForSantaElena: true,
 	},

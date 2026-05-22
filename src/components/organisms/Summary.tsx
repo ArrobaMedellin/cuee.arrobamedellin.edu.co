@@ -37,6 +37,7 @@ const howDidYouHearLabels: Record<string, string> = {
 		'Medios de comunicación tradicionales (radio, televisión, prensa)',
 	recomendacion: 'Recomendación de un conocido',
 	'stand-informativo': 'Stand informativo en algún lugar de la ciudad',
+	'conglomerado-publico': 'Conglomerado Público',
 	otro: 'Otro',
 }
 

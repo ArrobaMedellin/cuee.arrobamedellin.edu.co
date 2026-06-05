@@ -36,12 +36,21 @@ export default function ConfirmationPage() {
 									identidad. Al ingresar por primera vez, el sistema te pedirá
 									actualizar la contraseña para mayor seguridad.
 								</p>
-								<p>
-									Igualmente, a tu correo electrónico llegará toda la
-									información detallada para el ingreso y el inicio de tu curso.
-									Te recomendamos estar pendiente del correo que registraste y
-									revisar también tu bandeja de spam o correo no deseado.
-								</p>
+								<div className='py-10'>
+									<Button
+										asChild
+										className='w-full'
+									>
+										<a
+											href='https://ciudadeladigital.arrobamedellin.edu.co/'
+											target='_blank'
+											rel='noopener noreferrer'
+											className='text-xl py-6'
+										>
+											Haz click aquí para ingresar a tu curso
+										</a>
+									</Button>
+								</div>
 								<p>
 									<a
 										href='https://youtu.be/Kpw-4QbyrNg'
@@ -90,25 +99,14 @@ export default function ConfirmationPage() {
 										rel='noopener noreferrer'
 										className='text-primary underline font-semibold'
 									>
-										enlace.
+										enlace
 									</a>
+									.
 								</p>
 							</div>
 						</div>
 
 						<div className='pt-6 space-y-3 w-full max-w-md'>
-							<Button
-								asChild
-								className='w-full'
-							>
-								<a
-									href='https://ciudadeladigital.arrobamedellin.edu.co/'
-									target='_blank'
-									rel='noopener noreferrer'
-								>
-									Ir a la Ciudadela
-								</a>
-							</Button>
 							<Button
 								variant='outline'
 								className='w-full'

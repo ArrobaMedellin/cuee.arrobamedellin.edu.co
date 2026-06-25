@@ -112,6 +112,11 @@ export const COURSE_MAPPINGS: CourseMapping[] = [
 		apiId: '30504019',
 	},
 	{
+		value: 'abc-conmemorando-etnico',
+		label: 'ABC: Conmemorando lo étnico',
+		apiId: '30504060',
+	},
+	{
 		value: 'primeros-auxilios',
 		label: 'Primeros auxilios',
 		apiId: '30504032',

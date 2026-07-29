@@ -491,6 +491,7 @@ export function useAutofillForm(): UseAutofillFormReturn {
 					toBool(applicant.isVeteran) || data.section5?.isVeteran || false,
 			},
 			section6: {
+				company: toStr(applicant.company) || data.section6?.company || '',
 				selectedCourses:
 					(applicant.selectedCourses as string[]) ||
 					data.section6?.selectedCourses ||

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-	title: 'Inscripciones Sapiencia',
-	description: 'Inscripciones Sapiencia'
+	title: 'CUEE Sapiencia',
+	description: 'CUEE Sapiencia'
 }
 
 export default function RootLayout({

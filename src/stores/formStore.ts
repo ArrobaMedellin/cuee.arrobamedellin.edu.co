@@ -143,6 +143,7 @@ const initialData: Partial<RegistrationFormData> = {
 		isVeteran: false,
 	},
 	section6: {
+		company: '',
 		selectedCourses: [],
 		howDidYouHear: '',
 		otherSource: '',

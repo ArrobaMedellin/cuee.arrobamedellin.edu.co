@@ -11,7 +11,7 @@ export default function Header() {
 				style={{ height: 'auto' }}
 			/>
 			<h1 className='mb-6 text-center text-2xl font-bold text-white'>
-				Inscripciones Sapiencia {new Date().getFullYear()}
+				CUEE Sapiencia {new Date().getFullYear()}
 			</h1>
 		</div>
 	)

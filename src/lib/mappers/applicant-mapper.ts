@@ -148,6 +148,7 @@ export interface CreateApplicantDto {
 	victimRegistrationNumber?: string
 
 	// Cómo se enteró
+	company?: string
 	selectedCourses: string[]
 	howDidYouHear: string
 	foundOutAboutCall?: string
@@ -401,7 +402,7 @@ export function mapFormDataToDto(
 
 	return {
 		// Metadata
-		period: process.env.NEXT_PUBLIC_PERIOD || '32',
+		period: process.env.NEXT_PUBLIC_PERIOD || '51',
 		date: new Date().toISOString(),
 
 		// Información personal básica
@@ -544,6 +545,7 @@ export function mapFormDataToDto(
 		victimRegistrationNumber: section5?.victimRegistrationNumber || undefined,
 
 		// Cómo se enteró
+		company: section6?.company || undefined,
 		selectedCourses: section6?.selectedCourses || [],
 		howDidYouHear: section6?.howDidYouHear || 'N/A',
 		foundOutAboutCall:

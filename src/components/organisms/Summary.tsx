@@ -1,6 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { COMPANY_OPTIONS } from '@/constants/companies'
 import { useFormStore } from '@/stores/formStore'
 import type {
 	Section1,
@@ -495,6 +496,13 @@ export function Summary() {
 						<CardTitle>Cursos y Comunicación</CardTitle>
 					</CardHeader>
 					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+						<Kv
+							label='Empresa'
+							value={
+								COMPANY_OPTIONS.find(c => c.value === s6.company)?.label ||
+								s6.company
+							}
+						/>
 						<Kv
 							label='Cursos seleccionados'
 							value={s6.selectedCourses}

@@ -17,6 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { COMPANY_OPTIONS } from '@/constants/companies'
 import { COURSE_MAPPINGS } from '@/constants/courses'
 import type { Section6Form } from '@/schemas/section6'
 import { section6Schema } from '@/schemas/section6'
@@ -48,21 +49,25 @@ export function Section6Form() {
 	const form = useForm<Section6Form>({
 		resolver: zodResolver(section6Schema),
 		defaultValues: data.section6 || {
+			company: '',
 			selectedCourses: [],
 			howDidYouHear: '',
 			otherSource: '',
 		},
 	})
 
+	const selectedCompany = form.watch('company')
+
 	// Auto-seleccionar cuando hay un único curso disponible y no está deshabilitado
 	useEffect(() => {
+		if (!selectedCompany) return
 		const selectable = availableCourses.filter(c => !disabledCourses.includes(c.value))
 		const current = form.getValues('selectedCourses') ?? []
 		if (selectable.length === 1 && current.length === 0) {
 			form.setValue('selectedCourses', [selectable[0].value], { shouldDirty: true })
 			setSectionData('section6', { ...form.getValues(), selectedCourses: [selectable[0].value] })
 		}
-	}, [availableCourses, disabledCourses]) // eslint-disable-line react-hooks/exhaustive-deps
+	}, [availableCourses, disabledCourses, selectedCompany]) // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Guardar datos automáticamente cuando cambian los valores del formulario
 	useEffect(() => {
@@ -106,6 +111,40 @@ export function Section6Form() {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className='space-y-6'
 			>
+				{/* Selección de empresa */}
+				<FormField
+					control={form.control}
+					name='company'
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className='text-base font-semibold'>
+								Empresa
+							</FormLabel>
+							<Select
+								onValueChange={field.onChange}
+								defaultValue={field.value}
+							>
+								<FormControl>
+									<SelectTrigger>
+										<SelectValue placeholder='Selecciona tu empresa' />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									{COMPANY_OPTIONS.map(option => (
+										<SelectItem
+											key={option.value}
+											value={option.value}
+										>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
 				{/* Selección de cursos */}
 				<FormField
 					control={form.control}
@@ -116,6 +155,11 @@ export function Section6Form() {
 								Solo puedes seleccionar uno de los siguientes cursos en el que
 								quieres participar
 							</FormLabel>
+							{!selectedCompany && (
+								<p className='text-sm text-muted-foreground'>
+									Selecciona primero una empresa para habilitar los cursos.
+								</p>
+							)}
 							<FormControl>
 								<RadioGroup
 									onValueChange={value => field.onChange([value])}
@@ -123,7 +167,8 @@ export function Section6Form() {
 									className='grid grid-cols-1 md:grid-cols-2 gap-3'
 								>
 									{availableCourses.map(option => {
-										const isDisabled = disabledCourses.includes(option.value)
+										const isFinished = disabledCourses.includes(option.value)
+										const isDisabled = !selectedCompany || isFinished
 										return (
 											<FormItem
 												key={option.value}
@@ -137,7 +182,7 @@ export function Section6Form() {
 												</FormControl>
 												<FormLabel className='font-normal cursor-pointer w-full'>
 													{option.label}
-													{isDisabled && (
+													{isFinished && (
 														<span className='ml-2 text-xs text-muted-foreground'>
 															(Curso finalizado)
 														</span>

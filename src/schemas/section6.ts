@@ -1,6 +1,9 @@
 import { z } from 'zod'
 
 export const section6Schema = z.object({
+	// Empresa asociada a la inscripción (CUEE)
+	company: z.string().min(1, 'Debe seleccionar una empresa'),
+
 	// Selección de cursos (máximo 3)
 	selectedCourses: z
 		.array(z.string())

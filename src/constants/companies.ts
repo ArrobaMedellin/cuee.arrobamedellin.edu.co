@@ -7,6 +7,5 @@ export interface CompanyOption {
 }
 
 export const COMPANY_OPTIONS: CompanyOption[] = [
-	{ value: 'empresa-1', label: 'Empresa 1' },
-	{ value: 'empresa-2', label: 'Empresa 2' },
+	{ value: 'grupointer', label: 'Grupointer' },
 ]

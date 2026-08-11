@@ -59,7 +59,7 @@ export function RegistrationForm() {
 	// Verificar elegibilidad después de completar section2
 	const isEligible = useMemo(() => {
 		// Solo verificar si section2 tiene datos completos
-		if (!data.section2?.birthDate || !data.section2?.cityOfResidence) {
+		if (!data.section2?.birthDate) {
 			return true // Asumir elegible si aún no hay datos suficientes
 		}
 
@@ -82,7 +82,6 @@ export function RegistrationForm() {
 						return age
 					})()
 				: undefined,
-			cityOfResidence: data.section2?.cityOfResidence,
 		})
 
 		// Resetear contador si el usuario ahora es elegible

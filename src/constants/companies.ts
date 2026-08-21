@@ -10,4 +10,5 @@ export const COMPANY_OPTIONS: CompanyOption[] = [
 	{ value: 'grupointer', label: 'Grupointer' },
 	{ value: 'masterdent', label: 'Masterdent' },
 	{ value: 'conconcreto', label: 'Conconcreto' },
+	{ value: 'ucc', label: 'UCC' },
 ]

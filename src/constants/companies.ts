@@ -11,4 +11,7 @@ export const COMPANY_OPTIONS: CompanyOption[] = [
 	{ value: 'masterdent', label: 'Masterdent' },
 	{ value: 'conconcreto', label: 'Conconcreto' },
 	{ value: 'ucc', label: 'UCC' },
+	{ value: 'clofan', label: 'Clofán' },
+	{ value: 'corona', label: 'Corona' },
+	{ value: 'epm', label: 'EPM' },
 ]

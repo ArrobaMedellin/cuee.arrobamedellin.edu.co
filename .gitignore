@@ -46,8 +46,8 @@ next-env.d.ts
 /pnpm-lock.yaml
 
 # # Enviroments
-# .env
-# .env.*
+.env
+.env.*
 
 # Playwright
 /test-results/

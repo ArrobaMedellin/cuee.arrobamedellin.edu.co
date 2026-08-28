@@ -14,4 +14,5 @@ export const COMPANY_OPTIONS: CompanyOption[] = [
 	{ value: 'clofan', label: 'Clofán' },
 	{ value: 'corona', label: 'Corona' },
 	{ value: 'epm', label: 'EPM' },
+	{ value: 'comfenalco', label: 'Comfenalco' },
 ]

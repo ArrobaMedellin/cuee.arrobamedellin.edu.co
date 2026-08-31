@@ -15,4 +15,5 @@ export const COMPANY_OPTIONS: CompanyOption[] = [
 	{ value: 'corona', label: 'Corona' },
 	{ value: 'epm', label: 'EPM' },
 	{ value: 'comfenalco', label: 'Comfenalco' },
+	{ value: 'polito', label: 'Polito' },
 ]

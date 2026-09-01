@@ -33,6 +33,7 @@ import { Section3Form } from './form-sections/Section3Form'
 import { Section4Form } from './form-sections/Section4Form'
 import { Section5Form } from './form-sections/Section5Form'
 import { Section6Form } from './form-sections/Section6Form'
+import { SurveyForm } from './form-sections/SurveyForm'
 import { Summary } from './Summary'
 
 export function RegistrationForm() {
@@ -149,6 +150,12 @@ export function RegistrationForm() {
 			},
 			{
 				key: 7,
+				title: 'Encuesta de Caracterización',
+				description: 'Condiciones y expectativas',
+				tooltip: 'Encuesta de caracterización y permanencia',
+			},
+			{
+				key: 8,
 				title: 'Resumen',
 				description: 'Verificación final',
 				tooltip: 'Revisa y envía',
@@ -196,8 +203,8 @@ export function RegistrationForm() {
 				return <Section5Form />
 			case 6:
 				return <Section6Form />
-			case 8:
-				return <Summary />
+			case 7:
+				return <SurveyForm />
 			default:
 				return <Section1Form />
 		}
@@ -404,7 +411,7 @@ export function RegistrationForm() {
 									</p>
 								</div>
 							</div>
-						) : currentSection === 7 ? (
+						) : currentSection === 8 ? (
 							<Summary />
 						) : (
 							renderForm()

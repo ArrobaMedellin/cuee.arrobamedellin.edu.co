@@ -4,6 +4,7 @@ import { section3Schema } from '@/schemas/section3'
 import { section4Schema } from '@/schemas/section4'
 import { section5Schema } from '@/schemas/section5'
 import { section6Schema } from '@/schemas/section6'
+import { surveySchema } from '@/schemas/survey'
 import { useFormStore } from '@/stores/formStore'
 import { useMemo } from 'react'
 
@@ -12,7 +13,7 @@ import { useMemo } from 'react'
  * Usa los esquemas Zod definidos para cada sección
  */
 export function useValidateSection() {
-	const { data, currentSection } = useFormStore()
+	const { data, currentSection, surveyWizardCompleted } = useFormStore()
 
 	const isSectionValid = useMemo(() => {
 		try {
@@ -52,7 +53,15 @@ export function useValidateSection() {
 					return true
 
 				case 7:
-					// La sección 7 (resumen) siempre es válida si se llega a ella
+					if (!data.survey) return false
+					surveySchema.parse(data.survey)
+					// Además de válida, la encuesta debe haberse recorrido hasta el
+					// final en el wizard (evita habilitar "Siguiente" solo porque
+					// datos persistidos de una sesión anterior ya son válidos).
+					return surveyWizardCompleted
+
+				case 8:
+					// La sección 8 (resumen) siempre es válida si se llega a ella
 					// porque significa que todas las secciones anteriores ya fueron validadas
 					return true
 
@@ -67,7 +76,7 @@ export function useValidateSection() {
 			)
 			return false
 		}
-	}, [data, currentSection])
+	}, [data, currentSection, surveyWizardCompleted])
 
 	// Función para obtener errores de la sección actual
 	const getSectionErrors = useMemo(() => {
@@ -103,6 +112,11 @@ export function useValidateSection() {
 					section6Schema.parse(data.section6)
 					return []
 
+				case 7:
+					if (!data.survey) return []
+					surveySchema.parse(data.survey)
+					return []
+
 				default:
 					return []
 			}
@@ -118,8 +132,10 @@ export function useValidateSection() {
 				})
 
 				// Solo loggear si hay datos (evitar logs en formulario vacío)
+				const sectionKey =
+					currentSection === 7 ? 'survey' : `section${currentSection}`
 				const sectionData = (data as Record<string, unknown>)[
-					`section${currentSection}`
+					sectionKey
 				] as Record<string, unknown> | undefined
 				const hasData =
 					sectionData &&

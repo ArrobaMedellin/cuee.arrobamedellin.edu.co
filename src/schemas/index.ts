@@ -7,6 +7,7 @@ import { section4Schema } from './section4'
 import { section5Schema } from './section5'
 import { section6Schema } from './section6'
 import { section7Schema } from './section7'
+import { surveySchema } from './survey'
 
 export const formSchema = z.object({
 	section1: section1Schema,
@@ -16,7 +17,8 @@ export const formSchema = z.object({
 	section4: section4Schema,
 	section5: section5Schema,
 	section6: section6Schema,
-	section7: section7Schema
+	section7: section7Schema,
+	survey: surveySchema
 })
 
 export type FormSchema = z.infer<typeof formSchema>

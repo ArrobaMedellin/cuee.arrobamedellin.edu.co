@@ -589,3 +589,39 @@ export function mapFormDataToDto(
 
 // Update DTO interface for partial updates
 export type UpdateApplicantDto = Partial<CreateApplicantDto>
+
+// DTO de la encuesta de caracterización y permanencia (CAR_01-CAR_08)
+export interface CreateSurveyDto {
+	applicantId: string
+	car01: string
+	car01Other?: string
+	car02: string
+	car02Other?: string
+	car03: string
+	car04: string
+	car05: string[]
+	car06: string
+	car07?: string
+	car08: string
+	car08Other?: string
+}
+
+export function mapSurveyToDto(
+	applicantId: string,
+	survey: RegistrationFormData['survey'],
+): CreateSurveyDto {
+	return {
+		applicantId,
+		car01: survey.car01,
+		...(survey.car01Other?.trim() ? { car01Other: survey.car01Other.trim() } : {}),
+		car02: survey.car02,
+		...(survey.car02Other?.trim() ? { car02Other: survey.car02Other.trim() } : {}),
+		car03: survey.car03,
+		car04: survey.car04,
+		car05: survey.car05,
+		car06: survey.car06,
+		...(survey.car07 ? { car07: survey.car07 } : {}),
+		car08: survey.car08,
+		...(survey.car08Other?.trim() ? { car08Other: survey.car08Other.trim() } : {}),
+	}
+}

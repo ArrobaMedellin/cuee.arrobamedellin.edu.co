@@ -1,5 +1,5 @@
 import { apiService } from '@/lib/api'
-import { mapFormDataToDto } from '@/lib/mappers/applicant-mapper'
+import { mapFormDataToDto, mapSurveyToDto } from '@/lib/mappers/applicant-mapper'
 import { RegistrationFormData } from '@/types/form'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -53,6 +53,17 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 			setIsSuccess(true)
 			console.log('Form submitted:', result)
 			toast.success(result.isNew ? 'Inscripción enviada correctamente' : 'Información actualizada correctamente')
+
+			if (formData.survey && result.applicantId) {
+				try {
+					const surveyDto = mapSurveyToDto(result.applicantId, formData.survey)
+					await apiService.createSurvey(surveyDto)
+				} catch (surveyError) {
+					// La encuesta es información complementaria: no debe bloquear
+					// el flujo de inscripción si el aplicante ya fue creado.
+					console.error('Error al enviar la encuesta de caracterización:', surveyError)
+				}
+			}
 
 			if (onSuccess) {
 				onSuccess()

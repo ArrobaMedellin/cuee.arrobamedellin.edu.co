@@ -12,6 +12,7 @@ import type {
 	Section5,
 	Section6,
 	Section7,
+	Survey,
 } from '@/types/form'
 import { calculateAge } from '@/utils/age'
 
@@ -25,6 +26,81 @@ type SectionData =
 	| Section5
 	| Section6
 	| Section7
+	| Survey
+
+const car01Labels: Record<string, string> = {
+	A: 'Estudiante de bachillerato',
+	B: 'Estudiante de educación postsecundaria',
+	C: 'Aspirante a la educación postsecundaria',
+	D: 'Empleado(a)',
+	E: 'Desempleado(a) en búsqueda de empleo',
+	F: 'Emprendedor(a) o independiente',
+	G: 'Cuidador(a) del hogar',
+	H: 'Ni estudia ni trabaja',
+	I: 'Otra actividad',
+}
+
+const car02Labels: Record<string, string> = {
+	A: 'Conseguir un mejor empleo',
+	B: 'Fortalecer mis conocimientos y habilidades',
+	C: 'Descubrir si esta área de formación es adecuada para mí',
+	D: 'Aprovechar el tiempo libre',
+	E: 'Fortalecer o hacer crecer mi emprendimiento',
+	F: 'Aprovechar el acceso gratuito o el apoyo institucional',
+	G: 'Me la recomendaron',
+	H: 'Otro',
+}
+
+const car03Labels: Record<string, string> = {
+	A: 'Necesito flexibilidad en los horarios',
+	B: 'No puedo desplazarme presencialmente',
+	C: 'Trabajo y solo puedo estudiar en casa',
+	D: 'Me resulta más útil estudiar de forma virtual',
+	E: 'No identifiqué oportunidades de formación presencial',
+}
+
+const car04Labels: Record<string, string> = {
+	A: 'Menos de 2 horas',
+	B: 'Entre 2 y 4 horas',
+	C: 'Entre 5 y 7 horas',
+	D: 'Entre 8 y 10 horas',
+	E: 'Más de 10 horas',
+}
+
+const car05Labels: Record<string, string> = {
+	A: 'Computador portátil',
+	B: 'Computador de escritorio',
+	C: 'Tableta',
+	D: 'Teléfono celular inteligente',
+	E: 'Computador o tableta compartida',
+	F: 'Sin acceso regular a dispositivos',
+}
+
+const car06Labels: Record<string, string> = {
+	A: 'Internet fijo en mi vivienda',
+	B: 'Datos móviles de un plan de celular',
+	C: 'Internet compartido por otra persona o vivienda',
+	D: 'Internet en espacios públicos, educativos o comunitarios',
+	E: 'No cuento con acceso a internet',
+}
+
+const car07Labels: Record<string, string> = {
+	A: 'Muy estable',
+	B: 'Estable',
+	C: 'Medianamente estable',
+	D: 'Inestable',
+	E: 'Muy inestable',
+	NO_APLICA: 'No aplica: sin acceso a internet',
+}
+
+const car08Labels: Record<string, string> = {
+	A: 'Conseguir empleo',
+	B: 'Mejorar mi desempeño laboral actual',
+	C: 'Fortalecer mi emprendimiento',
+	D: 'Obtener el certificado para mejorar mis oportunidades',
+	E: 'Continuar con otros cursos o estudios formales',
+	F: 'Otro',
+}
 
 // Mapeo de valores de "Cómo se enteró" a sus labels
 const howDidYouHearLabels: Record<string, string> = {
@@ -81,6 +157,7 @@ export function Summary() {
 	const s4 = data.section4
 	const s5 = data.section5
 	const s6 = data.section6
+	const survey = data.survey
 
 	// Calcular edad si hay fecha de nacimiento
 	const calculatedAge = s2?.birthDate ? calculateAge(s2.birthDate) : null
@@ -515,6 +592,62 @@ export function Summary() {
 										? s6.otherSource || '—'
 										: howDidYouHearLabels[s6.howDidYouHear] || s6.howDidYouHear
 									: '—'
+							}
+						/>
+					</CardContent>
+				</Card>
+			)}
+
+			{survey && hasRealData(survey) && (
+				<Card>
+					<CardHeader>
+						<CardTitle>Encuesta de Caracterización y Permanencia</CardTitle>
+					</CardHeader>
+					<CardContent className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+						<Kv
+							label='Actividad principal actual'
+							value={
+								survey.car01 === 'I'
+									? survey.car01Other || '—'
+									: car01Labels[survey.car01] || survey.car01
+							}
+						/>
+						<Kv
+							label='Motivación principal'
+							value={
+								survey.car02 === 'H'
+									? survey.car02Other || '—'
+									: car02Labels[survey.car02] || survey.car02
+							}
+						/>
+						<Kv
+							label='Razón por modalidad virtual'
+							value={car03Labels[survey.car03] || survey.car03}
+						/>
+						<Kv
+							label='Tiempo semanal disponible'
+							value={car04Labels[survey.car04] || survey.car04}
+						/>
+						<Kv
+							label='Dispositivos con acceso regular'
+							value={survey.car05?.map(v => car05Labels[v] || v)}
+						/>
+						<Kv
+							label='Tipo de acceso a internet'
+							value={car06Labels[survey.car06] || survey.car06}
+						/>
+						<Kv
+							label='Estabilidad de la conexión'
+							value={
+								survey.car07 ? car07Labels[survey.car07] || survey.car07 : '—'
+							}
+						/>
+						<Kv
+							label='Resultado esperado al finalizar'
+							value={
+								survey.car08 === 'F'
+									? survey.car08Other || '—'
+									: car08Labels[survey.car08] || survey.car08
 							}
 						/>
 					</CardContent>

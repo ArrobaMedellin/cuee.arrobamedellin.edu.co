@@ -1,5 +1,6 @@
 import {
 	CreateApplicantDto,
+	CreateSurveyDto,
 	UpdateApplicantDto,
 } from './mappers/applicant-mapper'
 
@@ -320,6 +321,27 @@ export class ApiService {
 				throw new Error(await readErrorMessage(response))
 			}
 			return await parseJsonFromResponse(response)
+		} catch (error) {
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')
+			}
+			throw error
+		}
+	}
+
+	async createSurvey(dto: CreateSurveyDto): Promise<unknown> {
+		try {
+			const response = await fetchWithTimeout(`${this.baseUrl}/surveys`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(dto),
+			})
+
+			if (!response.ok) {
+				throw new Error(await readErrorMessage(response))
+			}
+
+			return await parseJsonFromResponse<unknown>(response)
 		} catch (error) {
 			if (error instanceof Error && error.name === 'AbortError') {
 				throw new Error('La solicitud tardó demasiado. Intenta de nuevo.')

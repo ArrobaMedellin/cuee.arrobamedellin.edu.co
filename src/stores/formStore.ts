@@ -4,6 +4,7 @@ import { section3Schema } from '@/schemas/section3'
 import { section4Schema } from '@/schemas/section4'
 import { section5Schema } from '@/schemas/section5'
 import { section6Schema } from '@/schemas/section6'
+import { surveySchema } from '@/schemas/survey'
 import { RegistrationFormData } from '@/types/form'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -14,6 +15,11 @@ interface FormStore {
 	activeEnrollmentCourse: string | null
 	enrollmentModalVisible: boolean
 	disabledCourses: string[]
+	// Se vuelve true solo cuando el usuario recorre el wizard de la encuesta
+	// hasta la última pregunta y esta queda válida. Evita que el botón
+	// "Siguiente" principal se habilite solo porque los datos persistidos
+	// (de una sesión anterior) ya son válidos sin haber recorrido el wizard.
+	surveyWizardCompleted: boolean
 	setSectionData: <K extends keyof RegistrationFormData>(
 		section: K,
 		data: RegistrationFormData[K],
@@ -25,6 +31,7 @@ interface FormStore {
 	setActiveEnrollmentCourse: (course: string | null) => void
 	setEnrollmentModalVisible: (visible: boolean) => void
 	setDisabledCourses: (courses: string[]) => void
+	setSurveyWizardCompleted: (completed: boolean) => void
 }
 
 const initialData: Partial<RegistrationFormData> = {
@@ -155,6 +162,19 @@ const initialData: Partial<RegistrationFormData> = {
 		icfesProScore: '',
 		icfesProYear: '',
 	},
+	survey: {
+		car01: '',
+		car01Other: '',
+		car02: '',
+		car02Other: '',
+		car03: '',
+		car04: '',
+		car05: [],
+		car06: '',
+		car07: '',
+		car08: '',
+		car08Other: '',
+	},
 }
 
 export const useFormStore = create<FormStore>()(
@@ -165,6 +185,7 @@ export const useFormStore = create<FormStore>()(
 			activeEnrollmentCourse: null,
 			enrollmentModalVisible: false,
 			disabledCourses: [],
+			surveyWizardCompleted: false,
 			setSectionData: (section, data) =>
 				set(state => ({
 					data: { ...state.data, [section]: data },
@@ -181,12 +202,15 @@ export const useFormStore = create<FormStore>()(
 					activeEnrollmentCourse: null,
 					enrollmentModalVisible: false,
 					disabledCourses: [],
+					surveyWizardCompleted: false,
 				}),
 			setActiveEnrollmentCourse: course =>
 				set({ activeEnrollmentCourse: course }),
 			setEnrollmentModalVisible: visible =>
 				set({ enrollmentModalVisible: visible }),
 			setDisabledCourses: courses => set({ disabledCourses: courses }),
+			setSurveyWizardCompleted: completed =>
+				set({ surveyWizardCompleted: completed }),
 			isSectionValid: section => {
 				const sectionData = get().data[section]
 				if (!sectionData) return false
@@ -212,6 +236,9 @@ export const useFormStore = create<FormStore>()(
 						case 'section6':
 							section6Schema.parse(sectionData)
 							return true
+						case 'survey':
+							surveySchema.parse(sectionData)
+							return true
 						case 'section7':
 						case 'section21':
 							// Estas secciones son opcionales
@@ -231,6 +258,7 @@ export const useFormStore = create<FormStore>()(
 				data: state.data,
 				currentSection: state.currentSection,
 				disabledCourses: state.disabledCourses,
+				surveyWizardCompleted: state.surveyWizardCompleted,
 			}),
 		},
 	),

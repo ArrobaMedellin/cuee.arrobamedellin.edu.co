@@ -1,0 +1,34 @@
+# Despliegue automático al hacer push a main.
+#
+# Cloud Build entra a la VM por el túnel IAP y ejecuta el script de despliegue
+# que vive allí (/opt/deploy/deploy.sh). La lógica está en la VM, no aquí, para
+# que todos los repos compartan el mismo procedimiento: build, reinicio, health
+# check y rollback automático si la versión nueva no responde.
+#
+# Requiere que la cuenta de Cloud Build tenga los roles compute.admin e
+# iap.tunnelResourceAccessor.
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: desplegar
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        echo "Desplegando $_APP en $_VM (commit $COMMIT_SHA)"
+        gcloud compute ssh "$_VM" \
+          --zone "$_ZONA" --project "$PROJECT_ID" \
+          --tunnel-through-iap --quiet \
+          --command "sudo /opt/deploy/deploy.sh $_APP $_RAMA"
+
+substitutions:
+  _VM: us2404-inscripciones-arrobamedellin-edu-co-v3
+  _ZONA: us-central1-a
+  _APP: cuee-sapiencia
+  _RAMA: main
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# El build de Next tarda ~1 min; 30 min deja margen para npm ci y reintentos.
+timeout: 1800s

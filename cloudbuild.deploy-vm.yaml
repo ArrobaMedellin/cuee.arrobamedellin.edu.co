@@ -5,21 +5,35 @@
 # que todos los repos compartan el mismo procedimiento: build, reinicio, health
 # check y rollback automático si la versión nueva no responde.
 #
-# Requiere que la cuenta de Cloud Build tenga los roles compute.admin e
-# iap.tunnelResourceAccessor.
+# Requiere en el proyecto de GCP:
+#   - cuenta de Cloud Build con compute.admin e iap.tunnelResourceAccessor
+#   - secreto cloudbuild-ssh-despliegue con la clave privada de `cbdeploy`,
+#     cuya pública está en la metadata del proyecto.
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: desplegar
     entrypoint: bash
+    secretEnv: ['SSH_KEY']
     args:
       - -c
       - |
         set -e
+        # Clave estable: sin ella gcloud genera una nueva en cada build y espera
+        # su propagación, que eran 4 de los 5 minutos de un despliegue.
+        mkdir -p /root/.ssh
+        printf '%s' "$$SSH_KEY" > /root/.ssh/cbdeploy
+        chmod 600 /root/.ssh/cbdeploy
+        ssh-keygen -y -f /root/.ssh/cbdeploy > /root/.ssh/cbdeploy.pub
         echo "Desplegando $_APP en $_VM (commit $COMMIT_SHA)"
-        gcloud compute ssh "$_VM" \
+        gcloud compute ssh "cbdeploy@$_VM" \
           --zone "$_ZONA" --project "$PROJECT_ID" \
-          --tunnel-through-iap --quiet \
+          --tunnel-through-iap --quiet --ssh-key-file=/root/.ssh/cbdeploy \
           --command "sudo /opt/deploy/deploy.sh $_APP $_RAMA"
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/arrobamedellin/secrets/cloudbuild-ssh-despliegue/versions/1
+      env: 'SSH_KEY'
 
 substitutions:
   _VM: us2404-inscripciones-arrobamedellin-edu-co-v3

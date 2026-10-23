@@ -1,5 +1,7 @@
 # Use Node.js 20 as base image
-FROM node:20-alpine
+# 24.22.1 corrige CVE-2026-111497 (RCE en el decodificador Brotli de Node). Versión
+# exacta para que la caché de Docker no mantenga una imagen vulnerable.
+FROM node:24.22.1-alpine
 
 # Set working directory
 WORKDIR /app

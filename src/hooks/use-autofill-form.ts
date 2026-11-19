@@ -492,10 +492,13 @@ export function useAutofillForm(): UseAutofillFormReturn {
 			},
 			section6: {
 				company: toStr(applicant.company) || data.section6?.company || '',
-				selectedCourses:
+				// Sin los cursos deshabilitados: la selección guardada en el navegador
+				// puede ser el curso que la persona ya finalizó.
+				selectedCourses: (
 					(applicant.selectedCourses as string[]) ||
 					data.section6?.selectedCourses ||
-					[],
+					[]
+				).filter(value => !useFormStore.getState().disabledCourses.includes(value)),
 				howDidYouHear:
 					toStr(applicant.howDidYouHear || applicant.foundOutAboutCall) ||
 					data.section6?.howDidYouHear ||

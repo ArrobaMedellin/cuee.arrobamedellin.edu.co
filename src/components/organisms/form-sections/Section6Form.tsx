@@ -58,6 +58,18 @@ export function Section6Form() {
 
 	const selectedCompany = form.watch('company')
 
+	// Si el curso seleccionado está deshabilitado (ya finalizado), se quita la
+	// selección para que la persona tenga que elegir uno nuevo. El navegador
+	// conserva la selección de la inscripción anterior.
+	useEffect(() => {
+		const current = form.getValues('selectedCourses') ?? []
+		const allowed = current.filter(value => !disabledCourses.includes(value))
+		if (allowed.length !== current.length) {
+			form.setValue('selectedCourses', allowed, { shouldDirty: true })
+			setSectionData('section6', { ...form.getValues(), selectedCourses: allowed })
+		}
+	}, [disabledCourses]) // eslint-disable-line react-hooks/exhaustive-deps
+
 	// Auto-seleccionar cuando hay un único curso disponible y no está deshabilitado
 	useEffect(() => {
 		if (!selectedCompany) return
@@ -163,7 +175,7 @@ export function Section6Form() {
 							<FormControl>
 								<RadioGroup
 									onValueChange={value => field.onChange([value])}
-									defaultValue={field.value?.[0]}
+									value={field.value?.[0] ?? ''}
 									className='grid grid-cols-1 md:grid-cols-2 gap-3'
 								>
 									{availableCourses.map(option => {

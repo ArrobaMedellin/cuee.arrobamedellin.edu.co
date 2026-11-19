@@ -208,7 +208,26 @@ export const useFormStore = create<FormStore>()(
 				set({ activeEnrollmentCourse: course }),
 			setEnrollmentModalVisible: visible =>
 				set({ enrollmentModalVisible: visible }),
-			setDisabledCourses: courses => set({ disabledCourses: courses }),
+			// Un curso deshabilitado (ya finalizado o cancelado) no puede quedar
+			// seleccionado: el navegador conserva la selección de la inscripción
+			// anterior y, sin esto, quien vuelve podía reenviar ese mismo curso.
+			setDisabledCourses: courses =>
+				set(state => {
+					const selected = state.data.section6?.selectedCourses
+					if (!state.data.section6 || !selected?.some(value => courses.includes(value))) {
+						return { disabledCourses: courses }
+					}
+					return {
+						disabledCourses: courses,
+						data: {
+							...state.data,
+							section6: {
+								...state.data.section6,
+								selectedCourses: selected.filter(value => !courses.includes(value)),
+							},
+						},
+					}
+				}),
 			setSurveyWizardCompleted: completed =>
 				set({ surveyWizardCompleted: completed }),
 			isSectionValid: section => {

@@ -1,3 +1,4 @@
+import { COURSE_MAPPINGS } from '@/constants/courses'
 import { apiService } from '@/lib/api'
 import { mapFormDataToDto, mapSurveyToDto } from '@/lib/mappers/applicant-mapper'
 import { RegistrationFormData } from '@/types/form'
@@ -34,6 +35,8 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 				throw new Error('Número de documento es requerido')
 			}
 
+			const applicantDto = mapFormDataToDto(formData)
+
 			if (!options?.skipEnrollmentCheck) {
 				const status = await apiService.getFormStatus(formData.section1.documentNumber)
 
@@ -45,9 +48,23 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 						`Ya se encuentra cursando un curso${status.activeEnrollments.length > 1 ? 's' : ''}: ${courseNames}`,
 					)
 				}
+
+				// Un curso que la persona ya finalizó o canceló no se puede volver a
+				// inscribir. La pantalla lo muestra deshabilitado; esto cubre una
+				// selección vieja que hubiera quedado guardada en el navegador.
+				const repeated = (applicantDto.courseIds ?? []).filter(id =>
+					status.disabledCourseIds.includes(id),
+				)
+				if (repeated.length > 0) {
+					const names = repeated
+						.map(id => COURSE_MAPPINGS.find(c => c.apiId === id)?.label ?? id)
+						.join(', ')
+					throw new Error(
+						`Ya tomaste este curso: ${names}. Vuelve al paso de selección y elige un curso nuevo.`,
+					)
+				}
 			}
 
-			const applicantDto = mapFormDataToDto(formData)
 			const result = await apiService.submitForm(applicantDto)
 
 			setIsSuccess(true)

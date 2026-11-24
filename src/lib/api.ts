@@ -268,6 +268,11 @@ export class ApiService {
 			enrollmentDate?: Date
 		}>
 		disabledCourseIds: string[]
+		/** Hay datos guardados; se cargan verificando el correo. */
+		hasApplicantData?: boolean
+		/** Correo registrado, enmascarado (a***z@gmail.com). */
+		maskedEmail?: string | null
+		/** Solo mientras el API los siga devolviendo sin verificación. */
 		applicantData?: {
 			id: string
 			documentType?: string
@@ -304,17 +309,65 @@ export class ApiService {
 		}
 	}
 
-	async submitForm(dto: CreateApplicantDto): Promise<{
+	/** Envía un código al correo registrado del documento. */
+	async requestVerificationCode(document: string): Promise<{
+		challengeId: string
+		expiresAt: string
+		maskedEmail: string | null
+		message: string
+	}> {
+		const response = await fetchWithTimeout(
+			`${this.baseUrl}/form/${this.formType}/verification`,
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ document }),
+			},
+		)
+		if (!response.ok) throw new Error(await readErrorMessage(response))
+		return await parseJsonFromResponse(response)
+	}
+
+	/** Verifica el código: devuelve los datos guardados y el token de edición. */
+	async verifyCode(
+		challengeId: string,
+		code: string,
+	): Promise<{
+		applicantData: Record<string, unknown>
+		editToken: string
+		editTokenExpiresAt: string
+	}> {
+		const response = await fetchWithTimeout(
+			`${this.baseUrl}/form/${this.formType}/verification/${encodeURIComponent(challengeId)}/verify`,
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ code }),
+			},
+		)
+		if (!response.ok) throw new Error(await readErrorMessage(response))
+		return await parseJsonFromResponse(response)
+	}
+
+	async submitForm(
+		dto: CreateApplicantDto,
+		editToken?: string | null,
+	): Promise<{
 		success: boolean
 		applicantId: string
 		isNew: boolean
 		enrollmentsCreated: number
+		/** false: ya existía y no se verificó el correo; sus datos no cambiaron. */
+		dataUpdated?: boolean
 	}> {
 		try {
 			const url = `${this.baseUrl}/form/${this.formType}/submit`
 			const response = await fetchWithTimeout(url, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					...(editToken ? { 'X-Form-Edit-Token': editToken } : {}),
+				},
 				body: JSON.stringify(dto),
 			})
 			if (!response.ok) {

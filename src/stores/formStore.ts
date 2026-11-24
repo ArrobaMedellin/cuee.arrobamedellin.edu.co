@@ -32,6 +32,12 @@ interface FormStore {
 	setEnrollmentModalVisible: (visible: boolean) => void
 	setDisabledCourses: (courses: string[]) => void
 	setSurveyWizardCompleted: (completed: boolean) => void
+	/**
+	 * Token que prueba que la persona verificó su correo (30 min). Solo en
+	 * memoria: no se guarda en localStorage (ver partialize).
+	 */
+	editToken: string | null
+	setEditToken: (token: string | null) => void
 }
 
 const initialData: Partial<RegistrationFormData> = {
@@ -186,6 +192,8 @@ export const useFormStore = create<FormStore>()(
 			enrollmentModalVisible: false,
 			disabledCourses: [],
 			surveyWizardCompleted: false,
+			editToken: null,
+			setEditToken: token => set({ editToken: token }),
 			setSectionData: (section, data) =>
 				set(state => ({
 					data: { ...state.data, [section]: data },
@@ -203,6 +211,7 @@ export const useFormStore = create<FormStore>()(
 					enrollmentModalVisible: false,
 					disabledCourses: [],
 					surveyWizardCompleted: false,
+					editToken: null,
 				}),
 			setActiveEnrollmentCourse: course =>
 				set({ activeEnrollmentCourse: course }),

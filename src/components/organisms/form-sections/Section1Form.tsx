@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select'
 import { DOCUMENT_TYPE_OPTIONS } from '@/constants'
 import { useAutofillForm } from '@/hooks/use-autofill-form'
+import { EmailVerificationDialog } from '@/components/molecules/EmailVerificationDialog'
 import { useCountries } from '@/hooks/use-countries'
 import { useDepartmentsCities } from '@/hooks/use-departments-cities'
 import type { Section1Form } from '@/schemas/section1'
@@ -27,12 +28,19 @@ import { section1Schema } from '@/schemas/section1'
 import { useFormStore } from '@/stores/formStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Search } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function Section1Form() {
 	const { data, setSectionData } = useFormStore()
-	const { isSearching, searchByDocument } = useAutofillForm()
+	const {
+		isSearching,
+		searchByDocument,
+		pendingVerification,
+		requestCode,
+		confirmCode,
+		skipVerification,
+	} = useAutofillForm()
 
 	// Estados para lugar de nacimiento
 	const [selectedBirthCountryId, setSelectedBirthCountryId] = useState<
@@ -107,9 +115,14 @@ export function Section1Form() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedBirthCountryId, countries.countries])
 
+	// Mientras se cargan datos guardados (tras el código del correo) el
+	// formulario todavía está vacío: no hay que copiarlo encima del store.
+	const loadingSavedData = useRef(false)
+
 	// Guardar datos automáticamente cuando cambian los valores del formulario
 	useEffect(() => {
 		const subscription = form.watch(values => {
+			if (loadingSavedData.current) return
 			// Solo guardar si hay datos válidos (no vacíos)
 			if (values && Object.keys(values).length > 0) {
 				// Asegurar que los campos opcionales siempre sean string (no undefined)
@@ -130,26 +143,44 @@ export function Section1Form() {
 		setSectionData('section1', values)
 	}
 
+	/** Lleva al formulario los datos que el hook dejó en el store. */
+	const applyFoundData = () => {
+		const freshData = useFormStore.getState().data.section1
+		if (freshData) {
+			form.reset(freshData)
+			// Re-restaurar selecciones geográficas
+			if (freshData.countryOfBirth) {
+				const country = countries.countries.find(
+					c => c.name === freshData.countryOfBirth,
+				)
+				if (country) setSelectedBirthCountryId(country.id)
+			}
+			if (freshData.departmentOfBirth) {
+				setSelectedBirthDepartmentName(freshData.departmentOfBirth)
+			}
+		}
+	}
+
 	const handleSearch = async () => {
 		const documentNumber = form.getValues('documentNumber')
-		if (documentNumber) {
+		if (!documentNumber) return
+		loadingSavedData.current = true
+		try {
 			const found = await searchByDocument(documentNumber)
-			if (found) {
-				const freshData = useFormStore.getState().data.section1
-				if (freshData) {
-					form.reset(freshData)
-					// Re-restaurar selecciones geográficas
-					if (freshData.countryOfBirth) {
-						const country = countries.countries.find(
-							c => c.name === freshData.countryOfBirth,
-						)
-						if (country) setSelectedBirthCountryId(country.id)
-					}
-					if (freshData.departmentOfBirth) {
-						setSelectedBirthDepartmentName(freshData.departmentOfBirth)
-					}
-				}
-			}
+			if (found) applyFoundData()
+		} finally {
+			loadingSavedData.current = false
+		}
+	}
+
+	const handleConfirmCode = async (code: string) => {
+		loadingSavedData.current = true
+		try {
+			const found = await confirmCode(code)
+			if (found) applyFoundData()
+			return found
+		} finally {
+			loadingSavedData.current = false
 		}
 	}
 
@@ -458,6 +489,12 @@ export function Section1Form() {
 					</CardContent>
 				</Card>
 			</form>
+			<EmailVerificationDialog
+				maskedEmail={pendingVerification?.maskedEmail ?? null}
+				onRequestCode={requestCode}
+				onConfirm={handleConfirmCode}
+				onSkip={skipVerification}
+			/>
 		</Form>
 	)
 }

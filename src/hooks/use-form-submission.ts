@@ -2,6 +2,7 @@ import { COURSE_MAPPINGS } from '@/constants/courses'
 import { apiService } from '@/lib/api'
 import { mapFormDataToDto, mapSurveyToDto } from '@/lib/mappers/applicant-mapper'
 import { RegistrationFormData } from '@/types/form'
+import { useFormStore } from '@/stores/formStore'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -65,7 +66,15 @@ export function useFormSubmission(): UseFormSubmissionReturn {
 				}
 			}
 
-			const result = await apiService.submitForm(applicantDto)
+			const result = await apiService.submitForm(
+				applicantDto,
+				useFormStore.getState().editToken,
+			)
+			if (result.dataUpdated === false) {
+				toast.info(
+					'Tu inscripción quedó registrada. Tus datos guardados no se cambiaron porque no verificaste tu correo.',
+				)
+			}
 
 			setIsSuccess(true)
 			console.log('Form submitted:', result)

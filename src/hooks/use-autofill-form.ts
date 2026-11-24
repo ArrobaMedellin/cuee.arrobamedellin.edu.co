@@ -9,11 +9,29 @@ export interface ActiveEnrollmentInfo {
 	courseName: string
 }
 
+type FormStatus = Awaited<ReturnType<ApiService['getFormStatus']>>
+
+/** Datos guardados que solo se cargan tras verificar el correo. */
+export interface PendingVerification {
+	document: string
+	maskedEmail: string
+	status: FormStatus
+	challengeId?: string
+}
+
 interface UseAutofillFormReturn {
 	isSearching: boolean
 	searchByDocument: (documentNumber: string) => Promise<boolean>
 	activeEnrollment: ActiveEnrollmentInfo | null
 	clearActiveEnrollment: () => void
+	/** Hay datos guardados esperando el código del correo. */
+	pendingVerification: PendingVerification | null
+	/** Envía el código al correo registrado. */
+	requestCode: () => Promise<boolean>
+	/** Verifica el código, carga los datos y sigue el flujo. true si cargó. */
+	confirmCode: (code: string) => Promise<boolean>
+	/** Sigue sin cargar los datos guardados. */
+	skipVerification: () => void
 }
 
 /**
@@ -34,7 +52,10 @@ export function useAutofillForm(): UseAutofillFormReturn {
 		setCurrentSection,
 		setMultipleSections,
 		setDisabledCourses,
+		setEditToken,
 	} = useFormStore()
+	const [pendingVerification, setPendingVerification] =
+		useState<PendingVerification | null>(null)
 
 	const clearActiveEnrollment = () => setActiveEnrollment(null)
 
@@ -102,6 +123,48 @@ export function useAutofillForm(): UseAutofillFormReturn {
 		return acts
 	}
 
+	/** Sigue el flujo con el estado y, si los hay, los datos del aspirante. */
+	const continueWithStatus = async (status: FormStatus): Promise<boolean> => {
+		// Si es usuario nuevo sin datos previos
+		if (status.flowType === 'NEW' && !status.applicantData) {
+			toast.info(
+				'No se encontró ninguna inscripción previa con este documento',
+			)
+			return false
+		}
+
+		// Establecer los cursos deshabilitados (finalizados) en el store
+		// Convertir los API IDs (códigos de curso) a valores del formulario
+		if (status.disabledCourseIds.length > 0) {
+			const disabledCourseValues = getCourseValuesFromApiIds(
+				status.disabledCourseIds,
+			)
+			setDisabledCourses(disabledCourseValues)
+			toast.info(
+				`Tienes ${disabledCourseValues.length} curso(s) finalizado(s). Estos cursos aparecerán deshabilitados en la selección.`,
+			)
+		}
+
+		// Si hay datos del aplicante, autocompletar el formulario
+		if (status.applicantData) {
+			await autofillFormData(status.applicantData)
+		}
+
+		// Si es reinscripción, redirigir directamente a la sección de selección de cursos
+		if (status.flowType === 'REENROLLMENT') {
+			setCurrentSection(6)
+			toast.success(
+				'¡Bienvenido de nuevo! Tus datos han sido cargados. Selecciona tu nuevo curso.',
+			)
+			return true
+		}
+
+		toast.success(
+			'¡Datos encontrados! El formulario se ha rellenado automáticamente',
+		)
+		return true
+	}
+
 	const searchByDocument = async (documentNumber: string): Promise<boolean> => {
 		if (!documentNumber || documentNumber.trim() === '') {
 			toast.error('Por favor ingresa un número de documento')
@@ -126,44 +189,30 @@ export function useAutofillForm(): UseAutofillFormReturn {
 				return false
 			}
 
-			// Si es usuario nuevo sin datos previos
-			if (statusResponse.flowType === 'NEW' && !statusResponse.applicantData) {
-				toast.info(
-					'No se encontró ninguna inscripción previa con este documento',
-				)
+			// Hay datos guardados pero el API ya no los entrega sin verificar el
+			// correo: se piden con un código antes de cargarlos.
+			if (!statusResponse.applicantData && statusResponse.hasApplicantData) {
+				if (!statusResponse.maskedEmail) {
+					toast.info(
+						'Ya hay una inscripción con este documento, pero sin correo registrado. Completa el formulario.',
+					)
+					return false
+				}
+				// Los cursos ya hechos quedan deshabilitados aunque no se verifique.
+				if (statusResponse.disabledCourseIds.length > 0) {
+					setDisabledCourses(
+						getCourseValuesFromApiIds(statusResponse.disabledCourseIds),
+					)
+				}
+				setPendingVerification({
+					document: documentNumber.trim(),
+					maskedEmail: statusResponse.maskedEmail,
+					status: statusResponse,
+				})
 				return false
 			}
 
-			// Establecer los cursos deshabilitados (finalizados) en el store
-			// Convertir los API IDs (códigos de curso) a valores del formulario
-			if (statusResponse.disabledCourseIds.length > 0) {
-				const disabledCourseValues = getCourseValuesFromApiIds(
-					statusResponse.disabledCourseIds,
-				)
-				setDisabledCourses(disabledCourseValues)
-				toast.info(
-					`Tienes ${disabledCourseValues.length} curso(s) finalizado(s). Estos cursos aparecerán deshabilitados en la selección.`,
-				)
-			}
-
-			// Si hay datos del aplicante, autocompletar el formulario
-			if (statusResponse.applicantData) {
-				await autofillFormData(statusResponse.applicantData)
-			}
-
-			// Si es reinscripción, redirigir directamente a la sección de selección de cursos
-			if (statusResponse.flowType === 'REENROLLMENT') {
-				setCurrentSection(6)
-				toast.success(
-					'¡Bienvenido de nuevo! Tus datos han sido cargados. Selecciona tu nuevo curso.',
-				)
-				return true
-			}
-
-			toast.success(
-				'¡Datos encontrados! El formulario se ha rellenado automáticamente',
-			)
-			return true
+			return await continueWithStatus(statusResponse)
 		} catch (error) {
 			console.error('Error searching for applicant:', error)
 			toast.error('Error al buscar en la base de datos. Intenta nuevamente')
@@ -533,10 +582,56 @@ export function useAutofillForm(): UseAutofillFormReturn {
 		setMultipleSections(mapped)
 	}
 
+	const requestCode = async (): Promise<boolean> => {
+		if (!pendingVerification) return false
+		try {
+			const res = await new ApiService().requestVerificationCode(
+				pendingVerification.document,
+			)
+			setPendingVerification({ ...pendingVerification, challengeId: res.challengeId })
+			return true
+		} catch (error) {
+			toast.error(
+				error instanceof Error ? error.message : 'No se pudo enviar el código',
+			)
+			return false
+		}
+	}
+
+	const confirmCode = async (code: string): Promise<boolean> => {
+		if (!pendingVerification?.challengeId) return false
+		try {
+			const res = await new ApiService().verifyCode(
+				pendingVerification.challengeId,
+				code,
+			)
+			setEditToken(res.editToken)
+			const status = { ...pendingVerification.status, applicantData: res.applicantData as FormStatus['applicantData'] }
+			setPendingVerification(null)
+			return await continueWithStatus(status)
+		} catch (error) {
+			toast.error(
+				error instanceof Error ? error.message : 'Código inválido o vencido',
+			)
+			return false
+		}
+	}
+
+	const skipVerification = () => {
+		setPendingVerification(null)
+		toast.info(
+			'Completa el formulario. Si ya estabas inscrito, tus datos guardados se mantienen.',
+		)
+	}
+
 	return {
 		isSearching,
 		searchByDocument,
 		activeEnrollment,
 		clearActiveEnrollment,
+		pendingVerification,
+		requestCode,
+		confirmCode,
+		skipVerification,
 	}
 }
